@@ -18,6 +18,15 @@ class Exit:
     """Base class for an Exit that leads from one Room to another Room
     """
     def __init__(self, name:str, description:str, end:'Room'):
+        """Creates an Exit
+
+        :param name: The name of the Exit
+        :type name: str
+        :param description: A description of the Exit
+        :type description: str
+        :param end: The Room that the exit leads to
+        :type end: Room
+        """
         self.name = name
         self.description = description
         self.end = end
@@ -86,3 +95,4 @@ class Room:
         :rtype: dict[Direction, Exit]
         """
         return self.exits
+    
