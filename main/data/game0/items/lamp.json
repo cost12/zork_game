@@ -1,0 +1,6 @@
+{
+    "name"        : "lamp",
+    "description" : "A plain lamp",
+    "weight"      : 1,
+    "value"       : 1
+}

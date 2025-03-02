@@ -1,0 +1,9 @@
+{
+    "name" : "walk",
+    "aliases": [
+        "w",
+        "walk",
+        "go",
+        "g"
+    ]
+}

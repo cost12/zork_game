@@ -1,0 +1,15 @@
+{
+    "comment"    : "This is an example of making a room",
+    
+    "name"       : "Third Room",
+    "description": "A very normal room.",
+    "exits"      : [
+        {
+            "name"        : "Exit 2",
+            "description" : "A path",
+            "direction"   : "North",
+            "end"         : "Boring Room"
+        }
+    ],
+    "characters"  : ["dragon"]
+}
