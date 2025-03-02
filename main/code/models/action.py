@@ -3,7 +3,7 @@ class Action:
     """Base class for an Action that a Character can make
     """
 
-    def __init__(self, name:str, aliases:set[str]):
+    def __init__(self, name:str, aliases:list[str]):
         """Creates an Action
 
         :param name: The name of the action
@@ -34,3 +34,5 @@ class Action:
             return True
         return False
     
+    def act(self):
+        pass
