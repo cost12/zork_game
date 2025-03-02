@@ -2,13 +2,5 @@
     "comment"    : "This is an example of making a room",
     
     "name"       : "Other Room",
-    "description": "A very normal room.",
-    "exits"      : [
-        {
-            "name"        : "Exit 1",
-            "description" : "A door",
-            "direction"   : "South",
-            "end"         : "Boring Room"
-        }
-    ]
+    "description": "A very normal room."
 }

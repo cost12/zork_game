@@ -1,0 +1,14 @@
+Achievements:
+    * Unlocked by doing little side quests that don't necessarily help reach the end goal
+    * Unable to see Achievements until after finishing the game
+
+Stat Tracking:
+    * Time/moves/turns spent in each room
+
+Variable Speed Rooms:
+    * Time moves faster/slower in certain rooms
+
+Coin Flip Room:
+    * Coin in room heads initially
+    * If the coin is flipped and is tails, one of the exits leads to a hidden room
+    * If the coin is flipped and is heads, the exit resets to it's normal path

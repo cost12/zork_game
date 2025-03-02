@@ -1,4 +1,5 @@
 {
     "min_players" : 1,
-    "max_players" : 1
+    "max_players" : 1,
+    "welcome_text": "You wake up in a new, strange place."
 }

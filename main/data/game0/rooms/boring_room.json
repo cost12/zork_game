@@ -2,21 +2,5 @@
     "comment"    : "This is an example of making a room",
     
     "name"       : "Boring Room",
-    "description": "A very boring room.",
-    "exits"      : [
-        {
-            "name"        : "Exit 1",
-            "description" : "A door",
-            "direction"   : "North",
-            "end"         : "Other Room"
-        },
-        {
-            "name"        : "Exit 2",
-            "description" : "A path",
-            "direction"   : "South",
-            "end"         : "Third Room"
-        }
-    ],
-    "items"      : ["lamp"],
-    "start"      : "True"
+    "description": "A very boring room."
 }

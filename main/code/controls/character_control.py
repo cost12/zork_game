@@ -1,5 +1,5 @@
 from code.models.character import Character
-from code.models.room import Room
+from code.models.room import Room, Direction, Exit
 from code.models.item import Item, Inventory
 from code.models.action import Action
 import code.views.string_views as views
@@ -49,10 +49,25 @@ class GameCharacter:
 
     def get_controller(self) -> CharacterController:
         return self.controller
+    
+class GameRoom:
+
+    def __init__(self, room:Room, exits:dict[Direction, Exit], characters:list[Character], items:list[Item], is_user_start_room:bool=False):
+        self.room = room
+        self.exits = exits
+        self.characters = characters
+        self.items = items
+        self.is_user_start_room = is_user_start_room
+
+    def get_name(self) -> str:
+        return self.room.get_name()
+
+    def is_start_room(self) -> bool:
+        return self.is_user_start_room
 
 class GameState:
 
-    def __init__(self, rooms:list[Room], start_rooms:list[Room], characters:list[GameCharacter], extra_characters:list[Character], actions:list[Action]):
+    def __init__(self, rooms:list[GameRoom], characters:list[GameCharacter], extra_characters:list[Character], actions:list[Action]):
         assert len(rooms) > 0 and len(characters) > 0
         self.rooms = {room.get_name():room for room in rooms}
         self.character_order = characters
@@ -60,6 +75,7 @@ class GameState:
         self.actions = actions
         
         i = 0
+        start_rooms = [room for room in rooms if room.is_start_room()]
         for character in extra_characters:
             new_character = GameCharacter(character, start_rooms[i%len(start_rooms)], CommandLineController(), Inventory(10,10))
             self.character_dict[character.get_name()] = new_character

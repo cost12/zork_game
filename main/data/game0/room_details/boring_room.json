@@ -1,0 +1,19 @@
+{
+    "room"       : "Boring Room",
+    "exits"      : [
+        {
+            "name"        : "Exit 1",
+            "description" : "A door",
+            "direction"   : "north",
+            "end"         : "Other Room"
+        },
+        {
+            "name"        : "Exit 2",
+            "description" : "A path",
+            "direction"   : "south",
+            "end"         : "Third Room"
+        }
+    ],
+    "items"      : ["lamp"],
+    "start"      : "True"
+}
