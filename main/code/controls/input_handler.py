@@ -1,10 +1,7 @@
+from typing import Any
 
-class Translator:
+from code.models.action import Action
 
-    def __init__(self):
-        pass
-
-class Interpreter:
-    
-    def __init__(self):
-        pass
+def translate(user_input:str) -> tuple[Action,Any]:
+    return None, None
+        

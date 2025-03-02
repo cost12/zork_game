@@ -1,5 +1,25 @@
+from code.controls.character_control import CommandLineController, GameState
+from code.controls.game_control import game_control
+from code.models.data_read_in import read_in_game
+from code.models.character import Character
+
 def main():
-    pass
+    game_name = input("Which game do you want to play? ")
+    rooms, start_rooms, game_characters, _, actions, details = read_in_game(game_name)
+    players = -1
+    while players < details['min_players'] or players > details['max_players']:
+        players = int(input("How many players are playing? "))
+    
+    extra_characters = list[Character]()
+    if players > details['playable_characters']:
+        for i in range(players-details['playable_characters']):
+            name = input(f"Name player {i}: ")
+            extra_characters.append(Character(name, 'human'))
+    if players < details['playable_characters']:
+        pass
+    
+    game = GameState(rooms, start_rooms, game_characters, extra_characters, actions)
+    game_control(game)
 
 if __name__=="__main__":
     main()
