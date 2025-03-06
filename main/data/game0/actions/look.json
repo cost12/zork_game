@@ -1,0 +1,7 @@
+{
+    "name"       : "look",
+    "aliases"    : ["look", "inspect", "search"],
+    "input_strs" : [
+        "(i) [_alias_] (around) (for) (a/the) (_target_)"
+    ]
+}

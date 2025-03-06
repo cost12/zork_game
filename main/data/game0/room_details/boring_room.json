@@ -15,5 +15,6 @@
         }
     ],
     "items"      : ["lamp"],
+    "characters" : ["Player 1"],
     "start"      : "True"
 }

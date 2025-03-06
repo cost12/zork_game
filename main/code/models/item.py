@@ -1,8 +1,9 @@
 from typing import Optional
 
 from code.models.action import Action
+from code.utils.alias import Alias
 
-class Item:
+class Item(Alias):
     """Base class for all Items/ anything that a Character can put in their Inventory
     """
     def __init__(self, name:str, description:str, weight:float, value:float, actions:Optional[list[Action]]=None):
@@ -25,6 +26,9 @@ class Item:
         self.value = value
         self.actions = list[Action]() if actions is None else actions
 
+    def get_aliases(self) -> list[str]:
+        return [self.name]
+
     def get_name(self) -> str:
         """Gets the name of the Item
 
@@ -32,6 +36,14 @@ class Item:
         :rtype: str
         """
         return self.name
+
+    def get_description(self) -> str:
+        """Gets a description of the Item
+
+        :return: A description of the Item
+        :rtype: str
+        """
+        return self.description
 
     def get_weight(self) -> float:
         """Gets the weight of the Item
@@ -90,6 +102,19 @@ class Inventory:
         :rtype: float
         """
         return sum([item[0].get_weight()*item[1] for item in self.items])
+    
+    def contains(self, item:Item) -> bool:
+        """Whether item is in the Inventory or not
+
+        :param item: The Item to check
+        :type item: Item
+        :return: True if item is in the Inventory, False otherwise
+        :rtype: bool
+        """
+        for item2,count in self.items:
+            if count > 0 and item==item2:
+                return True
+        return False
     
     def add_item(self, item:Item, count:int=1) -> int:
         """If one or more of the Items can fit in the inventory, this adds the Items and returns the number that were added. Otherwise it returns 0.

@@ -1,9 +1,8 @@
 {
     "name" : "walk",
-    "aliases": [
-        "w",
-        "walk",
-        "go",
-        "g"
+    "aliases": ["walk","go","g","head"],
+    "input_strs" : [
+        "(i) (_alias_) [direction]",
+        "(i) [_alias_] (to the) [direction]"
     ]
 }

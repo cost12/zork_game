@@ -1,5 +1,6 @@
+from code.utils.alias import Alias
 
-class Action:
+class Action(Alias):
     """Base class for an Action that a Character can make
     """
 
@@ -12,7 +13,10 @@ class Action:
         :type aliases: set[str]
         """
         self.name = name
-        self.aliases = {alias.lower() for alias in aliases}
+        self.aliases = aliases
+
+    def __repr__(self):
+        return f"[Action: {self.name}]"
 
     def get_name(self) -> str:
         """Get the Action's name
@@ -22,17 +26,8 @@ class Action:
         """
         return self.name
     
-    def is_match(self, alias:str) -> bool:
-        """Determine if a user input string is referncing this Action
-
-        :param alias: The string to test
-        :type alias: str
-        :return: True if the string is an alias for this Action, False otherwise
-        :rtype: bool
-        """
-        if alias.lower() in self.aliases:
-            return True
-        return False
+    def get_aliases(self) -> list[str]:
+        return self.aliases
     
     def act(self):
         pass

@@ -2,14 +2,15 @@ from typing import Optional
 from dataclasses import dataclass
 
 from code.models.action import Action
+from code.utils.alias import Alias
 
 @dataclass(frozen=True)
-class Direction:
+class Direction(Alias):
     """The Directions a Character can move to get from Room to Room. 
     Immutable so it can be used in dicts.
     """
     name:int
-    aliases:frozenset[str]        
+    aliases:tuple[str]        
 
     @staticmethod
     def make_direction(name:str, aliases:list[str]) -> 'Direction':
@@ -22,7 +23,7 @@ class Direction:
         :return: A Direction created from the inputs
         :rtype: Direction
         """
-        alias_set = frozenset({alias.lower() for alias in aliases})
+        alias_set = tuple(aliases)
         return Direction(name, alias_set)
 
     def get_name(self) -> str:
@@ -33,17 +34,10 @@ class Direction:
         """
         return self.name
     
-    def is_match(self, input_str:str) -> bool:
-        """Decides whether an input string represents this Direction
+    def get_aliases(self) -> list[str]:
+        return list(self.aliases)
 
-        :param input_str: An input string to check
-        :type input_str: str
-        :return: True if the input string matches an alias, False otherwise
-        :rtype: bool
-        """
-        return input_str.lower() in self.aliases
-
-class Exit:
+class Exit(Alias):
     """Base class for an Exit that leads from one Room to another Room
     """
     def __init__(self, name:str, description:str, end:'Room'):
@@ -59,6 +53,9 @@ class Exit:
         self.name = name
         self.description = description
         self.end = end
+
+    def get_aliases(self) -> list[str]:
+        return [self.name]
 
     def get_name(self) -> str:
         """Get the Exit's name
@@ -92,7 +89,7 @@ class Exit:
         """
         return True
 
-class Room:
+class Room(Alias):
     """Base class for rooms that a Character can move between
     """
     def __init__(self, name:str, description:str, actions:Optional[list[Action]]=None):
@@ -108,6 +105,9 @@ class Room:
         self.name = name
         self.description = description
         self.actions = list[Action]() if actions is None else actions
+
+    def get_aliases(self) -> list[str]:
+        return [self.name]
 
     def get_name(self) -> str:
         """Get the Room's name

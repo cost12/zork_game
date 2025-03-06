@@ -122,23 +122,26 @@ def read_in_exits(data:list[dict[str,Any]], directions:dict[str,Direction], room
         exits[direction] = Exit(name, description, end)
     return exits
 
-def read_in_room_details(data:dict[str,Any], directions:dict[str,Direction], rooms:dict[str,Room], characters:dict[str,Character], items:dict[str,Item]) -> GameRoom:
+def read_in_room_details(data:dict[str,Any], directions:dict[str,Direction], rooms:dict[str,Room], characters:dict[str,GameCharacter], items:dict[str,Item]) -> GameRoom:
     start = False
     if 'start' in data:
         start = True
     room = rooms[data['room']]
     exits = read_in_exits(data['exits'], directions, rooms)
     room_characters = []
-    if 'characters' in data:
-        for character_name in data['characters']:
-            room_characters.append(characters[character_name])
     room_items = []
     if 'items' in data:
         for item_name in data['items']:
             room_items.append(items[item_name])
-    return GameRoom(room, exits, room_characters, room_items, start)
+    game_room = GameRoom(room, exits, room_characters, room_items, start)
+    if 'characters' in data:
+        for character_name in data['characters']:
+            character = characters[character_name]
+            game_room.add_character(character)
+            character.set_current_room(game_room)
+    return game_room
 
-def read_in_rooms_details(game:str, directions:dict[str,Direction], rooms:dict[str,Room],  characters:dict[str,Character], items:dict[str,Item]) -> list[GameRoom]:
+def read_in_rooms_details(game:str, directions:dict[str,Direction], rooms:dict[str,Room],  characters:dict[str,GameCharacter], items:dict[str,Item]) -> list[GameRoom]:
     folder = f"data/{game}/room_details"
     data = __read_in_folder(folder)
     return [read_in_room_details(room_data, directions, rooms, characters, items) for room_data in data]
@@ -147,7 +150,7 @@ def read_in_game_details(game:str) -> Any:
     file = f"main/data/{game}/game_details.json"
     return __read_in_json(file)
 
-def read_in_game(game:str) -> tuple[list[GameRoom],list[GameCharacter],list[Action],dict[str,Any]]:
+def read_in_game(game:str) -> tuple[list[GameRoom],list[GameCharacter],list[Action],list[Item],list[Direction],dict[str,Any]]:
     directions = read_in_directions(game)
     direction_dict = {direction.get_name():direction for direction in directions}
     actions = read_in_actions(game)
@@ -159,7 +162,8 @@ def read_in_game(game:str) -> tuple[list[GameRoom],list[GameCharacter],list[Acti
     rooms = read_in_rooms(game, action_dict)
     room_dict = {room.get_name():room for room in rooms}
     game_characters, playable_characters = read_in_characters_details(game, room_dict, character_dict, item_dict)
-    game_rooms = read_in_rooms_details(game, direction_dict, room_dict, character_dict, item_dict)
+    game_character_dict = {game_character.get_name():game_character for game_character in game_characters}
+    game_rooms = read_in_rooms_details(game, direction_dict, room_dict, game_character_dict, item_dict)
     game_details = read_in_game_details(game)
     game_details['playable_characters'] = playable_characters
-    return game_rooms, game_characters, actions, game_details
+    return game_rooms, game_characters, actions, items, directions, game_details

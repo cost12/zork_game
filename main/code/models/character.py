@@ -1,8 +1,9 @@
 from typing import Optional
 
 from code.models.action import Action
+from code.utils.alias import Alias
 
-class Character:
+class Character(Alias):
     """Base class for all Characters, user controlled or NPCs
     """
     def __init__(self, name:str, type:str, description:str, actions:Optional[list[Action]]=None):
@@ -21,6 +22,9 @@ class Character:
         self.type = type
         self.description = description
         self.actions = list[Action]() if actions is None else actions
+
+    def get_aliases(self) -> list[str]:
+        return [self.name]
 
     def get_name(self) -> str:
         """Gets the Character's name
