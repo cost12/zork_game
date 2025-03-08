@@ -1,0 +1,44 @@
+{
+    "data" : [
+        {
+            "name"    : "north",
+            "aliases" : ["north", "n"]
+        },
+        {
+            "name"    : "northwest",
+            "aliases" : ["northwest", "nw"]
+        },
+        {
+            "name"    : "west",
+            "aliases" : ["west", "w"]
+        },
+        {
+            "name"    : "southwest",
+            "aliases" : ["southwest", "sw"]
+        },
+        {
+            "name"    : "south",
+            "aliases" : ["south", "s"]
+        },
+        {
+            "name"    : "southeast",
+            "aliases" : ["southeast", "se"]
+        },
+        {
+            "name"    : "east",
+            "aliases" : ["east", "e"]
+        },
+        {
+            "name"    : "northeast",
+            "aliases" : ["northeast", "ne"]
+        },
+        {
+            "name"    : "up",
+            "aliases" : ["up", "u"]
+        },
+        {
+            "name"    : "down",
+            "aliases" : ["down", "d"]
+        }
+    ]
+}

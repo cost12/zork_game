@@ -1,0 +1,24 @@
+{
+    "room"       : "Hallway",
+    "exits"      : [
+        {
+            "name"        : "Exit 1",
+            "description" : "A doorway",
+            "direction"   : "N",
+            "end"         : "Bedroom"
+        },
+        {
+            "name"        : "Exit 2",
+            "description" : "A doorway",
+            "direction"   : "S",
+            "end"         : "Den"
+        },
+        {
+            "name"        : "Exit 3",
+            "description" : "A doorway",
+            "direction"   : "E",
+            "end"         : "Kitchen"
+        }
+    ]
+
+}

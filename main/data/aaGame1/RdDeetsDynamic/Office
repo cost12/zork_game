@@ -1,0 +1,12 @@
+{
+    "room"       : "Office",
+    "exits"      : [
+        {
+            "name"        : "Exit 1",
+            "description" : "A door",
+            "direction"   : "south",
+            "end"         : "Dining Room"
+        }
+    ],
+    "items"      : ["Computer", "Emerald Book", "Magnifying Glass"]
+}

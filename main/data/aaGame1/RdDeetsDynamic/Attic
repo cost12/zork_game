@@ -1,0 +1,14 @@
+{
+    "room"       : "Attic",
+    "exits"      : [
+        {
+            "name"        : "Exit 1",
+            "description" : "A trapdoor flush with the floor",
+            "direction"   : "down",
+            "end"         : "Bedroom"
+        }
+       
+    ],
+    "items"      : ["Leaflet", "Hourglass", "Yellow Book"]
+
+}

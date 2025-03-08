@@ -1,0 +1,11 @@
+{
+    "room"       : "Chimney",
+    "exits"      : [
+        {
+            "name"        : "Exit 1",
+            "description" : "A fireplace opening near your feet",
+            "direction"   : ["Down", "Out"],
+            "end"         : "Attic"
+        }
+    ]
+}

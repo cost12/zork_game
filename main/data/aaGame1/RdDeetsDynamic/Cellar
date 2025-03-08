@@ -1,0 +1,12 @@
+{
+    "room"       : "Cellar",
+    "exits"      : [
+        {
+            "name"        : "Exit 1",
+            "description" : "A staircase",
+            "direction"   : "East",
+            "end"         : "Garden"
+        }
+    ],
+    "items"      : ["Jar of Peppers", "Lantern", "Brass Lock", "Trunk", "Basketball", "Skateboard"]
+}

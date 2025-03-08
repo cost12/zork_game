@@ -1,0 +1,29 @@
+{
+    "room"       : "Bedroom",
+    "exits"      : [
+        {
+            "name"        : "Exit 1",
+            "description" : "A passage",
+            "direction"   : "north",
+            "end"         : "Hallway"
+        },
+        {
+            "name"        : "Exit 2",
+            "description" : "A passage",
+            "direction"   : "south",
+            "end"         : "Garden"
+        },{
+            "name"        : "Exit 3",
+            "description" : "A passage",
+            "direction"   : "east",
+            "end"         : "Kitchen"
+        },{
+            "name"        : "Exit 4",
+            "description" : "A passage",
+            "direction"   : "west",
+            "end"         : "Dining Room"
+        }
+    ],
+    "items"      : ["Red Book", "Woolen Hat"]
+
+}

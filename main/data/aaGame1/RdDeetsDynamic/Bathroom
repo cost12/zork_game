@@ -1,0 +1,13 @@
+{
+    "room"       : "Bathroom",
+    "exits"      : [
+        {
+            "name"        : "Exit 1",
+            "description" : "A door",
+            "direction"   : "West",
+            "end"         : "Bedroom"
+        }    
+    ],
+    "items"      : ["Vermilion Book", "Shower", "Tap", "Sink"]
+ 
+}

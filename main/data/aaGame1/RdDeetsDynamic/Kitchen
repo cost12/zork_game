@@ -1,0 +1,18 @@
+{
+    "room"       : "Kitchen",
+    "exits"      : [
+        {
+            "name"        : "Exit 1",
+            "description" : "A doorway",
+            "direction"   : "north",
+            "end"         : "Hallway"
+        },
+        {
+            "name"        : "Exit 2",
+            "description" : "A door",
+            "direction"   : "west",
+            "end"         : "Den"
+        }
+    ],
+    "items"      : ["cabinet", "Mason Jar", "Rusty Fork", "Stove", "KSink"]
+}

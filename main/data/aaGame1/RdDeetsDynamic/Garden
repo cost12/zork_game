@@ -1,0 +1,18 @@
+{
+    "room"       : "Garden",
+    "exits"      : [
+        {
+            "name"        : "Exit 1",
+            "description" : "A stone staircase descends",
+            "direction"   : "West",
+            "end"         : "Cellar"
+        },
+        {
+            "name"        : "Exit 2",
+            "description" : "A thin earthen burrow",
+            "direction"   : "South",
+            "end"         : "Earthen Tunnel"
+        }
+    ],
+    "items"      : ["Thick Gloves", "Trowel", "Worms"]
+}

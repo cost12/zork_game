@@ -1,0 +1,6 @@
+{
+    "comment"    : "This is an example of making a room",
+    
+    "name"       : "Dining Room",
+    "description": "You are standing in a rectangular room with a rough-hewn wooden table in the middle."
+}

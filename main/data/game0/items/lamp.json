@@ -1,6 +1,7 @@
 {
-    "name"        : "lamp",
-    "description" : "A plain lamp",
-    "weight"      : 1,
-    "value"       : 1
+    "name"        : "Leaflet",
+    "description" : "A small leaflet",
+    "weight"      : 0.5,
+    "value"       : 1,
+    "origin"      : " is sitting on the table."
 }
