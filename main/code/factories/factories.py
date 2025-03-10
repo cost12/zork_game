@@ -1,0 +1,502 @@
+from typing import Optional, Any
+
+from code.models.action    import Named, Action
+from code.models.actors    import Location, Direction, Path, Target, Actor
+from code.models.character import Character
+from code.models.item      import Item, Inventory
+from code.models.state     import State, StateGraph, StateDisconnectedGraph, Skill, SkillSet, LocationDetail
+from code.controls.character_control import CharacterController, CommandLineController, NPCController
+
+
+class NamedFactory[T:Named]:
+
+    def __init__(self):
+        self.objects = dict[T,T]()
+        self.aliases = dict[str,T]()
+
+    def many_from_dict(self, named_dict:list[dict[str,Any]]) -> list[T]:
+        objects = list[T]()
+        for object in named_dict:
+            objects.append(self.one_from_dict(object))
+        return objects
+    
+    def one_from_dict(self, named_dict:dict[str,Any]) -> T:
+        name = named_dict['name']
+        aliases = None
+        if 'aliases' in named_dict:
+            aliases = named_dict['aliases']
+        return self.create_named(name, aliases)
+
+    def create_named(self, name:str, aliases:Optional[list[str]]=None) -> T:
+        new_object = Named(name,aliases)
+        if new_object in self.objects:
+            return self.objects[new_object]
+        for alias in new_object.get_aliases():
+            if alias in self.aliases:
+                print(f"Error: two objects {self.aliases[alias]} and {new_object} have the same alias. Only one will be created.")
+                return self.aliases[alias]
+        self.objects[new_object] = new_object
+        for alias in new_object.get_aliases():
+            self.aliases[alias] = new_object
+        return new_object
+    
+    def get_named(self, alias:str) -> Optional[T]:
+        return self.aliases.get(alias.lower(), None)
+    
+class StateFactory:
+
+    def __init__(self):
+        self.states = dict[State,State]()
+        self.names  = dict[str,State]()
+    
+    def create_state(self, name:str, actions_as_target:list[Action], actions_as_actor:list[Action]) -> State:
+        new_state = State.create_state(name,actions_as_target, actions_as_actor)
+        if new_state in self.states:
+            return self.states[new_state]
+        name = new_state.get_name().lower()
+        if name in self.names:
+            print(f"Error: two States {self.names[name]} and {new_state} have the same name. Only one will be created.")
+            return self.names[name]
+        self.states[new_state] = new_state
+        self.names[name] = new_state
+        return new_state
+
+    def get_state(self, name:str) -> Optional[State]:
+        return self.names.get(name.lower(), None)
+    
+    def many_from_dict(self, state_dict:list[dict[str,Any]], action_factory:NamedFactory[Action]) -> list[State]:
+        states = list[State]()
+        for state in state_dict:
+            name = state['name']
+            actions_as_target = []
+            if 'actions_as_target' in state:
+                actions_as_target = [action_factory.get_named(action) for action in state['actions_as_target']]
+            actions_as_actor = []
+            if 'actions_as_actor' in state:
+                actions_as_actor  = [action_factory.get_named(action) for action in state['actions_as_actor']]
+            states.append(self.create_state(name, actions_as_target, actions_as_actor))
+        return states
+    
+class StateGraphFactory:
+
+    def __init__(self):
+        self.graphs  = dict[StateGraph,StateGraph]()
+        self.aliases = dict[str,StateGraph]()
+
+    def create_state_graph(self, name:str, current_state:State, target_graph:dict[State,dict[Action,State]], actor_graph:dict[State,dict[Action,State]]) -> State:
+        new_graph = StateGraph(name, current_state, target_graph, actor_graph)
+        if new_graph in self.graphs:
+            return self.graphs[new_graph]
+        for alias in new_graph.get_aliases():
+            if alias in self.aliases:
+                print(f"Error: two StateGraphs {self.aliases[alias]} and {new_graph} have the same name. Only one will be created.")
+                return self.graphs[alias]
+        self.graphs[new_graph] = new_graph
+        for alias in new_graph.get_aliases():
+            self.aliases[alias] = new_graph
+        return new_graph
+    
+    def get_state_graph(self, alias:str) -> Optional[StateGraph]:
+        return self.aliases.get(alias.lower(), None)
+    
+    def many_from_dict(self, graph_dict:list[dict[str,Any]], state_factory:StateFactory, action_factory:NamedFactory[Action]) -> list[StateGraph]:
+        graphs = list[StateGraph]()
+        for graph in graph_dict:
+            name = graph['name']
+            current_state = state_factory.get_state(graph['current_state'])
+            target_graph = dict[State,dict[Action,State]]()
+            if 'target_graph' in graph:
+                for state1_name in graph['target_graph']:
+                    state1 = state_factory.get_state(state1_name)
+                    target_graph[state1] = dict[Action,State]()
+                    for action_name in graph['target_graph'][state1_name]:
+                        action = action_factory.get_named(action_name)
+                        state2 = state_factory.get_state(graph['target_graph'][state1_name][action_name])
+                        target_graph[state1][action] = state2
+            actor_graph = dict[State,dict[Action,State]]()
+            if 'actor_graph' in graph:
+                for state1_name in graph['actor_graph']:
+                    state1 = state_factory.get_state(state1_name)
+                    actor_graph[state1] = dict[Action,State]()
+                    for action_name in graph['actor_graph'][state1_name]:
+                        action = action_factory.get_named(action_name)
+                        state2 = state_factory.get_state(graph['actor_graph'][state1_name][action_name])
+                        actor_graph[state1][action] = state2
+            graphs.append(self.create_state_graph(name, current_state, target_graph, actor_graph))
+        return graphs
+    
+class StateDisconnectedGraphFactory:
+
+    def __init__(self):
+        self.graphs  = dict[StateDisconnectedGraph,StateDisconnectedGraph]()
+        self.aliases = dict[str,StateDisconnectedGraph]()
+
+    def create_state_disconnected_graph(self, name:str, state_graphs:StateGraph) -> State:
+        new_graph = StateDisconnectedGraph(name, state_graphs)
+        if new_graph in self.graphs:
+            return self.graphs[new_graph]
+        for alias in new_graph.get_aliases():
+            if alias in self.aliases:
+                print(f"Error: two StateDisconnectedGraphs {self.aliases[alias]} and {new_graph} have the same name. Only one will be created.")
+                return self.graphs[alias]
+        self.graphs[new_graph] = new_graph
+        for alias in new_graph.get_aliases():
+            self.aliases[alias] = new_graph
+        return new_graph
+    
+    def get_state_disconnected_graph(self, alias:str) -> Optional[StateGraph]:
+        return self.aliases.get(alias.lower(), None)
+    
+    def many_from_dict(self, graph_dict:list[dict[str,Any]], state_graph_factory:StateGraphFactory) -> list[StateDisconnectedGraph]:
+        graphs = list[StateDisconnectedGraph]()
+        for graph in graph_dict:
+            name = graph['name']
+            state_graphs = [state_graph_factory.get_state_graph(graph) for graph in graph['state_graphs']]
+            graphs.append(self.create_state_disconnected_graph(name, state_graphs))
+        return graphs
+
+class ItemFactory:
+
+    def __init__(self):
+        self.items = dict[Item,Item]()
+        self.aliases = dict[str,Item]()
+
+    def create_item(self, name:str, description:str, states:StateDisconnectedGraph, weight:float, value:float, size:float, target_responses:dict[Action,str], state_responses:dict[State,str]) -> Item:
+        if size is None:
+            new_item = Item(name, description, states, weight, value, target_responses=target_responses, state_responses=state_responses)
+        else:
+            new_item = Item(name, description, states, weight, value, size, target_responses, state_responses)
+        if new_item in self.items:
+            return self.items[new_item]
+        for alias in new_item.get_aliases():
+            if alias in self.aliases:
+                print(f"Error: two Items {self.aliases[alias]} and {new_item} have the same alias. Only one will be created.")
+                return self.aliases[alias]
+        self.items[new_item] = new_item
+        for alias in new_item.get_aliases():
+            self.aliases[alias] = new_item
+        return new_item
+    
+    def get_item(self, alias:str) -> Optional[Item]:
+        return self.aliases.get(alias.lower(), None)
+    
+    def many_from_dict(self, item_dict:list[dict[str,Any]], state_graphs:StateDisconnectedGraphFactory, action_factory:NamedFactory[Action], state_factory:StateFactory) -> list[Item]:
+        items = list[Item]()
+        for item in item_dict:
+            name = item['name']
+            description = item['description']
+            states = state_graphs.get_state_disconnected_graph(item['states'])
+            weight = item['weight']
+            value = item['value']
+            size = None
+            if 'size' in items:
+                size = items['size']
+            target_responses = dict[Action,str]()
+            if 'target_responses' in items:
+                for action_name in items['target_responses']:
+                    action = action_factory.get_named(action_name)
+                    target_responses[action] = items['target_responses'][action_name]
+            state_responses = dict[State,str]()
+            if 'state_responses' in items:
+                for state_name in items['state_responses']:
+                    state = state_factory.get_state(state_name)
+                    state_responses[state] = items['state_responses'][state_name]
+            items.append(self.create_item(name, description, states, weight, value, size, target_responses, state_responses))
+        return items
+    
+class SkillSetFactory:
+
+    def __init__(self):
+        self.skill_sets = dict[SkillSet,SkillSet]()
+        self.aliases = dict[str,SkillSet]()
+
+    def create_skill_set(self, name:str, skills:dict[Skill,int], default_proficiency:int=None) -> SkillSet:
+        if default_proficiency is None:
+            new_skill_set = SkillSet(name, skills)
+        else:
+            new_skill_set = SkillSet(name, skills, default_proficiency)
+        if new_skill_set in self.skill_sets:
+            return self.skill_sets[new_skill_set]
+        for alias in new_skill_set.get_aliases():
+            if alias in self.aliases:
+                print(f"Error: two SkillSets {self.aliases[alias]} and {new_skill_set} have the same alias. Only one will be created.")
+                return self.aliases[alias]
+        self.skill_sets[new_skill_set] = new_skill_set
+        for alias in new_skill_set.get_aliases():
+            self.aliases[alias] = new_skill_set
+        return new_skill_set
+    
+    def get_skill_set(self, alias:str) -> Optional[SkillSet]:
+        return self.aliases.get(alias.lower(), None)
+    
+    def many_from_dict(self, skill_set_dict:list[dict[str,Any]], skill_factory:NamedFactory[Skill]) -> list[SkillSet]:
+        skill_sets = list[SkillSet]()
+        for skill_set in skill_set_dict:
+            name = skill_set['name']
+            skills = dict[Skill,int]()
+            if 'skills' in skill_set:
+                for skill_name in skill_set['skills']:
+                    skill = skill_factory.get_named(skill_name)
+                    skills[skill] = skill_set['skills'][skill_name]
+            proficiency = None
+            if 'default_proficiency' in skill_set:
+                proficiency = skill_set['default_proficiency']
+            skill_sets.append(self.create_skill_set(name, skills, proficiency))
+        return skill_sets
+
+class CharacterFactory:
+
+    def __init__(self):
+        self.characters = dict[Character,Character]()
+        self.aliases = dict[str,Character]()
+
+    def get_characters(self) -> list[Character]:
+        return list(self.characters.values())
+
+    def create_character(self, 
+                         name:str, 
+                         description:str, 
+                         type:str, 
+                         states:StateDisconnectedGraph, 
+                         skills:SkillSet,
+                         inventory:Inventory,
+                         actor_responses:dict[Action,str],
+                         target_responses:dict[Action,str], 
+                         state_responses:dict[State,str],
+                         aliases:list[str]) -> Character:
+        new_character = Character(name, description, type, states, skills, inventory, actor_responses, target_responses, state_responses, aliases)
+        if new_character in self.characters:
+            return self.characters[new_character]
+        for alias in new_character.get_aliases():
+            if alias in self.aliases:
+                print(f"Error: two Characters {self.aliases[alias]} and {new_character} have the same alias. Only one will be created.")
+                return self.aliases[alias]
+        self.characters[new_character] = new_character
+        for alias in new_character.get_aliases():
+            self.aliases[alias] = new_character
+        return new_character
+    
+    def get_character(self, alias:str) -> Optional[Character]:
+        return self.aliases.get(alias.lower(), None)
+    
+    def __inventory_from_dict(self, inventory_dict:dict[str,Any], item_factory:ItemFactory) -> Inventory:
+        size_limit = inventory_dict['size_limit']
+        weight_limit = inventory_dict['weight_limit']
+        items = list[Item]()
+        if 'items' in inventory_dict:
+            for item_name in inventory_dict['items']:
+                item = item_factory.get_item(item_name)
+                items.append(item)
+        return Inventory(size_limit, weight_limit, items)
+    
+    def many_from_dict(self, 
+                       character_dicts:list[dict[str,Any]], 
+                       state_graphs:StateDisconnectedGraphFactory,
+                       skills_factory:SkillSetFactory,
+                       item_factory:ItemFactory,
+                       action_factory:NamedFactory[Action],
+                       state_factory:StateFactory) -> Character:
+        characters = list[Character]()
+        for character_dict in character_dicts:
+            name = character_dict['name']
+            description = character_dict['description']
+            type = character_dict['type']
+            states = state_graphs.get_state_disconnected_graph(character_dict['states'])
+            skills = skills_factory.get_skill_set(character_dict['skills'])
+            inventory = self.__inventory_from_dict(character_dict['inventory'], item_factory)
+            actor_responses = dict[Action,str]()
+            if 'actor_responses' in character_dict:
+                for action_name in character_dict['actor_responses']:
+                    action = action_factory.get_named(action_name)
+                    actor_responses[action] = character_dict['actor_responses'][action_name]
+            target_responses = dict[Action,str]()
+            if 'target_responses' in character_dict:
+                for action_name in character_dict['target_responses']:
+                    action = action_factory.get_named(action_name)
+                    target_responses[action] = character_dict['target_responses'][action_name]
+            state_responses = dict[State,str]()
+            if 'state_responses' in character_dict:
+                for state_name in character_dict['state_responses']:
+                    state = state_factory.get_state(state_name)
+                    state_responses[state] = character_dict['state_responses'][state_name]
+            aliases = None
+            if 'aliases' in character_dict:
+                aliases = character_dict['aliases']
+            characters.append(self.create_character(name, description, type, states, skills, inventory, actor_responses, target_responses, state_responses, aliases))
+        return characters
+
+class LocationDetailFactory:
+
+    def __init__(self):
+        self.details = dict[LocationDetail,LocationDetail]()
+        self.aliases = dict[str,LocationDetail]()
+
+    def get_details(self) -> list[LocationDetail]:
+        return list(self.details.values())
+
+    def create_detail(self, name:str="default", description:str="", note_worthy:bool=False, hidden:bool=False, aliases:list[str]=None) -> SkillSet:
+        new_detail = LocationDetail(name, description, note_worthy, hidden, aliases)
+        if new_detail in self.details:
+            return self.details[new_detail]
+        for alias in new_detail.get_aliases():
+            if alias in self.aliases:
+                print(f"Error: two LocationDetails {self.aliases[alias]} and {new_detail} have the same alias. Only one will be created.")
+                return self.aliases[alias]
+        self.details[new_detail] = new_detail
+        for alias in new_detail.get_aliases():
+            self.aliases[alias] = new_detail
+        return new_detail
+    
+    def get_detail(self, alias:str) -> Optional[LocationDetail]:
+        return self.aliases.get(alias.lower(), None)
+    
+    def one_from_dict(self, detail_dict:dict[str,Any]) -> LocationDetail:
+        name = detail_dict['name']
+        description = detail_dict['description']
+        note_worthy = len(description) > 0
+        hidden = False
+        if 'hidden' in detail_dict:
+            hidden = detail_dict['hidden']
+        aliases = detail_dict['aliases']
+        return self.create_detail(name, description, note_worthy, hidden, aliases=aliases)
+    
+    def many_from_dict(self, detail_dicts:list[dict[str,Any]]) -> list[LocationDetail]:
+        details = list[LocationDetail]()
+        for detail_dict in detail_dicts:
+            details.append(self.one_from_dict(detail_dict))
+        return details
+
+class LocationFactory:
+
+    def __init__(self):
+        self.locations = dict[SkillSet,SkillSet]()
+        self.aliases = dict[str,SkillSet]()
+
+    def get_locations(self) -> list[Location]:
+        return list(self.locations.values())
+
+    def create_location(self,
+                        name:str, 
+                        description:str, 
+                        paths:dict[Direction,Path], 
+                        direction_responses:dict[Direction,str],
+                        details:list[LocationDetail],
+                        contents:dict[Target,Location],
+                        start_location:bool) -> Location:
+        new_location = Location(name, description, paths, direction_responses, details, contents, start_location)
+        if new_location in self.locations:
+            return self.locations[new_location]
+        for alias in new_location.get_aliases():
+            if alias in self.aliases:
+                print(f"Error: two Locations {self.aliases[alias]} and {new_location} have the same alias. Only one will be created.")
+                return self.aliases[alias]
+        self.locations[new_location] = new_location
+        for alias in new_location.get_aliases():
+            self.aliases[alias] = new_location
+        return new_location
+    
+    def get_location(self, alias:str) -> Optional[Location]:
+        return self.aliases.get(alias.lower(), None)
+    
+    def __path_from_dict(self, path_dict:dict[str,Any], item_factory:ItemFactory, character_factory:CharacterFactory, state_factory:StateFactory) -> Path:
+        name = path_dict['name']
+        description = path_dict['description']
+        end = None
+        hidden = False
+        if 'hidden' in path_dict:
+            hidden = bool(path_dict['hidden'])
+        exit_response = None
+        if 'exit_response' in path_dict:
+            exit_response = path_dict['exit_response']
+        linked_targets = dict[Target,State]()
+        if 'linked_targets' in path_dict:
+            for target_name,state_name in path_dict['linked_targets'].items():
+                target = item_factory.get_item(target_name)
+                if target is None:
+                    target = character_factory.get_character(target_name)
+                state = state_factory.get_state(state_name)
+                linked_targets[target] = state
+        passing_requirements = dict[Actor,State]()
+        if 'passing_requirements' in path_dict:
+            for actor_name, state_name in path_dict['passing_requirements'].items():
+                actor = character_factory.get_character(actor_name)
+                state = state_factory.get_state(state_name)
+                passing_requirements[actor] = state
+        aliases = None
+        if 'aliases' in path_dict:
+            aliases = path_dict['aliases']
+        return Path(name, description, end, hidden, exit_response, linked_targets, passing_requirements, aliases)
+
+    def many_from_dict(self, location_dicts:list[dict[str,Any]], character_factory:CharacterFactory, item_factory:ItemFactory, direction_factory:NamedFactory[Direction], state_factory:StateFactory) -> list[Location]:
+        locations = list[Location]()
+        for location_dict in location_dicts:
+            name = location_dict['name']
+            description = location_dict['description']
+            paths = dict[Direction,Path]()
+            if 'paths' in location_dict:
+                for direction_name,path_dict in location_dict['paths'].items():
+                    direction = direction_factory.get_named(direction_name)
+                    path = self.__path_from_dict(path_dict, item_factory, character_factory, state_factory)
+                    paths[direction] = path
+            direction_responses = dict[Direction,str]()
+            if 'direction_responses' in location_dict:
+                for direction_name,response in location_dict['direction_responses'].items():
+                    direction = direction_factory.get_named(direction)
+                    direction_responses[direction] = response
+            detail_factory = LocationDetailFactory()
+            if 'details' in location_dict:
+                detail_factory.many_from_dict(location_dict['details'])
+            contents = dict[Target,LocationDetail]()
+            if 'contents' in location_dict:
+                for target_name,detail_name in location_dict['contents'].items():
+                    target = character_factory.get_character(target_name)
+                    if target is None:
+                        target = item_factory.get_item(target_name)
+                    if detail_name == "default":
+                        detail = detail_factory.create_detail()
+                    else:
+                        detail = detail_factory.get_detail(detail_name)
+                    contents[target] = detail
+            start_location = False
+            if 'start' in location_dict:
+                start_location = bool(location_dict['start'])
+            locations.append(self.create_location(name, description, paths, direction_responses, detail_factory.get_details(), contents, start_location))
+        
+        # for each path set the end to the correct location
+        # (this can't be done earlier because the end location might not exist yet)
+        for location_dict in location_dicts:
+            location = self.get_location(location_dict['name'])
+            if 'paths' in location_dict:
+                for direction_name,path_dict in location_dict['paths'].items():
+                    direction = direction_factory.get_named(direction_name)
+                    if 'end' in path_dict:
+                        end_name = path_dict['end']
+                        end = self.get_location(end_name)
+                        location.get_path(direction)[0].set_end(end)
+        return locations
+
+class CharacterControlFactory:
+
+    def __init__(self):
+        self.characters = dict[Character,CharacterController]()
+
+    def create_character(self, character:Character, controller:CharacterController) -> None:
+        self.characters[character] = controller
+    
+    def get_controller(self, character:Character) -> Optional[CharacterController]:
+        return self.characters.get(character, None)
+    
+    def many_from_dict(self, controller_dicts:list[dict[str,Any]], character_factory:CharacterFactory) -> None:
+        for controller_dict in controller_dicts:
+            character = character_factory.get_character(controller_dict['character'])
+            controller = NPCController()
+            if 'controller' in controller_dict:
+                controller_type = controller_dict['controller']
+                if controller_type.lower() == 'user':
+                    controller = CommandLineController()
+                else:
+                    controller = NPCController()
+            self.create_character(character, controller)
+    
+    def playable_characters(self) -> int:
+        return len([1 for _,control in self.characters.items() if isinstance(control, CommandLineController)])

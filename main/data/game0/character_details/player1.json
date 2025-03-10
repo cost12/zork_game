@@ -1,9 +1,0 @@
-{
-    "character"    : "Player 1",
-    "control_type" : "user",
-    "spawn_room"   : "Boring Room",
-    "inventory"    : {
-        "item_limit"   : 10,
-        "weight_limit" : 10
-    }
-}

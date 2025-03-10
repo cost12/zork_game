@@ -1,9 +1,0 @@
-{
-    "character"    : "dragon",
-    "control_type" : "cpu",
-    "spawn_room"   : "Third Room",
-    "inventory"    : {
-        "item_limit"   : 10,
-        "weight_limit" : 10
-    }
-}

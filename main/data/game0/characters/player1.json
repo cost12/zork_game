@@ -1,5 +1,11 @@
 {
     "name"         : "Player 1",
     "type"         : "human",
-    "description"  : "A plain looking human"
+    "description"  : "plain looking human",
+    "states"       : "standard_character",
+    "skills"       : "standard",
+    "inventory"    : {
+        "size_limit": 10,
+        "weight_limit": 20
+    }
 }

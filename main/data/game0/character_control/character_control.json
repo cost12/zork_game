@@ -1,0 +1,10 @@
+[
+    {
+        "character"  : "Player 1",
+        "controller" : "user"
+    },
+    {
+        "character"  : "dragon",
+        "controller" : "npc"
+    }
+]
