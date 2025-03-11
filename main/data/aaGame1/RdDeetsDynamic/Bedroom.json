@@ -1,0 +1,26 @@
+{
+    "room"       : "Bedroom",
+    "exits"      : [
+        {
+            "name"        : "Exit 1",
+            "description" : "A doorway",
+            "direction"   : "East",
+            "end"         : "Bathroom"
+        },
+        {
+            "name"        : "Exit 2",
+            "description" : "A doorway",
+            "direction"   : "south",
+            "end"         : "Hallway"
+        },
+
+        {
+            "name"        : "Exit 3",
+            "description" : "A trap door on the ceiling",
+            "direction"   : "Up",
+            "end"         : "Attic"
+        }
+    ],
+    "items"      : ["Mug of Water", "Brown Book"],
+    "start"      : "True"
+}

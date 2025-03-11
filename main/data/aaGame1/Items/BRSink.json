@@ -1,0 +1,9 @@
+{
+    "name"        : "Bathroom sink",
+    "description" : "A dirty ceramic sink",
+    "weight"      : 0.5,
+    "value"       : 1,
+    "origin_text" : " stands against one wall.",
+    "comments"    : "can't be taken, only turned off/on"
+    
+}

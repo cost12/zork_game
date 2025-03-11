@@ -1,0 +1,9 @@
+{
+    "name"        : "Jar of Peppers",
+    "description" : "A jar of pickled hot peppers",
+    "weight"      : 5,
+    "value"       : 2,
+    "origin_text" : " is sitting on the trunk.",
+    "comments"    : "State: eaten/empty, loses 3 weight. If given to Orge, allowed to pass. If given to child, child cries. If given to bear, bear attacks."
+    
+}

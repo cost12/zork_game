@@ -1,0 +1,17 @@
+{
+    "room"       : "Small Cavern",
+    "exits"      : [
+        {
+            "name"        : "Exit 1",
+            "description" : "A narrow tunnel",
+            "direction"   : "North",
+            "end"         : "Earthen Tunnel"
+        },
+        {
+            "name"        : "Exit 2",
+            "description" : "Amidst stalagmites, a sturdy wooden door is installed",
+            "direction"   : "South",
+            "end"         : "Beehive Room"
+        }
+    ]
+}

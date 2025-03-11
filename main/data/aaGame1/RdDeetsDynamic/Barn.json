@@ -1,0 +1,13 @@
+{
+    "room"       : "Barn",
+    "exits"      : [
+      
+        {
+            "name"        : "Exit 1",
+            "description" : "A large barn door",
+            "direction"   : "east",
+            "end"         : "Beehive Room"
+        }
+    ],
+    "items"      : ["Rubber Ducky", "Warm Boots"]
+}

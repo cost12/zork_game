@@ -1,0 +1,18 @@
+{
+    "room"       : "Skate Park",
+    "exits"      : [
+        {
+            "name"        : "Exit 1",
+            "description" : "An exit",
+            "direction"   : "northwest",
+            "end"         : "Beehive Room"
+        },
+        {
+            "name"        : "Exit 2",
+            "description" : "A newly revealed door",
+            "direction"   : "South",
+            "end"         : "Greenhouse" ,
+            "comment" : "only possible if child has been given skateboard!"
+        }
+    ]
+}

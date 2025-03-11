@@ -1,0 +1,9 @@
+{
+    "name"        : "Lantern",
+    "description" : "A sturdy, battery-powered survival lantern",
+    "weight"      : 3,
+    "value"       : 3,
+    "origin_text" : " is on top of the trunk.",
+    "comments"    : "on/off states. Must be on in order to see exits/descriptions of rooms, on list in RmDeets."
+    
+}

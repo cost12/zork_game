@@ -1,0 +1,9 @@
+{
+    "name"        : "Emerald Book",
+    "description" : "An emerald book",
+    "weight"      : 1,
+    "value"       : 2,
+    "origin_text" : " is sitting on the table.",
+    "comments"    : ""
+    
+}

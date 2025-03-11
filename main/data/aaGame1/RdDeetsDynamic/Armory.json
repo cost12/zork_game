@@ -1,0 +1,12 @@
+{
+    "room"       : "Armory",
+    "exits"      : [
+        {
+            "name"        : "Exit 1",
+            "description" : "A passage",
+            "direction"   : "west",
+            "end"         : "Beehive Room"
+        }
+    ],
+    "items"      : ["Spear", "Sword", "Pitchfork"]
+}

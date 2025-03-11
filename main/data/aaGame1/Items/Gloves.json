@@ -1,0 +1,9 @@
+{
+    "name"        : "Thick Gloves",
+    "description" : "A pair of thick hide gloves",
+    "weight"      : 3,
+    "value"       : 4,
+    "origin_text" : " is on the ground near a planter bed.",
+    "comments"    : ""
+    
+}

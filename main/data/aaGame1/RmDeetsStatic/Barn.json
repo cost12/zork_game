@@ -1,0 +1,6 @@
+{
+    "comment"    : "This is an example of making a room",
+    
+    "name"       : "Barn",
+    "description": "You enter a large empty barn dominated by what seem to be abandoned stables. Cobwebs cover most surfaces. On the west wall, opposite the door, ancient tools are rusted to their racks, with a single holder missing something like a rake or staff. [(If day): Sunlight drips through thin cracks in the lofty slatted roof. (If night): Stars twinkle through gaps in the wooden roof. ]"
+}

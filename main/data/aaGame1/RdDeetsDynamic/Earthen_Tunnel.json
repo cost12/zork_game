@@ -1,0 +1,17 @@
+{
+    "room"       : "Earthen Tunnel",
+    "exits"      : [
+        {
+            "name"        : "Exit 1",
+            "description" : "The passage",
+            "direction"   : "north",
+            "end"         : "Garden"
+        },
+        {
+            "name"        : "Exit 2",
+            "description" : "The passage",
+            "direction"   : "South",
+            "end"         : "Small Cavern"
+        }
+    ]
+}

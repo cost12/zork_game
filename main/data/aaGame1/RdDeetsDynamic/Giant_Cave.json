@@ -1,0 +1,17 @@
+{
+    "room"       : "Giant Cave",
+    "exits"      : [
+        {
+            "name"        : "Exit 1",
+            "description" : "A distant hole in the stone",
+            "direction"   : "South",
+            "end"         : "Candlelit Room"
+        },
+        {
+            "name"        : "Exit 2",
+            "description" : "A passage",
+            "direction"   : "Northeast",
+            "end"         : "Beehive Room"
+        }
+    ]
+}

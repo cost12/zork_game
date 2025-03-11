@@ -1,0 +1,9 @@
+{
+    "name"        : "Computer",
+    "description" : "An old-school desktop computer open to a console",
+    "weight"      : 80,
+    "value"       : 10,
+    "origin_text" : " hums softly. Its light eerily illuminates the room with a blue glow.",
+    "comments"    : ""
+    
+}

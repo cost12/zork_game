@@ -1,0 +1,17 @@
+{
+    "room"       : "Orge Lair",
+    "exits"      : [
+        {
+            "name"        : "Exit 1",
+            "description" : "A door",
+            "direction"   : "north",
+            "end"         : "Beehive Room"
+        },
+        {
+            "name"        : "Exit 2",
+            "description" : "A passage",
+            "direction"   : "South",
+            "end"         : "Bright Room"
+        }
+    ]
+}

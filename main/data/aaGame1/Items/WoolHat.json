@@ -1,0 +1,9 @@
+{
+    "name"        : "Mug of Water",
+    "description" : "A rustic mug full of water",
+    "weight"      : 0.5,
+    "value"       : 1,
+    "origin_text" : " is sitting on the bedside table.",
+    "comments"    : ""
+    
+}

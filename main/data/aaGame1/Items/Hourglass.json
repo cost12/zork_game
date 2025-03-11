@@ -1,0 +1,9 @@
+{
+    "name"        : "Hourglass",
+    "description" : "An ancient, fragile hourglass",
+    "weight"      : 0.5,
+    "value"       : 5,
+    "origin_text" : " is sitting on the table.",
+    "comments"    : "When broken, Armory can be used/taken from"
+    
+}

@@ -1,0 +1,9 @@
+{
+    "name"        : "Bathroom Shower",
+    "description" : "A stained shower",
+    "weight"      : 0.5,
+    "value"       : 1,
+    "origin_text" : " occupies one corner.",
+    "comments"    : "Can't be taken, only interacted with, states: on/off"
+    
+}

@@ -1,0 +1,9 @@
+{
+    "name"        : "Meal",
+    "description" : "A decadent, steaming meal",
+    "weight"      : 3,
+    "value"       : 3,
+    "origin_text" : " sits on the plate",
+    "comments"    : "can be eaten, when eaten, allows plate to be taken."
+    
+}

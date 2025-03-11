@@ -1,0 +1,44 @@
+{
+    "room"       : "Bedroom",
+    "exits"      : [
+        {
+            "name"        : "Exit 1",
+            "description" : "A door",
+            "direction"   : "north",
+            "end"         : "Small Cavern"
+        },
+        {
+            "name"        : "Exit 2",
+            "description" : "A door",
+            "direction"   : "Northwest",
+            "end"         : "Barn"
+        },
+        {
+            "name"        : "Exit 3",
+            "description" : "A door",
+            "direction"   : "Northeast",
+            "end"         : "Armory"
+        },
+        {
+            "name"        : "Exit 4",
+            "description" : "A door",
+            "direction"   : "Southeast",
+            "end"         : "Skate Park"
+        },
+        {
+            "name"        : "Exit 5",
+            "description" : "A door",
+            "direction"   : "south",
+            "end"         : "Orge Lair"
+        },
+        {
+            "name"        : "Exit 6",
+            "description" : "A door",
+            "direction"   : "Wouthwest",
+            "end"         : "Giant Cave"
+        }
+    ],
+    "items"      : ["Honey"],
+    "characters" : ["Bees"]
+
+}

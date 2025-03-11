@@ -1,0 +1,9 @@
+{
+    "name"        : "Kitchen Sink",
+    "description" : "A rusty aluminium sink basin",
+    "weight"      : 0.5,
+    "value"       : 1,
+    "origin_text" : " is embedded in the counter.",
+    "comments"    : ""
+    
+}

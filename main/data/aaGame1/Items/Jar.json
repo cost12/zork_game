@@ -1,0 +1,9 @@
+{
+    "name"        : "Mason Jar",
+    "description" : "A smudged and empty mason jar",
+    "weight"      : 1,
+    "value"       : 1,
+    "origin_text" : " is inside the cabinet.",
+    "comments"    : "Seen when kitchen cabinet is opened. States: full of dirt, water, honey (add 2lbs in these states)"
+    
+}
