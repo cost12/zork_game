@@ -1,0 +1,10 @@
+[
+    {
+        "name"             : "normal_character",
+        "actions_as_actor" : ["walk", "wait", "look"]
+    },
+    {
+        "name"              : "normal_item",
+        "actions_as_target" : ["look"]
+    }
+]

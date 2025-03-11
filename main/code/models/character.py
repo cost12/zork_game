@@ -1,38 +1,28 @@
 from typing import Optional
 
+from code.models.actors import Actor
+from code.models.item   import Inventory, Item
+from code.models.state  import StateDisconnectedGraph, SkillSet, State, LocationDetail
 from code.models.action import Action
-from code.utils.alias import Alias
 
-class Character(Alias):
+class Character(Actor):
     """Base class for all Characters, user controlled or NPCs
     """
-    def __init__(self, name:str, type:str, description:str, actions:Optional[list[Action]]=None):
-        """Creates a Character
-
-        :param name: The Character's name
-        :type name: str
-        :param type: What type of being the character is ex: human, dragon, ...
-        :type type: str
-        :param description: A description of the Character
-        :type description: str
-        :param actions: A list of Actions that the Character has access to, defaults to None
-        :type actions: list[Action], optional
-        """
-        self.name = name
+    def __init__(self, 
+                 name:str, 
+                 description:str,
+                 type:str,
+                 states:StateDisconnectedGraph, 
+                 skills:SkillSet, 
+                 inventory:Inventory,
+                 actor_responses:Optional[dict[Action,str]]=None, 
+                 target_responses:Optional[dict[Action,str]]=None, 
+                 state_responses:Optional[dict[State,str]]=None,
+                 aliases:Optional[list[str]]=None):
+        super().__init__(name, description, states, skills, actor_responses, target_responses, state_responses, aliases)
         self.type = type
-        self.description = description
-        self.actions = list[Action]() if actions is None else actions
-
-    def get_aliases(self) -> list[str]:
-        return [self.name]
-
-    def get_name(self) -> str:
-        """Gets the Character's name
-
-        :return: The Character's name
-        :rtype: str
-        """
-        return self.name
+        self.inventory = inventory
+        self.inventory_location = LocationDetail(f"{self.name}'s inventory", True, hidden=True)
 
     def get_type(self) -> str:
         """Gets the Character's type
@@ -42,18 +32,34 @@ class Character(Alias):
         """
         return self.type
 
-    def get_description(self) -> str:
-        """Gets the Character's description
+    def _set_location(self, location, detail, *, origin=False):
+        super()._set_location(location, detail, origin=origin)
+        for item in self.inventory.get_items():
+            item.change_location(location, self.inventory_location)
 
-        :return: A description of the Character
-        :rtype: str
-        """
-        return self.description
-
-    def get_actions(self) -> str:
-        """Gets the Actions available to the Character
-
-        :return: The Actions availabe to the Character
-        :rtype: str
-        """
-        return self.actions
+    def get_inventory_weight(self) -> float:
+        return self.inventory.get_total_weight()
+    
+    def get_inventory_value(self) -> float:
+        return self.inventory.get_total_value()
+    
+    def get_inventory_size(self) -> float:
+        return self.inventory.get_total_size()
+    
+    def add_item_to_inventory(self, item:Item) -> bool:
+        if self.inventory.add_item(item):
+            item.change_location(self.location, self.inventory_location)
+            return True
+        return False
+    
+    def remove_item_from_inventory(self, item:Item) -> bool:
+        if self.inventory.drop_item(item):
+            item.change_location(self.location)
+            return True
+        return False
+    
+    def get_inventory_items(self) -> list[Item]:
+        return self.inventory.get_items()
+    
+    def is_holding(self, item:Item) -> bool:
+        return self.inventory.contains(item)

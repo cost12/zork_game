@@ -1,6 +1,14 @@
 {
-    "comment"    : "This is an example of making a room",
-    
     "name"       : "Third Room",
-    "description": "A very normal room."
+    "description": "You see a very normal room.",
+    "paths"      : {
+        "north"  : {
+            "name"        : "Exit 2",
+            "description" : "you see a path",
+            "end"         : "Boring Room"
+        }
+    },
+    "contents"  : {
+        "dragon" : "default"
+    }
 }

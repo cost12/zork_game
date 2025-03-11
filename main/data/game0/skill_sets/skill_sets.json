@@ -1,0 +1,9 @@
+[
+    {
+        "name" : "standard",
+        "skills" : {
+            "strength": 0
+        },
+        "default_proficiencies": 0
+    }
+]

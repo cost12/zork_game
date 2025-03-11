@@ -1,23 +1,38 @@
-from typing import Any
+from typing import Any, Optional
 
-from code.models.action import Action
+from code.models.action import Action, Named
 from code.models.item import Item
-from code.models.room import Direction, Room, Exit
 from code.models.character import Character
-from code.utils.alias import Alias
+from code.models.actors import Direction, Location, Path
+from code.factories.factories import ItemFactory, NamedFactory, StateFactory, LocationFactory, SkillSetFactory, CharacterFactory, StateGraphFactory, LocationDetailFactory, CharacterControlFactory, StateDisconnectedGraphFactory
+
+class Word:
+    def __init__(self):
+        pass
+
+class InputDictionary:
+
+    def __init__(self, dictionary:dict[str,dict[str,Any]]):
+        self.dictionary = dictionary
+
+    def translate(self, token:str) -> Word:
+        pass
+
+    def translate_str(self, input_str:str) -> list[Word]:
+        pass
 
 class Node:
     def add_edge(self, edge:str, end:'TranslateNode') -> None:
         pass
 
-    def interpret(self, tokens:list[str], context:dict[str,list[Alias]]) -> tuple:
+    def interpret(self, tokens:list[str], context:dict[str,list[Named]]) -> tuple:
         pass
 
 class TranslateError(Node):
     def __init__(self, message:str):
         self.message = message
 
-    def interpret(self, tokens:list[str], context:dict[str,list[Alias]]) -> tuple:
+    def interpret(self, tokens:list[str], context:dict[str,list[Named]]) -> tuple:
         return (self,)
 
 class TranslateNode(Node):
@@ -56,7 +71,7 @@ class Translator:
     def __init__(self, head:Node):
         self.head = head
 
-    def interpret(self, input:str, actions:dict[str,Action], characters:dict[str,Character], rooms:dict[str,Room], items:dict[str,Item], directions:dict[str,Direction]) -> tuple[Action,tuple]:
+    def interpret(self, input:str, actions:dict[str,Action], characters:dict[str,Character], rooms:dict[str,Location], items:dict[str,Item], directions:dict[str,Direction]) -> tuple[Action,tuple]:
         context = {
             'action'    : actions,
             'character' : characters,
@@ -64,7 +79,7 @@ class Translator:
             'item'      : items,
             'direction' : directions
         }
-        tokens = input.split()
+        tokens = input.lower().split()
         tokens.append('\n')
         result = self.head.interpret(tokens, context)
         for token in result:

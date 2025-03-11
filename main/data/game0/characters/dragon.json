@@ -1,5 +1,15 @@
 {
     "name"         : "dragon",
     "type"         : "dragon",
-    "description"  : "A very normal dragon"
+    "description"  : "very normal dragon",
+    "states"       : "standard_character",
+    "skills"       : "standard",
+    "inventory"    : {
+        "size_limit" : 20,
+        "weight_limit" : 100
+    },
+    "target_responses" : {
+        "look" : "the dragon does not like to be looked at",
+        "take" : "a noble effort"
+    }
 }

@@ -1,0 +1,10 @@
+[
+    {
+        "name"          : "standard_character",
+        "current_state" : "normal_character"
+    },
+    {
+        "name"          : "standard_item",
+        "current_state" : "normal_item"
+    }
+]

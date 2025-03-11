@@ -1,6 +1,21 @@
 {
-    "comment"    : "This is an example of making a room",
-    
     "name"       : "Boring Room",
-    "description": "A very boring room."
+    "description": "You see a very boring room.",
+    "paths"      : {
+        "north"  : {
+            "name"        : "Exit 1",
+            "description" : "you see a door",
+            "end"         : "Other Room"
+        },
+        "south" : {
+            "name"        : "Exit 2",
+            "description" : "you see a path",
+            "end"         : "Third Room"
+        }
+    },
+    "contents"   : {
+        "lamp"     : "default",
+        "Player 1" : "default"
+    },
+    "start" : "True"
 }

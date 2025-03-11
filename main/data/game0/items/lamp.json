@@ -1,7 +1,15 @@
 {
-    "name"        : "lamp",
-    "description" : "A small leaflet",
-    "weight"      : 0.5,
-    "value"       : 1,
-    "origin"      : " is sitting on the table."
+    "name"             : "lamp",
+    "description"      : "small lamp",
+    "states"           : "standard_item",
+    "weight"           : 1,
+    "value"            : 1,
+    "size"             : 1,
+    "target_responses" : {
+        "take": "it is surprisingly light!"
+    },
+    "state_responses"  : {
+        "on"  : "the lamp is on",
+        "off" : "the lamp is off"
+    }
 }

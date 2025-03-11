@@ -1,6 +1,11 @@
 {
-    "comment"    : "This is an example of making a room",
-    
     "name"       : "Other Room",
-    "description": "A very normal room."
+    "description": "You see a very normal room.",
+    "paths"      : {
+        "south"  : {
+            "name"        : "Exit 1",
+            "description" : "you see a door",
+            "end"         : "Boring Room"
+        }
+    }
 }
