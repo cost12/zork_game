@@ -29,6 +29,7 @@ def read_in_actions(game:str) -> NamedFactory[Action]:
     factory = NamedFactory[Action]()
     folder = f"data/{game}/actions"
     data = __read_in_folder(folder)
+    data = [data_dict for data_list in data for data_dict in data_list]
     factory.many_from_dict(data)
     return factory
 
@@ -36,14 +37,16 @@ def read_in_states(game:str, actions:NamedFactory[Action]) -> StateFactory:
     factory = StateFactory()
     folder = f"data/{game}/states"
     data = __read_in_folder(folder)
-    factory.many_from_dict(data[0], actions)
+    data = [data_dict for data_list in data for data_dict in data_list]
+    factory.many_from_dict(data, actions)
     return factory
 
 def read_in_state_graphs(game:str, states:StateFactory, actions:NamedFactory[Action]) -> StateGraphFactory:
     factory = StateGraphFactory()
     folder = f"data/{game}/state_graphs"
     data = __read_in_folder(folder)
-    factory.many_from_dict(data[0], states, actions)
+    data = [data_dict for data_list in data for data_dict in data_list]
+    factory.many_from_dict(data, states, actions)
     return factory
 
 def read_in_state_disconnected_graphs(game:str, state_graphs:StateGraphFactory) -> StateDisconnectedGraphFactory:

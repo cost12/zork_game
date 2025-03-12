@@ -1,0 +1,14 @@
+[
+    {
+        "state_groups" : [
+            {
+                "name"   : "normal",
+                "states" : ["normal_character"]
+            }
+        ]
+    },
+    {
+        "name"          : "standard_character",
+        "current_state" : "normal"
+    }
+]

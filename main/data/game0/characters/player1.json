@@ -1,5 +1,5 @@
 {
-    "name"         : "Player 1",
+    "name"         : "Player1",
     "type"         : "human",
     "description"  : "plain looking human",
     "states"       : "standard_character",

@@ -15,7 +15,7 @@
     },
     "contents"   : {
         "lamp"     : "default",
-        "Player 1" : "default"
+        "Player1"  : "default"
     },
     "start" : "True"
 }

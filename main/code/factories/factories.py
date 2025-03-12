@@ -4,7 +4,7 @@ from code.models.action    import Named, Action
 from code.models.actors    import Location, Direction, Path, Target, Actor
 from code.models.character import Character
 from code.models.item      import Item, Inventory
-from code.models.state     import State, StateGraph, StateDisconnectedGraph, Skill, SkillSet, LocationDetail
+from code.models.state     import State, StateGroup, StateGraph, StateDisconnectedGraph, Skill, SkillSet, LocationDetail
 from code.controls.character_control import CharacterController, CommandLineController, NPCController
 
 
@@ -49,8 +49,8 @@ class StateFactory:
         self.states = dict[State,State]()
         self.names  = dict[str,State]()
     
-    def create_state(self, name:str, actions_as_target:list[Action], actions_as_actor:list[Action]) -> State:
-        new_state = State.create_state(name,actions_as_target, actions_as_actor)
+    def create_state(self, name:str, actions_as_target:list[Action], actions_as_actor:list[Action], actions_as_tool:list[Action]) -> State:
+        new_state = State.create_state(name,actions_as_target, actions_as_actor, actions_as_tool)
         if new_state in self.states:
             return self.states[new_state]
         name = new_state.get_name().lower()
@@ -71,20 +71,53 @@ class StateFactory:
             actions_as_target = []
             if 'actions_as_target' in state:
                 actions_as_target = [action_factory.get_named(action) for action in state['actions_as_target']]
+            actions_as_tool = []
+            if 'actions_as_tool' in state:
+                actions_as_tool = [action_factory.get_named(action) for action in state['actions_as_tool']]
             actions_as_actor = []
             if 'actions_as_actor' in state:
                 actions_as_actor  = [action_factory.get_named(action) for action in state['actions_as_actor']]
-            states.append(self.create_state(name, actions_as_target, actions_as_actor))
+            states.append(self.create_state(name, actions_as_target, actions_as_actor, actions_as_tool))
         return states
     
+class StateGroupFactory:
+
+    def __init__(self):
+        self.groups  = dict[StateGroup,StateGroup]()
+        self.aliases = dict[str,StateGroup]()
+
+    def create_state_group(self, name:str, states:list[State]) -> StateGroup:
+        new_group = StateGroup(name, states)
+        if new_group in self.groups:
+            return self.groups[new_group]
+        for alias in new_group.get_aliases():
+            if alias in self.aliases:
+                print(f"Error: two StateGroups {self.aliases[alias]} and {new_group} have the same name. Only one will be created.")
+                return self.groups[alias]
+        self.groups[new_group] = new_group
+        for alias in new_group.get_aliases():
+            self.aliases[alias] = new_group
+        return new_group
+    
+    def get_state_group(self, alias:str) -> Optional[StateGroup]:
+        return self.aliases.get(alias.lower(), None)
+    
+    def many_from_dict(self, group_dicts:list[dict[str,Any]], state_factory:StateFactory) -> list[StateGroup]:
+        groups = []
+        for group_dict in group_dicts:
+            name = group_dict['name']
+            states = [state_factory.get_state(state) for state in group_dict['states']]
+            groups.append(self.create_state_group(name, states))
+        return groups
+
 class StateGraphFactory:
 
     def __init__(self):
         self.graphs  = dict[StateGraph,StateGraph]()
         self.aliases = dict[str,StateGraph]()
 
-    def create_state_graph(self, name:str, current_state:State, target_graph:dict[State,dict[Action,State]], actor_graph:dict[State,dict[Action,State]]) -> State:
-        new_graph = StateGraph(name, current_state, target_graph, actor_graph)
+    def create_state_graph(self, name:str, current_state:StateGroup, target_graph:dict[StateGroup,dict[Action,StateGroup]], tool_graph:dict[StateGroup,dict[Action,StateGroup]], actor_graph:dict[StateGroup,dict[Action,StateGroup]], time_graph:dict[StateGroup,tuple[int,StateGroup]]) -> StateGraph:
+        new_graph = StateGraph(name, current_state, target_graph, tool_graph, actor_graph, time_graph)
         if new_graph in self.graphs:
             return self.graphs[new_graph]
         for alias in new_graph.get_aliases():
@@ -99,30 +132,51 @@ class StateGraphFactory:
     def get_state_graph(self, alias:str) -> Optional[StateGraph]:
         return self.aliases.get(alias.lower(), None)
     
-    def many_from_dict(self, graph_dict:list[dict[str,Any]], state_factory:StateFactory, action_factory:NamedFactory[Action]) -> list[StateGraph]:
+    def many_from_dict(self, graph_dicts:list[dict[str,Any]], state_factory:StateFactory, action_factory:NamedFactory[Action]) -> list[StateGraph]:
         graphs = list[StateGraph]()
-        for graph in graph_dict:
-            name = graph['name']
-            current_state = state_factory.get_state(graph['current_state'])
-            target_graph = dict[State,dict[Action,State]]()
-            if 'target_graph' in graph:
-                for state1_name in graph['target_graph']:
-                    state1 = state_factory.get_state(state1_name)
-                    target_graph[state1] = dict[Action,State]()
-                    for action_name in graph['target_graph'][state1_name]:
+        state_group_factory = StateGroupFactory()
+        for graph_dict in graph_dicts:
+            if 'state_groups' in graph_dict:
+                state_group_factory = StateGroupFactory()
+                state_group_factory.many_from_dict(graph_dict['state_groups'], state_factory)
+                continue
+            name = graph_dict['name']
+            current_state = state_group_factory.get_state_group(graph_dict['current_state'])
+            target_graph = dict[StateGroup,dict[Action,StateGroup]]()
+            if 'target_graph' in graph_dict:
+                for state_group1_name in graph_dict['target_graph']:
+                    state_group1 = state_group_factory.get_state_group(state_group1_name)
+                    target_graph[state_group1] = dict[Action,StateGroup]()
+                    for action_name in graph_dict['target_graph'][state_group1_name]:
                         action = action_factory.get_named(action_name)
-                        state2 = state_factory.get_state(graph['target_graph'][state1_name][action_name])
-                        target_graph[state1][action] = state2
-            actor_graph = dict[State,dict[Action,State]]()
-            if 'actor_graph' in graph:
-                for state1_name in graph['actor_graph']:
-                    state1 = state_factory.get_state(state1_name)
-                    actor_graph[state1] = dict[Action,State]()
-                    for action_name in graph['actor_graph'][state1_name]:
+                        state_group2 = state_group_factory.get_state_group(graph_dict['target_graph'][state_group1_name][action_name])
+                        target_graph[state_group1][action] = state_group2
+            tool_graph = dict[StateGroup,dict[Action,StateGroup]]()
+            if 'tool_graph' in graph_dict:
+                for state_group1_name in graph_dict['tool_graph']:
+                    state_group1 = state_group_factory.get_state_group(state_group1_name)
+                    tool_graph[state_group1] = dict[Action,StateGroup]()
+                    for action_name in graph_dict['tool_graph'][state_group1_name]:
                         action = action_factory.get_named(action_name)
-                        state2 = state_factory.get_state(graph['actor_graph'][state1_name][action_name])
-                        actor_graph[state1][action] = state2
-            graphs.append(self.create_state_graph(name, current_state, target_graph, actor_graph))
+                        state_group2 = state_group_factory.get_state_group(graph_dict['tool_graph'][state_group1_name][action_name])
+                        tool_graph[state_group1][action] = state_group2
+            actor_graph = dict[StateGroup,dict[Action,StateGroup]]()
+            if 'actor_graph' in graph_dict:
+                for state_group1_name in graph_dict['actor_graph']:
+                    state_group1 = state_group_factory.get_state_group(state_group1_name)
+                    actor_graph[state_group1] = dict[Action,StateGroup]()
+                    for action_name in graph_dict['actor_graph'][state_group1_name]:
+                        action = action_factory.get_named(action_name)
+                        state_group2 = state_group_factory.get_state_group(graph_dict['actor_graph'][state_group1_name][action_name])
+                        actor_graph[state_group1][action] = state_group2
+            time_graph = dict[StateGroup,tuple[int,StateGroup]]()
+            if 'time_graph' in graph_dict:
+                for state_group1_name in graph_dict['time_graph']:
+                    state_group1 = state_group_factory.get_state_group(state_group1_name)
+                    time,state_group2_name = graph_dict['time_graph'][state_group1_name]
+                    state_group2 = state_group_factory.get_state_group(state_group2_name)
+                    time_graph[state_group1] = (time, state_group2)
+            graphs.append(self.create_state_graph(name, current_state, target_graph, tool_graph, actor_graph, time_graph))
         return graphs
     
 class StateDisconnectedGraphFactory:
@@ -161,11 +215,11 @@ class ItemFactory:
         self.items = dict[Item,Item]()
         self.aliases = dict[str,Item]()
 
-    def create_item(self, name:str, description:str, states:StateDisconnectedGraph, weight:float, value:float, size:float, target_responses:dict[Action,str], state_responses:dict[State,str]) -> Item:
+    def create_item(self, name:str, description:str, states:StateDisconnectedGraph, weight:float, value:float, size:float, target_responses:dict[Action,str], tool_responses:dict[Action,str], state_responses:dict[State,str]) -> Item:
         if size is None:
-            new_item = Item(name, description, states, weight, value, target_responses=target_responses, state_responses=state_responses)
+            new_item = Item(name, description, states, weight, value, target_responses=target_responses, tool_responses=tool_responses, state_responses=state_responses)
         else:
-            new_item = Item(name, description, states, weight, value, size, target_responses, state_responses)
+            new_item = Item(name, description, states, weight, value, size, target_responses, tool_responses, state_responses)
         if new_item in self.items:
             return self.items[new_item]
         for alias in new_item.get_aliases():
@@ -180,28 +234,33 @@ class ItemFactory:
     def get_item(self, alias:str) -> Optional[Item]:
         return self.aliases.get(alias.lower(), None)
     
-    def many_from_dict(self, item_dict:list[dict[str,Any]], state_graphs:StateDisconnectedGraphFactory, action_factory:NamedFactory[Action], state_factory:StateFactory) -> list[Item]:
+    def many_from_dict(self, item_dicts:list[dict[str,Any]], state_graphs:StateDisconnectedGraphFactory, action_factory:NamedFactory[Action], state_factory:StateFactory) -> list[Item]:
         items = list[Item]()
-        for item in item_dict:
-            name = item['name']
-            description = item['description']
-            states = state_graphs.get_state_disconnected_graph(item['states'])
-            weight = item['weight']
-            value = item['value']
+        for item_dict in item_dicts:
+            name = item_dict['name']
+            description = item_dict['description']
+            states = state_graphs.get_state_disconnected_graph(item_dict['states'])
+            weight = item_dict['weight']
+            value = item_dict['value']
             size = None
-            if 'size' in items:
-                size = items['size']
+            if 'size' in item_dict:
+                size = item_dict['size']
             target_responses = dict[Action,str]()
-            if 'target_responses' in items:
-                for action_name in items['target_responses']:
+            if 'target_responses' in item_dict:
+                for action_name in item_dict['target_responses']:
                     action = action_factory.get_named(action_name)
-                    target_responses[action] = items['target_responses'][action_name]
+                    target_responses[action] = item_dict['target_responses'][action_name]
+            tool_responses = dict[Action,str]()
+            if 'tool_responses' in item_dict:
+                for action_name in item_dict['tool_responses']:
+                    action = action_factory.get_named(action_name)
+                    tool_responses[action] = item_dict['tool_responses'][action_name]
             state_responses = dict[State,str]()
-            if 'state_responses' in items:
-                for state_name in items['state_responses']:
+            if 'state_responses' in item_dict:
+                for state_name in item_dict['state_responses']:
                     state = state_factory.get_state(state_name)
-                    state_responses[state] = items['state_responses'][state_name]
-            items.append(self.create_item(name, description, states, weight, value, size, target_responses, state_responses))
+                    state_responses[state] = item_dict['state_responses'][state_name]
+            items.append(self.create_item(name, description, states, weight, value, size, target_responses, tool_responses, state_responses))
         return items
     
 class SkillSetFactory:
@@ -262,9 +321,10 @@ class CharacterFactory:
                          inventory:Inventory,
                          actor_responses:dict[Action,str],
                          target_responses:dict[Action,str], 
+                         tool_responses:dict[Action,str],
                          state_responses:dict[State,str],
                          aliases:list[str]) -> Character:
-        new_character = Character(name, description, type, states, skills, inventory, actor_responses, target_responses, state_responses, aliases)
+        new_character = Character(name, description, type, states, skills, inventory, actor_responses, target_responses, tool_responses, state_responses, aliases)
         if new_character in self.characters:
             return self.characters[new_character]
         for alias in new_character.get_aliases():
@@ -314,6 +374,11 @@ class CharacterFactory:
                 for action_name in character_dict['target_responses']:
                     action = action_factory.get_named(action_name)
                     target_responses[action] = character_dict['target_responses'][action_name]
+            tool_responses = dict[Action,str]()
+            if 'tool_responses' in character_dict:
+                for action_name in character_dict['tool_responses']:
+                    action = action_factory.get_named(action_name)
+                    tool_responses[action] = character_dict['tool_responses'][action_name]
             state_responses = dict[State,str]()
             if 'state_responses' in character_dict:
                 for state_name in character_dict['state_responses']:
@@ -322,7 +387,7 @@ class CharacterFactory:
             aliases = None
             if 'aliases' in character_dict:
                 aliases = character_dict['aliases']
-            characters.append(self.create_character(name, description, type, states, skills, inventory, actor_responses, target_responses, state_responses, aliases))
+            characters.append(self.create_character(name, description, type, states, skills, inventory, actor_responses, target_responses, tool_responses, state_responses, aliases))
         return characters
 
 class LocationDetailFactory:
