@@ -13,6 +13,7 @@
             "end"         : "Third Room"
         }
     },
+    
     "contents"   : {
         "lamp"     : "default",
         "Player1"  : "default"
