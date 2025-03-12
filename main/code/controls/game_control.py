@@ -52,7 +52,7 @@ class GameState:
         while not self.game_over():
             character = self.whose_turn()
             controller = self.controllers.get_controller(character)
-            #print(f"Turn: {character.get_name()}")
+            #print(character)
             user_input = controller.make_move()
             #print(f"Input: {user_input}")
             action, inputs = self.translate(user_input)
@@ -79,7 +79,11 @@ class GameState:
             feedback = Feedback("Time passes.")
             character.perform_action_as_actor(action)
         elif 'take' in action.get_aliases():
-            feedback = Feedback("This has not been implemented yet.")
+            feedback = self.take(character, inputs[0])
+        elif "inventory" in action.get_aliases():
+            feedback = self.check_inventory(character)
+        else:
+            feedback = Feedback("This has not been implemented yet.",turns=0)
             character.perform_action_as_actor(action)
             for input in inputs:
                 if isinstance(input, Target):
@@ -114,15 +118,40 @@ class GameState:
     def look(self, character:Character, target:Optional[Item]=None) -> Feedback:
         if target is None:
             location,_ = character.get_location()
-            character.perform_action_as_actor(self.actions.get_named('look'))
-            return Feedback(location.get_description(character), turns=0)
+            response = character.perform_action_as_actor(self.actions.get_named('look'))
+            return Feedback(".".join(response) + location.get_description(character), turns=0)
         else:
             is_holding = character.is_holding(target)
             in_room,detail=character.get_location()[0].contains(target)
             hidden = detail.is_hidden()
             if is_holding or (in_room and not hidden):
-                character.perform_action_as_actor(self.actions.get_named('look'))
-                target.perform_action_as_target(self.actions('look'))
-                return Feedback(target.get_description())
+                response = character.perform_action_as_actor(self.actions.get_named('look'))
+                response.extend(target.perform_action_as_target(self.actions('look')))
+                return Feedback(".".join(response) + target.get_description())
             else:
                 return Feedback(f"There is no {target.get_name()} here.")
+            
+    def take(self, character:Character, target:Item) -> Feedback:
+        action = self.actions.get_named('take')
+        if action in character.get_actions_as_actor() and action in target.get_actions_as_target():
+            location,_ = character.get_location()
+            in_view,detail = location.contains(target)
+            if (in_view and not detail.hidden) or target in character.get_inventory_items():
+                if character.add_item_to_inventory(target):
+                    response = character.perform_action_as_actor(action)
+                    response.extend(target.perform_action_as_target(action))
+                    if len(response) > 0:
+                        return Feedback(f"{".".join(response)}. Taken.")
+                    return Feedback("Taken.")
+                else:
+                    return Feedback(f"It doesn't seem to fit in your pack.", turns=0)
+            return Feedback(f"There doesn't seem to be a {target.get_name()} here.", turns=0)
+        return Feedback(f"Unfortunately you are unable to take the {target.get_name()}.", turns=0)
+    
+    def check_inventory(self, character:Character) -> Feedback:
+        action = self.actions.get_named('inventory')
+        if action in character.get_actions_as_actor():
+            response = "Your inventory contains:\n"
+            response += "\n".join([item.get_name() for item in character.get_inventory_items()])
+            return Feedback(response, turns=0)
+        return Feedback("You are unable to check your inventory.", turns=0)

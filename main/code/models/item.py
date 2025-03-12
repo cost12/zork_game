@@ -14,9 +14,10 @@ class Item(Target):
                  weight:float=1,
                  value:float=0,
                  size:float=1,
-                 target_responses:Optional[dict[Action,str]]=None, 
+                 target_responses:Optional[dict[Action,str]]=None,
+                 tool_responses:Optional[dict[Action,str]]=None,
                  state_responses:Optional[dict[Action,str]]=None):
-        super().__init__(name, description, states, target_responses, state_responses)
+        super().__init__(name, description, states, target_responses, tool_responses, state_responses)
         self.description = description
         self.weight = weight
         self.value = value

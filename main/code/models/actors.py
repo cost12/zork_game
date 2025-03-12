@@ -1,6 +1,6 @@
 from typing import Optional
 
-from code.models.state  import State, Skill, StateDisconnectedGraph, SkillSet, LocationDetail
+from code.models.state  import State, Skill, FullState, SkillSet, LocationDetail
 from code.models.action import Named, Action
 
 # Should Items know which character has them?
@@ -8,11 +8,12 @@ from code.models.action import Named, Action
 
 class Target(Named):
 
-    def __init__(self, name:str, description:str, states:StateDisconnectedGraph, target_responses:Optional[dict['Action',str]]=None, state_responses:Optional[dict[State,str]]=None, aliases:Optional[str]=None):
+    def __init__(self, name:str, description:str, states:FullState, target_responses:Optional[dict['Action',str]]=None, tool_responses:Optional[dict['Action',str]]=None, state_responses:Optional[dict[State,str]]=None, aliases:Optional[str]=None):
         super().__init__(name, aliases)
         self.description = description
         self.states = states
         self.target_responses = dict[Action,str]() if target_responses is None else target_responses
+        self.tool_responses   = dict[Action,str]() if tool_responses   is None else tool_responses
         self.state_responses  = dict[State,str]()  if state_responses  is None else state_responses
         self.origin = None
         self.location = None
@@ -34,10 +35,20 @@ class Target(Named):
         response = list[str]()
         if action in self.target_responses:
             response.append(self.target_responses[action])
-        results = self.states.perform_action_as_target(action)
-        for change,state in results:
-            if change and state in self.state_responses:
-                response.append(self.state_responses[state])
+        new_states = self.states.perform_action_as_target(action)
+        for new_state in new_states:
+            if new_state in self.state_responses:
+                response.append(self.state_responses[new_state])
+        return response
+    
+    def perform_action_as_tool(self, action:'Action') -> list[str]:
+        response = list[str]()
+        if action in self.target_responses:
+            response.append(self.tool_responses[action])
+        new_states = self.states.perform_action_as_tool(action)
+        for new_state in new_states:
+            if new_state in self.state_responses:
+                response.append(self.state_responses[new_state])
         return response
     
     def get_location(self) -> tuple['Location',LocationDetail]:
@@ -63,13 +74,13 @@ class Target(Named):
 
 class Actor(Target):
 
-    def __init__(self, name:str, description:str, states:StateDisconnectedGraph, skills:SkillSet, actor_responses:Optional[dict['Action',str]]=None, target_responses:Optional[dict['Action',str]]=None, state_responses:Optional[dict[State,str]]=None, aliases:Optional[list[str]]=None):
-        super().__init__(name, description, states, target_responses, state_responses, aliases)
+    def __init__(self, name:str, description:str, states:FullState, skills:SkillSet, actor_responses:Optional[dict['Action',str]]=None, target_responses:Optional[dict['Action',str]]=None, tool_responses:Optional[dict['Action',str]]=None, state_responses:Optional[dict[State,str]]=None, aliases:Optional[list[str]]=None):
+        super().__init__(name, description, states, target_responses, tool_responses, state_responses, aliases)
         self.actor_responses = dict[Action,str]() if actor_responses is None else actor_responses
         self.skills = skills
 
     def __repr__(self):
-        return f"[Actor {self.name}]\n\tOrigin: {self.origin.name}\n\tLoc: {self.location.name}\n\t{self.location_detail}\n\t{self.states}\n\t{self.skills}"
+        return f"[Actor {self.name}]\n\tOrigin: {self.origin.name}\n\tLoc: {self.location.name}\n\tDet: {self.location_detail}\n\tStates: {self.states}\n\tSkills: {self.skills}"
 
     def get_proficiency(self, skill:Skill) -> int:
         return self.skills.get_proficiency(skill)
@@ -87,10 +98,10 @@ class Actor(Target):
         response = list[str]()
         if action in self.actor_responses:
             response.append(self.actor_responses[action])
-        results = self.states.perform_action_as_actor(action)
-        for change,state in results:
-            if change and state in self.actor_responses:
-                response.append(self.actor_responses[state])
+        new_states = self.states.perform_action_as_actor(action)
+        for new_state in new_states:
+            if new_state in self.actor_responses:
+                response.append(self.actor_responses[new_state])
         return response
 
 class Direction(Named):
@@ -152,7 +163,7 @@ class Location(Named):
             target._set_location(self,detail,origin=True)
 
     def __repr__(self):
-        return f"[Location {self.name}]\n\t{self.paths}\n\t{self.details}\n\t{self.contents}"
+        return f"[Location {self.name}]\n\tPaths: {self.paths}\n\tDetails: {self.details}\n\tContents: {self.contents}"
 
     def get_description(self, actor:Actor) -> str:
         full_description = self.description

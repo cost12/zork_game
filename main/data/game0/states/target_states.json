@@ -1,0 +1,25 @@
+[
+    {
+        "name"              : "normal_item",
+        "actions_as_target" : ["look", "break"]
+    },
+    {
+        "name"              : "broken_item"
+    },
+    {
+        "name"              : "on",
+        "actions_as_target" : ["toggle", "turn off"]
+    },
+    {
+        "name"              : "off",
+        "actions_as_target" : ["toggle", "turn on"]
+    },
+    {
+        "name"              : "held",
+        "actions_as_target" : ["drop"]
+    },
+    {
+        "name"              : "not held",
+        "actions_as_target" : ["take"]
+    }
+]

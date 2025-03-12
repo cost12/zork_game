@@ -17,9 +17,10 @@ class Character(Actor):
                  inventory:Inventory,
                  actor_responses:Optional[dict[Action,str]]=None, 
                  target_responses:Optional[dict[Action,str]]=None, 
+                 tool_responses:Optional[dict[Action,str]]=None,
                  state_responses:Optional[dict[State,str]]=None,
                  aliases:Optional[list[str]]=None):
-        super().__init__(name, description, states, skills, actor_responses, target_responses, state_responses, aliases)
+        super().__init__(name, description, states, skills, actor_responses, target_responses, tool_responses, state_responses, aliases)
         self.type = type
         self.inventory = inventory
         self.inventory_location = LocationDetail(f"{self.name}'s inventory", True, hidden=True)
