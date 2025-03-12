@@ -1,13 +1,21 @@
 {
-    "room"       : "Bathroom",
-    "exits"      : [
-        {
+    "name"       : "Bathroom",
+    "description": "You are in a basic bathroom. A toilet, sink, and small shower take up the space, lit by a grimy ceiling light. There is no water in the toilet bowl.",
+    "paths"      : {
+        "west"  : {
             "name"        : "Exit 1",
-            "description" : "A door",
-            "direction"   : "West",
+            "description" : "a thin door",
             "end"         : "Bedroom"
-        }    
-    ],
-    "items"      : ["Vermilion Book", "Shower", "Tap", "Sink"]
- 
+        }
+    },
+    "details"    : [
+        {"name" : "toilet",
+        "description" : "sitting next to the toilet"
+    }
+],
+    "contents"   : {
+        "Vermilion Book"      : "toilet",
+        "Shower"    : "default",
+        "Sink"    : "default"
+    }
 }

@@ -1,14 +1,22 @@
+
 {
-    "room"       : "Attic",
-    "exits"      : [
-        {
+    "name"       : "Attic",
+    "description": "You are in a musty, small attic. It is mostly empty, except for a table.",
+    "paths"      : {
+        "down"  : {
             "name"        : "Exit 1",
-            "description" : "A trapdoor flush with the floor",
-            "direction"   : "down",
+            "description" : "a trapdoor flush with the floor",
             "end"         : "Bedroom"
         }
-       
-    ],
-    "items"      : ["Leaflet", "Hourglass", "Yellow Book"]
-
+    },
+    "details"    : [
+        {"name" : "table",
+        "description" : "on the spindly table"
+    }
+],
+    "contents"   : {
+        "Leaflet"      : "table",
+        "Hourglass"    : "table",
+        "Yellow Book"  : "table"
+    }
 }
