@@ -10,7 +10,7 @@
         {
             "name"        : "Exit 2",
             "description" : "A doorway",
-            "direction"   : "south",
+            "direction"   : "South",
             "end"         : "Hallway"
         },
 

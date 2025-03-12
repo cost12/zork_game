@@ -1,0 +1,18 @@
+{
+    "room"       : "Bright Room",
+    "exits"      : [
+        {
+            "name"        : "Exit 1",
+            "description" : "A passage",
+            "direction"   : "north",
+            "end"         : "Orge Lair"
+        },
+        {
+            "name"        : "Exit 2",
+            "description" : "A door",
+            "direction"   : "southwest",
+            "end"         : "Theatre Entrance"
+        }
+    ],
+    "items"      : []
+}

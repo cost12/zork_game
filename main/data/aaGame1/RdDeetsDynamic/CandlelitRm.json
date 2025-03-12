@@ -1,0 +1,18 @@
+{
+    "room"       : "Candlelit Room",
+    "exits"      : [
+        {
+            "name"        : "Exit 1",
+            "description" : "A thin passage",
+            "direction"   : "north",
+            "end"         : "Office"
+        },
+        {
+            "name"        : "Exit 2",
+            "description" : "A door",
+            "direction"   : "east",
+            "end"         : "Den"
+        }
+    ],
+    "items"      : ["Meal", "Plate"]
+}

@@ -10,3 +10,6 @@ Barn: Day/night: "(If day): Sunlight drips through thin cracks in the lofty slat
 Beehive Room: Bees sting every 10 seconds up to 3x, at which point player dies. Burning herbs with lit candle pacifies the bees for 30 turns
 Armory: Any added inventory items disappear unless hourglass is broken
 SkatePark: ((if given skateboard to Child): The child from the train skates happily around, doing sick tricks deftly. They flash you a thumbs up midair). Also makes door to Greenhouse appear/possible
+Bright Room: Two different descriptions based on if sunglasses are worn or not (in static description text)
+Library: Shelves should reflect the books that have been placed on them in description? Make items with states for each shelf?
+Man Cave: bully challenges if not yet beaten, sulks on couch if beaten

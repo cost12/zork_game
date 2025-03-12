@@ -1,0 +1,6 @@
+{
+    "comment"    : "This is an example of making a room",
+    
+    "name"       : "Library",
+    "description": "You are standing in a small town library. The single room contains ten shelves numbered 1-10."
+}

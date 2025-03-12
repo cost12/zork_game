@@ -1,0 +1,23 @@
+go/walk/run/proceed
+slay/kill/fight/cut/attack/hit/strike (with)
+play (instrument)
+take/pick up (item)
+drop (item)
+turn on/off (lantern/tap/sink/shower/stove)
+Eat/drink (meal, honey, peppers, herbs)
+Dig (garden)
+Break (hourglass,skateboard)
+put on (clothes/sunglasses)
+Take off (clothes/sunglasses)
+Put (book) on shelf (number) shelf
+Put (spear/pitchfork) on tool holder
+shoot (basketball)
+give (item) to (actor)
+burn (herbs) with (candle)
+use (magnifying glass) to light candle (bright room or garden during day)
+Unlock car/trunk  (with keys)
+Open cabiner/trunk/theatre seat
+Say "" (useless)
+hang (painting)
+work on (puzzle)
+Arm Wrestle (bully)
