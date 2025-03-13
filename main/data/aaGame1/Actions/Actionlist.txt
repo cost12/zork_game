@@ -1,4 +1,4 @@
-go/walk/run/proceed
+go/walk/run/proceed/head/g
 slay/kill/fight/cut/attack/hit/strike (with)
 play (instrument)
 take/pick up (item)

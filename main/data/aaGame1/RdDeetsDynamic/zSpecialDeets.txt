@@ -13,3 +13,5 @@ SkatePark: ((if given skateboard to Child): The child from the train skates happ
 Bright Room: Two different descriptions based on if sunglasses are worn or not (in static description text)
 Library: Shelves should reflect the books that have been placed on them in description? Make items with states for each shelf?
 Man Cave: bully challenges if not yet beaten, sulks on couch if beaten
+Conditional exits: North in Library, Museum, Gym, Parking Lot, Theatre Entrance. SW, N, SE in Theatre Seats
+Parking Lot: directions/exits for "get in car" and "get in trunk"?

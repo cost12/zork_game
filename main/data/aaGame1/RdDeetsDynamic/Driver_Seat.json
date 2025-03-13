@@ -1,18 +1,12 @@
 {
-    "room"       : "Dining Room",
+    "room"       : "Driver's Seat",
     "exits"      : [
         {
             "name"        : "Exit 1",
-            "description" : "A door",
-            "direction"   : "north",
-            "end"         : "Office"
-        },
-        {
-            "name"        : "Exit 2",
-            "description" : "A door",
-            "direction"   : "east",
-            "end"         : "Den"
+            "description" : "The door",
+            "direction"   : "out",
+            "end"         : "Parking Lot"
         }
     ],
-    "items"      : ["Meal", "Plate"]
+    "items"      : ["Sunglasses"]
 }

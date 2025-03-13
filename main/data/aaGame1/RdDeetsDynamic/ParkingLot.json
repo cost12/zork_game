@@ -1,18 +1,24 @@
 {
-    "room"       : "Dining Room",
+    "room"       : "Parking Lot",
     "exits"      : [
         {
             "name"        : "Exit 1",
-            "description" : "A door",
+            "description" : "An exit ramp",
             "direction"   : "north",
-            "end"         : "Office"
+            "end"         : "Riches Room" 
+        },
+        {
+            "name"        : "Exit 1",
+            "description" : "",
+            "direction"   : "in trunk",
+            "end"         : "Car Trunk" 
         },
         {
             "name"        : "Exit 2",
-            "description" : "A door",
-            "direction"   : "east",
-            "end"         : "Den"
+            "description" : "",
+            "direction"   : "in car",
+            "end"         : "Driver's Seat"
         }
     ],
-    "items"      : ["Meal", "Plate"]
+    "items"      : ["Fuzzy Jacket"]
 }

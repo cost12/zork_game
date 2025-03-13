@@ -1,18 +1,21 @@
+
 {
-    "room"       : "Bear's Den",
-    "exits"      : [
-        {
+    "name"       : "Bear's Den",
+    "description": "You are standing in a round, earthen den, reeking sickly sweet. A huge, hulking bear blocks a passageway to the North. In an alcove in the Eastern wall is a pile of large, empty jars decorated with what looks like simple depictions of bees.",
+    "paths"      : {
+        "north"  : {
             "name"        : "Exit 1",
-            "description" : "A thin escape",
-            "direction"   : "north",
+            "description" : "a narrow escape",
             "end"         : "Cold Room"
         },
-        {
+        "south"  : {
             "name"        : "Exit 2",
-            "description" : "A passage",
-            "direction"   : "South",
+            "description" : "a passage",
             "end"         : "Puzzle Room"
         }
-    ],
-    "items"      : []
+    },
+    "details"    : [],
+    "contents"   : {
+        "bear" : "default"
+    }
 }

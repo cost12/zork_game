@@ -1,0 +1,26 @@
+{
+    "name"       : "Bedroom",
+    "description": "You see a very boring room.",
+    "paths"      : {
+        "north"  : {
+            "name"        : "Exit 1",
+            "description" : "you see a door",
+            "end"         : "Other Room"
+        },
+        "south" : {
+            "name"        : "Exit 2",
+            "description" : "you see a path",
+            "end"         : "Third Room"
+        }
+    },
+    "details"    : [
+        {"name" : "table",
+        "description" : "on the table"
+    }
+],
+    "contents"   : {
+        "lamp"     : "table",
+        "Player1"  : "default"
+    },
+    "start" : "True"
+}
