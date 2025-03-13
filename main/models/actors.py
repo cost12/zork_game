@@ -1,7 +1,7 @@
 from typing import Optional
 
-from code.models.state  import State, Skill, FullState, SkillSet, LocationDetail
-from code.models.action import Named, Action
+from models.state  import State, Skill, FullState, SkillSet, LocationDetail
+from models.action import Named, Action
 
 # Should Items know which character has them?
 # Should all Targets have weight? size? value?

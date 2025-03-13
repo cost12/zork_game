@@ -1,10 +1,10 @@
 from typing import Any, Optional
 
-from code.models.action import Action, Named
-from code.models.item import Item
-from code.models.character import Character
-from code.models.actors import Direction, Location, Path
-from code.factories.factories import ItemFactory, NamedFactory, StateFactory, LocationFactory, SkillSetFactory, CharacterFactory, StateGraphFactory, LocationDetailFactory, CharacterControlFactory, StateDisconnectedGraphFactory
+from models.action import Action, Named
+from models.item import Item
+from models.character import Character
+from models.actors import Direction, Location, Path
+from factories.factories import ItemFactory, NamedFactory, StateFactory, LocationFactory, SkillSetFactory, CharacterFactory, StateGraphFactory, LocationDetailFactory, CharacterControlFactory, StateDisconnectedGraphFactory
 
 class Word:
     def __init__(self):

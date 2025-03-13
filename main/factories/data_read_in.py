@@ -2,11 +2,11 @@ import glob
 import json
 from typing import Any
 
-from code.models.actors              import Direction
-from code.models.action              import Action
-from code.models.state               import Skill
+from models.actors              import Direction
+from models.action              import Action
+from models.state               import Skill
 
-from code.factories.factories import ItemFactory, NamedFactory, StateFactory, StateGraphFactory, StateDisconnectedGraphFactory, SkillSetFactory, CharacterFactory, LocationFactory, CharacterControlFactory
+from factories.factories import ItemFactory, NamedFactory, StateFactory, StateGraphFactory, StateDisconnectedGraphFactory, SkillSetFactory, CharacterFactory, LocationFactory, CharacterControlFactory
 
 def __read_in_json(file:str) -> dict:
     with open(file) as contents:

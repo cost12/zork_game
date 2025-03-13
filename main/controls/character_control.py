@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-import code.views.string_views as views
+import views.string_views as views
 
 @dataclass(frozen=True)
 class Feedback:

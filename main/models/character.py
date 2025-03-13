@@ -1,9 +1,9 @@
 from typing import Optional
 
-from code.models.actors import Actor
-from code.models.item   import Inventory, Item
-from code.models.state  import StateDisconnectedGraph, SkillSet, State, LocationDetail
-from code.models.action import Action
+from models.actors import Actor
+from models.item   import Inventory, Item
+from models.state  import StateDisconnectedGraph, SkillSet, State, LocationDetail
+from models.action import Action
 
 class Character(Actor):
     """Base class for all Characters, user controlled or NPCs

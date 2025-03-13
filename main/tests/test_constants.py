@@ -1,0 +1,1 @@
+GAME_TO_TEST = 'game0'

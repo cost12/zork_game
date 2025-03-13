@@ -1,6 +1,6 @@
-from code.controls.game_control import GameState
-from code.factories.data_read_in import read_in_game
-from code.models.character import Character
+from controls.game_control import GameState
+from factories.data_read_in import read_in_game
+from models.character import Character
 
 def main():
     #game_name = input("Which game do you want to play? ")

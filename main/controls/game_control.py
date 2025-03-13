@@ -1,12 +1,12 @@
 from typing import Any, Optional
 
-from code.models.character import Character
-from code.models.item import Item
-from code.models.actors import Direction, Target, Actor, Location
-from code.models.action import Action
-from code.factories.factories import ItemFactory, NamedFactory, StateFactory, LocationFactory, SkillSetFactory, CharacterFactory, StateGraphFactory, LocationDetailFactory, CharacterControlFactory, StateDisconnectedGraphFactory
-from code.controls.character_control import CommandLineController, Feedback
-from code.controls.translate import get_input_translator
+from models.character import Character
+from models.item import Item
+from models.actors import Direction, Target, Actor, Location
+from models.action import Action
+from factories.factories import ItemFactory, NamedFactory, StateFactory, LocationFactory, SkillSetFactory, CharacterFactory, StateGraphFactory, LocationDetailFactory, CharacterControlFactory, StateDisconnectedGraphFactory
+from controls.character_control import CommandLineController, Feedback
+from controls.translate import get_input_translator
 
 # Where do target/actor/tool responses go?
 # What if the action is/isn't successful?

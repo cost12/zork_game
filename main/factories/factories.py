@@ -1,11 +1,11 @@
 from typing import Optional, Any, Callable
 
-from code.models.action    import Named, Action
-from code.models.actors    import Location, Direction, Path, Target, Actor
-from code.models.character import Character
-from code.models.item      import Item, Inventory
-from code.models.state     import State, StateGroup, StateGraph, StateDisconnectedGraph, Skill, SkillSet, LocationDetail
-from code.controls.character_control import CharacterController, CommandLineController, NPCController
+from models.action    import Named, Action
+from models.actors    import Location, Direction, Path, Target, Actor
+from models.character import Character
+from models.item      import Item, Inventory
+from models.state     import State, StateGroup, StateGraph, StateDisconnectedGraph, Skill, SkillSet, LocationDetail
+from controls.character_control import CharacterController, CommandLineController, NPCController
 
 
 class NamedFactory[T:Named]:
@@ -14,6 +14,9 @@ class NamedFactory[T:Named]:
         self.constructor = constructor
         self.objects = dict[T,T]()
         self.aliases = dict[str,T]()
+
+    def get_all_named(self) -> list[T]:
+        return list(self.objects.values())
 
     def many_from_dict(self, named_dict:list[dict[str,Any]]) -> list[T]:
         objects = list[T]()

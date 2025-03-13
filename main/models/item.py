@@ -1,8 +1,8 @@
 from typing import Optional
 
-from code.models.action import Action
-from code.models.actors import Target
-from code.models.state  import StateDisconnectedGraph
+from models.action import Action
+from models.actors import Target
+from models.state  import StateDisconnectedGraph
 
 class Item(Target):
     """Base class for all Items/ anything that a Character can put in their Inventory

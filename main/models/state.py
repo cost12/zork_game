@@ -1,7 +1,7 @@
 from typing import Optional
 from dataclasses import dataclass
 
-from code.models.action import Action, Named
+from models.action import Action, Named
 
 # Adding: effects, is this needed?
 # To add update: class, factory, json, other classes
