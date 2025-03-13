@@ -30,6 +30,9 @@ class Target(Named):
 
     def get_actions_as_target(self) -> list['Action']:
         return self.states.get_available_actions_as_target()
+    
+    def get_actions_as_tool(self) -> list['Action']:
+        return self.states.get_available_actions_as_tool()
 
     def perform_action_as_target(self, action:'Action') -> list[str]:
         response = list[str]()

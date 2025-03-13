@@ -13,8 +13,14 @@
             "end"         : "Third Room"
         }
     },
+    "details"    : [
+        {
+            "name" : "table",
+            "description": "on the table"
+        }
+    ],
     "contents"   : {
-        "lamp"     : "default",
+        "lamp"     : "table",
         "Player1"  : "default"
     },
     "start" : "True"

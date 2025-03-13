@@ -18,7 +18,7 @@ def __read_in_folder(folder:str) -> list[dict[str,Any]]:
     return [__read_in_json(file) for file in files]
 
 def read_in_directions(game:str) -> NamedFactory[Direction]:
-    factory = NamedFactory[Direction]()
+    factory = NamedFactory[Direction](Direction)
     folder = f"data/{game}/directions"
     data = __read_in_folder(folder)
     for d in data:
@@ -26,7 +26,7 @@ def read_in_directions(game:str) -> NamedFactory[Direction]:
     return factory
 
 def read_in_actions(game:str) -> NamedFactory[Action]:
-    factory = NamedFactory[Action]()
+    factory = NamedFactory[Action](Action)
     folder = f"data/{game}/actions"
     data = __read_in_folder(folder)
     data = [data_dict for data_list in data for data_dict in data_list]
@@ -64,7 +64,7 @@ def read_in_items(game:str, state_graphs:StateDisconnectedGraphFactory, actions:
     return factory
 
 def read_in_skills(game:str) -> NamedFactory[Skill]:
-    factory = NamedFactory[Skill]()
+    factory = NamedFactory[Skill](Skill)
     folder  = f"data/{game}/skills"
     data = __read_in_folder(folder)
     factory.many_from_dict(data[0])

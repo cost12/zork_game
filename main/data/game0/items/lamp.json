@@ -6,7 +6,7 @@
     "value"            : 1,
     "size"             : 1,
     "target_responses" : {
-        "take": "it is surprisingly light!"
+        "take": "it is surprisingly light"
     },
     "state_responses"  : {
         "on"  : "the lamp is on",

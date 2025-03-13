@@ -3,9 +3,8 @@ from dataclasses import dataclass
 
 from code.models.action import Action, Named
 
-# Actions as tool? Actions that can be performed with an item instead of to an item
-# Adding: effects, tools x, fullstate x
-# Need: class, factory, json
+# Adding: effects, is this needed?
+# To add update: class, factory, json, other classes
 
 class Effect(Named):
     

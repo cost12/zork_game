@@ -1,4 +1,4 @@
-from typing import Optional, Any
+from typing import Optional, Any, Callable
 
 from code.models.action    import Named, Action
 from code.models.actors    import Location, Direction, Path, Target, Actor
@@ -10,7 +10,8 @@ from code.controls.character_control import CharacterController, CommandLineCont
 
 class NamedFactory[T:Named]:
 
-    def __init__(self):
+    def __init__(self, constructor:Callable[[Any],T]):
+        self.constructor = constructor
         self.objects = dict[T,T]()
         self.aliases = dict[str,T]()
 
@@ -28,7 +29,7 @@ class NamedFactory[T:Named]:
         return self.create_named(name, aliases)
 
     def create_named(self, name:str, aliases:Optional[list[str]]=None) -> T:
-        new_object = Named(name,aliases)
+        new_object = self.constructor(name,aliases)
         if new_object in self.objects:
             return self.objects[new_object]
         for alias in new_object.get_aliases():
@@ -422,7 +423,9 @@ class LocationDetailFactory:
         hidden = False
         if 'hidden' in detail_dict:
             hidden = detail_dict['hidden']
-        aliases = detail_dict['aliases']
+        aliases = None
+        if 'aliases' in detail_dict:
+            aliases = detail_dict['aliases']
         return self.create_detail(name, description, note_worthy, hidden, aliases=aliases)
     
     def many_from_dict(self, detail_dicts:list[dict[str,Any]]) -> list[LocationDetail]:
