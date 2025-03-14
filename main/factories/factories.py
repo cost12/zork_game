@@ -52,6 +52,9 @@ class StateFactory:
     def __init__(self):
         self.states = dict[State,State]()
         self.names  = dict[str,State]()
+
+    def get_states(self) -> list[State]:
+        return list(self.states.values())
     
     def create_state(self, name:str, actions_as_target:list[Action], actions_as_actor:list[Action], actions_as_tool:list[Action]) -> State:
         new_state = State.create_state(name,actions_as_target, actions_as_actor, actions_as_tool)
@@ -119,6 +122,9 @@ class StateGraphFactory:
     def __init__(self):
         self.graphs  = dict[StateGraph,StateGraph]()
         self.aliases = dict[str,StateGraph]()
+
+    def get_state_graphs(self) -> list[StateGraph]:
+        return list(self.graphs.values())
 
     def create_state_graph(self, name:str, current_state:StateGroup, target_graph:dict[StateGroup,dict[Action,StateGroup]], tool_graph:dict[StateGroup,dict[Action,StateGroup]], actor_graph:dict[StateGroup,dict[Action,StateGroup]], time_graph:dict[StateGroup,tuple[int,StateGroup]]) -> StateGraph:
         new_graph = StateGraph(name, current_state, target_graph, tool_graph, actor_graph, time_graph)
@@ -189,6 +195,9 @@ class StateDisconnectedGraphFactory:
         self.graphs  = dict[StateDisconnectedGraph,StateDisconnectedGraph]()
         self.aliases = dict[str,StateDisconnectedGraph]()
 
+    def get_state_disconnected_graphs(self) -> list[StateDisconnectedGraph]:
+        return list(self.graphs.values())
+
     def create_state_disconnected_graph(self, name:str, state_graphs:StateGraph) -> State:
         new_graph = StateDisconnectedGraph(name, state_graphs)
         if new_graph in self.graphs:
@@ -218,6 +227,9 @@ class ItemFactory:
     def __init__(self):
         self.items = dict[Item,Item]()
         self.aliases = dict[str,Item]()
+
+    def get_items(self) -> list[Item]:
+        return list(self.items.values())
 
     def create_item(self, name:str, description:str, states:StateDisconnectedGraph, weight:float, value:float, size:float, target_responses:dict[Action,str], tool_responses:dict[Action,str], state_responses:dict[State,str]) -> Item:
         if size is None:

@@ -1,10 +1,9 @@
-from tests.test_constants        import GAME_TO_TEST
-from factories.data_read_in import read_in_directions
-from factories.factories    import NamedFactory
-from models.actors          import Direction
+from tests.conftest      import directions
+from models.actors       import Direction
+from factories.factories import NamedFactory
 
-def test_read_in():
-    direction_factory = read_in_directions(GAME_TO_TEST)
+def test_read_in(directions:NamedFactory[Direction]):
+    direction_factory = directions
     all = direction_factory.get_all_named()
     for direction in all:
         assert isinstance(direction, Direction)

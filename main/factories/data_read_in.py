@@ -77,11 +77,11 @@ def read_in_skill_sets(game:str, skill_factory:NamedFactory[Skill]) -> SkillSetF
     factory.many_from_dict(data[0], skill_factory)
     return factory
 
-def read_in_characters(game:str, state_graphs:StateDisconnectedGraphFactory, skills_factory:NamedFactory[Skill], item_factory:ItemFactory, action_factory:NamedFactory[Action], state_factory:StateFactory) -> CharacterFactory:
+def read_in_characters(game:str, state_graphs:StateDisconnectedGraphFactory, skill_sets_factory:SkillSetFactory, item_factory:ItemFactory, action_factory:NamedFactory[Action], state_factory:StateFactory) -> CharacterFactory:
     factory = CharacterFactory()
     folder = f"data/{game}/characters"
     data = __read_in_folder(folder)
-    factory.many_from_dict(data, state_graphs, skills_factory, item_factory, action_factory, state_factory)
+    factory.many_from_dict(data, state_graphs, skill_sets_factory, item_factory, action_factory, state_factory)
     return factory
 
 def read_in_rooms(game:str, character_factory:CharacterFactory, item_factory:ItemFactory, direction_factory:NamedFactory[Direction], state_factory:StateFactory) -> LocationFactory:
