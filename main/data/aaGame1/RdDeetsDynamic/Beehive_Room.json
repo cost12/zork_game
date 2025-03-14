@@ -1,44 +1,44 @@
 {
-    "room"       : "Bedroom",
-    "exits"      : [
-        {
+    "name"       : "Beehive Room",
+    "description": "You enter an odd, hexagonal room and immediately hear a loud buzzing sound. Bees fill the room, their hive in a corner to the east, dripping with honey. Passages are placed on each of the six gray concrete walls.",
+    "paths"      : {
+        "north"  : {
             "name"        : "Exit 1",
-            "description" : "A door",
-            "direction"   : "north",
+            "description" : "a passage",
             "end"         : "Small Cavern"
         },
-        {
+        "northwest"  : {
             "name"        : "Exit 2",
-            "description" : "A door",
-            "direction"   : "Northwest",
+            "description" : "a rustic door",
             "end"         : "Barn"
         },
-        {
+        "northeast"  : {
             "name"        : "Exit 3",
-            "description" : "A door",
-            "direction"   : "Northeast",
+            "description" : "a thick metal door",
             "end"         : "Armory"
         },
-        {
+        "southeast"  : {
             "name"        : "Exit 4",
-            "description" : "A door",
-            "direction"   : "Southeast",
+            "description" : "a small door",
             "end"         : "Skate Park"
         },
-        {
+        "south"  : {
             "name"        : "Exit 5",
-            "description" : "A door",
-            "direction"   : "south",
+            "description" : "a scarred wooden door",
             "end"         : "Orge Lair"
         },
-        {
+        "southwest"  : {
             "name"        : "Exit 6",
-            "description" : "A door",
-            "direction"   : "Wouthwest",
+            "description" : "a large rocky passage",
             "end"         : "Giant Cave"
         }
+    },
+    "details"    : [
+        {"name" : "beehive",
+    "description" : "dripping from the beehive"}
     ],
-    "items"      : ["Honey"],
-    "characters" : ["Bees"]
-
+    "contents"   : {
+        "honey"  : "beehive",
+        "bees"   : "default"
+    } 
 }

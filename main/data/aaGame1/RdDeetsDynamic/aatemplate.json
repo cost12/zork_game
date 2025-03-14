@@ -1,0 +1,23 @@
+{
+    "name"       : "Name",
+    "description": "",
+    "paths"      : {
+        "XXXnorth"  : {
+            "name"        : "Exit 1",
+            "description" : "a narrow escape",
+            "end"         : "Cold Room"
+        },
+        "XXXsouth"  : {
+            "name"        : "Exit 2",
+            "description" : "a passage",
+            "end"         : "Puzzle Room"
+        }
+    },
+    "details"    : [
+        {"name" : "title",
+    "description" : "on a title"}
+    ],
+    "contents"   : {
+        "bear" : "default"
+    }
+}

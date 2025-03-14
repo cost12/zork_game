@@ -1,18 +1,19 @@
+
 {
-    "room"       : "Bright Room",
-    "exits"      : [
-        {
+    "name"       : "Bright Room",
+    "description": "Upon entering the room, a shockingly bright light strikes your eyes, forcing you to shut them tight. You simply cannot bear to open them. (If sunglasses on): The room is possessed by an overwhelmingly bright light. By squinting hard, you can just barely make out an eerily smooth room.",
+    "paths"      : {
+        "north"  : {
             "name"        : "Exit 1",
-            "description" : "A passage",
-            "direction"   : "north",
+            "description" : "a passage",
             "end"         : "Orge Lair"
         },
-        {
+        "southwest"  : {
             "name"        : "Exit 2",
-            "description" : "A door",
-            "direction"   : "southwest",
+            "description" : "a tall door",
             "end"         : "Theatre Entrance"
         }
-    ],
-    "items"      : []
+    },
+    "details"    : [],
+    "contents"   : {}
 }
