@@ -1,9 +1,7 @@
 from typing import Optional, Any, Callable
 
 from models.action    import Named, Action
-from models.actors    import Location, Direction, Path, Target, Actor
-from models.character import Character
-from models.item      import Item, Inventory
+from models.actors    import Location, Direction, Path, Target, Actor, Inventory
 from models.state     import State, StateGroup, StateGraph, StateDisconnectedGraph, Skill, SkillSet, LocationDetail
 from controls.character_control import CharacterController, CommandLineController, NPCController
 
@@ -225,17 +223,17 @@ class StateDisconnectedGraphFactory:
 class ItemFactory:
 
     def __init__(self):
-        self.items = dict[Item,Item]()
-        self.aliases = dict[str,Item]()
+        self.items = dict[Target,Target]()
+        self.aliases = dict[str,Target]()
 
-    def get_items(self) -> list[Item]:
+    def get_items(self) -> list[Target]:
         return list(self.items.values())
 
-    def create_item(self, name:str, description:str, states:StateDisconnectedGraph, weight:float, value:float, size:float, target_responses:dict[Action,str], tool_responses:dict[Action,str], state_responses:dict[State,str]) -> Item:
+    def create_item(self, name:str, description:str, states:StateDisconnectedGraph, weight:float, value:float, size:float, target_responses:dict[Action,str], tool_responses:dict[Action,str], state_responses:dict[State,str]) -> Target:
         if size is None:
-            new_item = Item(name, description, states, weight, value, target_responses=target_responses, tool_responses=tool_responses, state_responses=state_responses)
+            new_item = Target(name, description, states, weight=weight, value=value, target_responses=target_responses, tool_responses=tool_responses, state_responses=state_responses)
         else:
-            new_item = Item(name, description, states, weight, value, size, target_responses, tool_responses, state_responses)
+            new_item = Target(name, description, states, weight=weight, value=value, size=size, target_responses=target_responses, tool_responses=tool_responses, state_responses=state_responses)
         if new_item in self.items:
             return self.items[new_item]
         for alias in new_item.get_aliases():
@@ -247,11 +245,11 @@ class ItemFactory:
             self.aliases[alias] = new_item
         return new_item
     
-    def get_item(self, alias:str) -> Optional[Item]:
+    def get_item(self, alias:str) -> Optional[Target]:
         return self.aliases.get(alias.lower(), None)
     
-    def many_from_dict(self, item_dicts:list[dict[str,Any]], state_graphs:StateDisconnectedGraphFactory, action_factory:NamedFactory[Action], state_factory:StateFactory) -> list[Item]:
-        items = list[Item]()
+    def many_from_dict(self, item_dicts:list[dict[str,Any]], state_graphs:StateDisconnectedGraphFactory, action_factory:NamedFactory[Action], state_factory:StateFactory) -> list[Target]:
+        items = list[Target]()
         for item_dict in item_dicts:
             name = item_dict['name']
             description = item_dict['description']
@@ -322,10 +320,10 @@ class SkillSetFactory:
 class CharacterFactory:
 
     def __init__(self):
-        self.characters = dict[Character,Character]()
-        self.aliases = dict[str,Character]()
+        self.characters = dict[Actor,Actor]()
+        self.aliases = dict[str,Actor]()
 
-    def get_characters(self) -> list[Character]:
+    def get_characters(self) -> list[Actor]:
         return list(self.characters.values())
 
     def create_character(self, 
@@ -335,12 +333,15 @@ class CharacterFactory:
                          states:StateDisconnectedGraph, 
                          skills:SkillSet,
                          inventory:Inventory,
+                         weight:float,
+                         size:float,
+                         value:float,
                          actor_responses:dict[Action,str],
                          target_responses:dict[Action,str], 
                          tool_responses:dict[Action,str],
                          state_responses:dict[State,str],
-                         aliases:list[str]) -> Character:
-        new_character = Character(name, description, type, states, skills, inventory, actor_responses, target_responses, tool_responses, state_responses, aliases)
+                         aliases:list[str]) -> Actor:
+        new_character = Actor(name, description, type, states, skills, inventory, weight=weight, size=size, value=value, actor_responses=actor_responses, target_responses=target_responses, tool_responses=tool_responses, state_responses=state_responses, aliases=aliases)
         if new_character in self.characters:
             return self.characters[new_character]
         for alias in new_character.get_aliases():
@@ -352,13 +353,13 @@ class CharacterFactory:
             self.aliases[alias] = new_character
         return new_character
     
-    def get_character(self, alias:str) -> Optional[Character]:
+    def get_character(self, alias:str) -> Optional[Actor]:
         return self.aliases.get(alias.lower(), None)
     
     def __inventory_from_dict(self, inventory_dict:dict[str,Any], item_factory:ItemFactory) -> Inventory:
         size_limit = inventory_dict['size_limit']
         weight_limit = inventory_dict['weight_limit']
-        items = list[Item]()
+        items = list[Target]()
         if 'items' in inventory_dict:
             for item_name in inventory_dict['items']:
                 item = item_factory.get_item(item_name)
@@ -371,8 +372,8 @@ class CharacterFactory:
                        skills_factory:SkillSetFactory,
                        item_factory:ItemFactory,
                        action_factory:NamedFactory[Action],
-                       state_factory:StateFactory) -> Character:
-        characters = list[Character]()
+                       state_factory:StateFactory) -> Actor:
+        characters = list[Actor]()
         for character_dict in character_dicts:
             name = character_dict['name']
             description = character_dict['description']
@@ -380,6 +381,15 @@ class CharacterFactory:
             states = state_graphs.get_state_disconnected_graph(character_dict['states'])
             skills = skills_factory.get_skill_set(character_dict['skills'])
             inventory = self.__inventory_from_dict(character_dict['inventory'], item_factory)
+            weight = Actor.DEFAULT_WEIGHT
+            if 'weight' in character_dict:
+                weight = character_dict['weight']
+            size = Actor.DEFAULT_SIZE
+            if 'size' in character_dict:
+                size = character_dict['size']
+            value = Actor.DEFAULT_VALUE
+            if 'value' in character_dict:
+                value = character_dict['value']
             actor_responses = dict[Action,str]()
             if 'actor_responses' in character_dict:
                 for action_name in character_dict['actor_responses']:
@@ -403,7 +413,7 @@ class CharacterFactory:
             aliases = None
             if 'aliases' in character_dict:
                 aliases = character_dict['aliases']
-            characters.append(self.create_character(name, description, type, states, skills, inventory, actor_responses, target_responses, tool_responses, state_responses, aliases))
+            characters.append(self.create_character(name, description, type, states, skills, inventory, weight, size, value, actor_responses, target_responses, tool_responses, state_responses, aliases))
         return characters
 
 class LocationDetailFactory:
@@ -561,12 +571,12 @@ class LocationFactory:
 class CharacterControlFactory:
 
     def __init__(self):
-        self.characters = dict[Character,CharacterController]()
+        self.characters = dict[Actor,CharacterController]()
 
-    def create_character(self, character:Character, controller:CharacterController) -> None:
+    def create_character(self, character:Actor, controller:CharacterController) -> None:
         self.characters[character] = controller
     
-    def get_controller(self, character:Character) -> Optional[CharacterController]:
+    def get_controller(self, character:Actor) -> Optional[CharacterController]:
         return self.characters.get(character, None)
     
     def many_from_dict(self, controller_dicts:list[dict[str,Any]], character_factory:CharacterFactory) -> None:

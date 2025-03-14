@@ -1,7 +1,7 @@
 from tests.conftest      import state_graphs
 from factories.factories import StateGraphFactory
-from models.actors          import Action
-from models.state           import State, StateGraph, StateGroup
+from models.actors       import Action
+from models.state        import State, StateGraph, StateGroup
 
 def test_read_in(state_graphs:StateGraphFactory):
     factory = state_graphs

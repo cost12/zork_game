@@ -8,10 +8,13 @@ from models.action import Named, Action
 
 class Target(Named):
 
-    def __init__(self, name:str, description:str, states:FullState, target_responses:Optional[dict['Action',str]]=None, tool_responses:Optional[dict['Action',str]]=None, state_responses:Optional[dict[State,str]]=None, aliases:Optional[str]=None):
+    def __init__(self, name:str, description:str, states:FullState,*, weight:float=1, size:float=1, value:float=0, target_responses:Optional[dict['Action',str]]=None, tool_responses:Optional[dict['Action',str]]=None, state_responses:Optional[dict[State,str]]=None, aliases:Optional[str]=None):
         super().__init__(name, aliases)
         self.description = description
         self.states = states
+        self.weight = weight
+        self.size = size
+        self.value = value
         self.target_responses = dict[Action,str]() if target_responses is None else target_responses
         self.tool_responses   = dict[Action,str]() if tool_responses   is None else tool_responses
         self.state_responses  = dict[State,str]()  if state_responses  is None else state_responses
@@ -24,6 +27,15 @@ class Target(Named):
 
     def get_description(self) -> str:
         return self.description
+    
+    def get_weight(self) -> float:
+        return self.weight
+
+    def get_value(self) -> float:
+        return self.value
+
+    def get_size(self) -> float:
+        return self.size
 
     def get_current_state(self) -> list[State]:
         return self.states.get_current_states()
@@ -75,11 +87,53 @@ class Target(Named):
             return True
         return False
 
-class Actor(Target):
+class Inventory:
+    """Stores a Character's Items
+    """
+    def __init__(self, size_limit:int, weight_limit:float, items:Optional[list[Target]]=None):
+        self.size_limit = size_limit
+        self.weight_limit = weight_limit
+        assert items is None or (sum([item.get_size() for item in items]) <= self.size_limit and sum([item.get_weight() for item in items]) <= self.weight_limit)
+        self.items = list[Target]() if items is None else items
 
-    def __init__(self, name:str, description:str, states:FullState, skills:SkillSet, actor_responses:Optional[dict['Action',str]]=None, target_responses:Optional[dict['Action',str]]=None, tool_responses:Optional[dict['Action',str]]=None, state_responses:Optional[dict[State,str]]=None, aliases:Optional[list[str]]=None):
-        super().__init__(name, description, states, target_responses, tool_responses, state_responses, aliases)
+    def get_items(self) -> list[Target]:
+        return self.items
+    
+    def get_total_value(self) -> float:
+        return sum([item.get_value() for item in self.items])
+    
+    def get_total_weight(self) -> float:
+        return sum([item.get_weight() for item in self.items])
+    
+    def get_total_size(self) -> float:
+        return sum([item.get_size() for item in self.items])
+    
+    def contains(self, item:Target) -> bool:
+        return item in self.items
+    
+    def add_item(self, item:Target) -> bool:
+        if item.get_size() + self.get_total_size() <= self.size_limit and item.get_weight() + self.get_total_weight():
+            self.items.append(item)
+            return True
+        return False
+    
+    def drop_item(self, item:Target) -> bool:
+        if item in self.items:
+            self.items.remove(item)
+            return True
+        return False
+
+class Actor(Target):
+    DEFAULT_WEIGHT = 100
+    DEFAULT_SIZE   = 100
+    DEFAULT_VALUE  = 0
+
+    def __init__(self, name:str, description:str, type:str, states:FullState, skills:SkillSet, inventory:Inventory, *, weight:float=DEFAULT_WEIGHT, size:float=DEFAULT_SIZE, value:float=DEFAULT_VALUE, actor_responses:Optional[dict['Action',str]]=None, target_responses:Optional[dict['Action',str]]=None, tool_responses:Optional[dict['Action',str]]=None, state_responses:Optional[dict[State,str]]=None, aliases:Optional[list[str]]=None):
+        super().__init__(name, description, states, weight=weight, size=size, value=value, target_responses=target_responses, tool_responses=tool_responses, state_responses=state_responses, aliases=aliases)
         self.actor_responses = dict[Action,str]() if actor_responses is None else actor_responses
+        self.inventory = inventory
+        self.inventory_location = LocationDetail(f"{self.name}'s inventory", True, hidden=True)
+        self.type = type
         self.skills = skills
 
     def __repr__(self):
@@ -106,6 +160,41 @@ class Actor(Target):
             if new_state in self.actor_responses:
                 response.append(self.actor_responses[new_state])
         return response
+    
+    def get_type(self) -> str:
+        return self.type
+
+    def _set_location(self, location, detail, *, origin=False):
+        super()._set_location(location, detail, origin=origin)
+        for item in self.inventory.get_items():
+            item.change_location(location, self.inventory_location)
+
+    def get_inventory_weight(self) -> float:
+        return self.inventory.get_total_weight()
+    
+    def get_inventory_value(self) -> float:
+        return self.inventory.get_total_value()
+    
+    def get_inventory_size(self) -> float:
+        return self.inventory.get_total_size()
+    
+    def add_item_to_inventory(self, item:Target) -> bool:
+        if self.inventory.add_item(item):
+            item.change_location(self.location, self.inventory_location)
+            return True
+        return False
+    
+    def remove_item_from_inventory(self, item:Target) -> bool:
+        if self.inventory.drop_item(item):
+            item.change_location(self.location)
+            return True
+        return False
+    
+    def get_inventory_items(self) -> list[Target]:
+        return self.inventory.get_items()
+    
+    def is_holding(self, item:Target) -> bool:
+        return self.inventory.contains(item)
 
 class Direction(Named):
     """The Directions a Character can move to get from Room to Room.

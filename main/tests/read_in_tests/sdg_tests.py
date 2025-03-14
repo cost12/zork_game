@@ -1,7 +1,6 @@
 from tests.conftest      import state_disconnected_graphs
 from factories.factories import StateDisconnectedGraphFactory
-from models.state        import State, StateGraph, StateDisconnectedGraph
-from models.action       import Action
+from models.state        import StateGraph, StateDisconnectedGraph
 
 def test_read_in(state_disconnected_graphs:StateDisconnectedGraphFactory):
     factory = state_disconnected_graphs

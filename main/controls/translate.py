@@ -1,9 +1,7 @@
 from typing import Any, Optional
 
 from models.action import Action, Named
-from models.item import Item
-from models.character import Character
-from models.actors import Direction, Location, Path
+from models.actors import Direction, Location, Path, Target, Actor
 from factories.factories import ItemFactory, NamedFactory, StateFactory, LocationFactory, SkillSetFactory, CharacterFactory, StateGraphFactory, LocationDetailFactory, CharacterControlFactory, StateDisconnectedGraphFactory
 
 class Word:
@@ -71,7 +69,7 @@ class Translator:
     def __init__(self, head:Node):
         self.head = head
 
-    def interpret(self, input:str, actions:dict[str,Action], characters:dict[str,Character], rooms:dict[str,Location], items:dict[str,Item], directions:dict[str,Direction]) -> tuple[Action,tuple]:
+    def interpret(self, input:str, actions:dict[str,Action], characters:dict[str,Actor], rooms:dict[str,Location], items:dict[str,Target], directions:dict[str,Direction]) -> tuple[Action,tuple]:
         context = {
             'action'    : actions,
             'character' : characters,

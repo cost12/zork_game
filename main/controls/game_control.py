@@ -1,7 +1,5 @@
 from typing import Any, Optional
 
-from models.character import Character
-from models.item import Item
 from models.actors import Direction, Target, Actor, Location
 from models.action import Action
 from factories.factories import ItemFactory, NamedFactory, StateFactory, LocationFactory, SkillSetFactory, CharacterFactory, StateGraphFactory, LocationDetailFactory, CharacterControlFactory, StateDisconnectedGraphFactory
@@ -20,7 +18,7 @@ class GameAction:
     def check_inputs(self, inputs:tuple) -> tuple[bool,tuple,str]:
         pass
 
-    def take_action(self, character:Character, inputs) -> Feedback:
+    def take_action(self, character:Actor, inputs) -> Feedback:
         pass
 
     def __combine_responses__(self, responses:list[str|None]) -> str:
@@ -35,12 +33,12 @@ class GameAction:
             first = False
         return result
 
-    def __verify_character__(self, character:Character) -> tuple[bool,str]:
+    def __verify_character__(self, character:Actor) -> tuple[bool,str]:
         if self.action in character.get_actions_as_actor():
             return True, ''
         return False, f"You are unable to perform this action."
 
-    def __verify_target__(self, character:Character, target:Item) -> tuple[bool,str]:
+    def __verify_target__(self, character:Actor, target:Target) -> tuple[bool,str]:
         room,_ = character.get_location()
         target_room, detail = target.get_location()
         if target_room == room:
@@ -51,7 +49,7 @@ class GameAction:
             return False, f"You can't seen any {target.get_name()} here."
         return False, f"There is no {target.get_name()} in this room."
 
-    def __verify_tool__(self, character:Character, tool:Item) -> tuple[bool,str]:
+    def __verify_tool__(self, character:Actor, tool:Target) -> tuple[bool,str]:
         room,_ = character.get_location()
         tool_room, detail = tool.get_location()
         if tool_room == room:
@@ -72,7 +70,7 @@ class LookAction(GameAction):
             return False, None, "You can't look at that."
         return False, None, "Pick something to focus on."
     
-    def take_action(self, character:Character, target:Optional[Item]=None) -> Feedback:
+    def take_action(self, character:Actor, target:Optional[Target]=None) -> Feedback:
         can_look, response = self.__verify_character__(character)
         if can_look:
             if target is None:
@@ -100,7 +98,7 @@ class WalkAction(GameAction):
             return False, None, "What direction?"
         return False, None, "That's a lot of words. Which way do you want to go?"
 
-    def take_action(self, character:Character, direction:Direction) -> Feedback:
+    def take_action(self, character:Actor, direction:Direction) -> Feedback:
         can_walk, response = self.__verify_character__(character)
         if can_walk:
             room, detail = character.get_location()
@@ -127,7 +125,7 @@ class WaitAction(GameAction):
             return True, None, ""
         return False, None, "Thats a lot of words. Do you want to wait?"
 
-    def take_action(self, character:Character):
+    def take_action(self, character:Actor):
         can_wait, response = self.__verify_character__(character)
         if can_wait:
             responses = character.perform_action_as_actor(self.action)
@@ -146,7 +144,7 @@ class TakeAction(GameAction):
             return True, (inputs,), ""
         return False, None, "Take what?"
     
-    def take_action(self, character:Character, targets:list[Item]) -> Feedback:
+    def take_action(self, character:Actor, targets:list[Target]) -> Feedback:
         can_take, response = self.__verify_character__(character)
         success = False
         if can_take:
@@ -173,7 +171,7 @@ class CheckInventoryAction(GameAction):
             return True, None, ""
         return False, None, f"That's a lot of words."
     
-    def take_action(self, character:Character) -> Feedback:
+    def take_action(self, character:Actor) -> Feedback:
         can_check, response = self.__verify_character__(character)
         if can_check:
             response = "Your inventory contains:\n\t"
@@ -186,7 +184,7 @@ class DefaultAction(GameAction):
     def check_inputs(self, inputs:tuple) -> tuple[bool,tuple,str]:
         return True, (inputs,), ""
     
-    def take_action(self, character:Character, inputs:tuple[Target]) -> Feedback:
+    def take_action(self, character:Actor, inputs:tuple[Target]) -> Feedback:
         can_act, response = self.__verify_character__(character)
         success = False
         if can_act:
@@ -204,7 +202,7 @@ class DefaultAction(GameAction):
 
 class GameState:
 
-    def __init__(self, details:dict[str,Any], rooms:LocationFactory, characters:CharacterFactory, extra_characters:list[Character], controllers:CharacterControlFactory, actions:NamedFactory[Action], items:ItemFactory, directions:NamedFactory[Direction]):
+    def __init__(self, details:dict[str,Any], rooms:LocationFactory, characters:CharacterFactory, extra_characters:list[Actor], controllers:CharacterControlFactory, actions:NamedFactory[Action], items:ItemFactory, directions:NamedFactory[Direction]):
         self.game_details    = details
         self.rooms           = rooms
         self.characters      = characters
@@ -237,7 +235,7 @@ class GameState:
     ##########################################################################
     # Getters
     ##########################################################################
-    def whose_turn(self) -> Character:
+    def whose_turn(self) -> Actor:
         return self.character_order[self.current_turn%len(self.character_order)]
 
     def game_over(self) -> bool:
@@ -262,7 +260,7 @@ class GameState:
     ###########################################################################
     # Actions
     ###########################################################################
-    def action(self, character:Character, action:Action, inputs:tuple) -> Feedback:
+    def action(self, character:Actor, action:Action, inputs:tuple) -> Feedback:
         feedback = None
         if action == 'error':
             feedback = Feedback(inputs.message,success=False,turns=0)

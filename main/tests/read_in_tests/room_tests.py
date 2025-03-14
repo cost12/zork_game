@@ -1,8 +1,7 @@
 from tests.conftest      import rooms
 from factories.factories import LocationFactory
 from models.actors       import Location, LocationDetail, Target, Direction, Path, Actor
-from models.action       import Action
-from models.state        import State, FullState
+from models.state        import State
 
 def test_read_in(rooms:LocationFactory):
     factory = rooms
