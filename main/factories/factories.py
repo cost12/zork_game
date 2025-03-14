@@ -231,9 +231,12 @@ class ItemFactory:
 
     def create_item(self, name:str, description:str, states:StateDisconnectedGraph, weight:float, value:float, size:float, target_responses:dict[Action,str], tool_responses:dict[Action,str], state_responses:dict[State,str]) -> Target:
         if size is None:
-            new_item = Target(name, description, states, weight=weight, value=value, target_responses=target_responses, tool_responses=tool_responses, state_responses=state_responses)
-        else:
-            new_item = Target(name, description, states, weight=weight, value=value, size=size, target_responses=target_responses, tool_responses=tool_responses, state_responses=state_responses)
+            size = Target.DEFAULT_SIZE
+        if weight is None:
+            weight = Target.DEFAULT_WEIGHT
+        if value is None:
+            value = Target.DEFAULT_VALUE
+        new_item = Target(name, description, states, weight=weight, value=value, size=size, target_responses=target_responses, tool_responses=tool_responses, state_responses=state_responses)
         if new_item in self.items:
             return self.items[new_item]
         for alias in new_item.get_aliases():
@@ -254,8 +257,12 @@ class ItemFactory:
             name = item_dict['name']
             description = item_dict['description']
             states = state_graphs.get_state_disconnected_graph(item_dict['states'])
-            weight = item_dict['weight']
-            value = item_dict['value']
+            weight = None
+            if 'weight' in item_dict:
+                weight = item_dict['weight']
+            value = None
+            if 'value' in item_dict:
+                value = item_dict['value']
             size = None
             if 'size' in item_dict:
                 size = item_dict['size']

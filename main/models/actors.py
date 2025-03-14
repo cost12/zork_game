@@ -7,8 +7,11 @@ from models.action import Named, Action
 # Should all Targets have weight? size? value?
 
 class Target(Named):
+    DEFAULT_WEIGHT = 1
+    DEFAULT_SIZE   = 1
+    DEFAULT_VALUE  = 0
 
-    def __init__(self, name:str, description:str, states:FullState,*, weight:float=1, size:float=1, value:float=0, target_responses:Optional[dict['Action',str]]=None, tool_responses:Optional[dict['Action',str]]=None, state_responses:Optional[dict[State,str]]=None, aliases:Optional[str]=None):
+    def __init__(self, name:str, description:str, states:FullState,*, weight:float=DEFAULT_WEIGHT, size:float=DEFAULT_SIZE, value:float=DEFAULT_VALUE, target_responses:Optional[dict['Action',str]]=None, tool_responses:Optional[dict['Action',str]]=None, state_responses:Optional[dict[State,str]]=None, aliases:Optional[str]=None):
         super().__init__(name, aliases)
         self.description = description
         self.states = states
