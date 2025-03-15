@@ -1,0 +1,10 @@
+[
+    {
+        "name"         : "standard_character",
+        "state_graphs" : ["standard_character"]
+    },
+    {
+        "name"         : "standard_item",
+        "state_graphs" : ["standard_item", "held_item", "switch"]
+    }
+]
