@@ -112,43 +112,40 @@ class StateGraph(Named):
         return self.current_state.get_actions_as_tool()
 
     def perform_action_as_actor(self, action:Action) -> list[State]:
-        if self.current_state.can_act_as_actor(action):
-            if self.current_state in self.actor_graph:
-                if action in self.actor_graph[self.current_state]:
-                    old_state = self.current_state
-                    self.current_state = self.actor_graph[self.current_state][action]
-                    self.time_in_state = 0
-                return [state for state in self.current_state.get_states() if old_state.has_state(state)]
+        if self.current_state in self.actor_graph:
+            if action in self.actor_graph[self.current_state]:
+                old_state = self.current_state
+                self.current_state = self.actor_graph[self.current_state][action]
+                self.time_in_state = 0
+                return [state for state in self.current_state.get_states() if not old_state.has_state(state)]
         return []
 
     def perform_action_as_target(self, action:Action) -> list[State]:
-        if self.current_state.can_act_as_target(action):
-            if self.current_state in self.target_graph:
-                if action in self.target_graph[self.current_state]:
-                    old_state = self.current_state
-                    self.current_state = self.target_graph[self.current_state][action]
-                    self.time_in_state = 0
-                return [state for state in self.current_state.get_states() if old_state.has_state(state)]
+        if self.current_state in self.target_graph:
+            if action in self.target_graph[self.current_state]:
+                old_state = self.current_state
+                self.current_state = self.target_graph[self.current_state][action]
+                self.time_in_state = 0
+                return [state for state in self.current_state.get_states() if not old_state.has_state(state)]                    
         return []
     
     def perform_action_as_tool(self, action:Action) -> list[State]:
-        if self.current_state.can_act_as_tool(action):
-            if self.current_state in self.tool_graph:
-                if action in self.tool_graph[self.current_state]:
-                    old_state = self.current_state
-                    self.current_state = self.tool_graph[self.current_state][action]
-                    self.time_in_state = 0
-                return [state for state in self.current_state.get_states() if old_state.has_state(state)]
+        if self.current_state in self.tool_graph:
+            if action in self.tool_graph[self.current_state]:
+                old_state = self.current_state
+                self.current_state = self.tool_graph[self.current_state][action]
+                self.time_in_state = 0
+                return [state for state in self.current_state.get_states() if not old_state.has_state(state)]
         return []
     
     def time_passes(self, time:int=1) -> list[State]:
         self.time_in_state += time
         if self.current_state in self.time_graph:
-            if self.time_in_state > self.time_graph[self.current_state][0]:
+            if self.time_in_state >= self.time_graph[self.current_state][0]:
                 old_state = self.current_state
                 self.current_state = self.time_graph[self.current_state][1]
                 self.time_in_state = 0
-                return [state for state in self.current_state.get_states() if old_state.has_state(state)]
+                return [state for state in self.current_state.get_states() if not old_state.has_state(state)]
         return []
 
 class FullState(Named):

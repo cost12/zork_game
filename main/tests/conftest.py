@@ -60,3 +60,56 @@ def game_details() -> dict[str,Any]:
 @pytest.fixture
 def game() -> tuple[LocationFactory, CharacterFactory, CharacterControlFactory, ItemFactory, NamedFactory[Action], NamedFactory[Direction], dict[str,Any]]:
     return read_in_game(GAME_TO_TEST)
+
+# Test
+@pytest.fixture
+def test_directions() -> NamedFactory[Direction]:
+    return read_in_directions('test_game')
+
+@pytest.fixture
+def test_actions() -> NamedFactory[Action]:
+    return read_in_actions('test_game')
+
+@pytest.fixture
+def test_states(actions:NamedFactory[Action]) -> StateFactory:
+    return read_in_states('test_game', actions)
+
+@pytest.fixture
+def test_state_graphs(states:StateFactory, actions:NamedFactory[Action]) -> StateGraphFactory:
+    return read_in_state_graphs('test_game', states, actions)
+
+@pytest.fixture
+def test_state_disconnected_graphs(state_graphs:StateGraphFactory) -> StateDisconnectedGraphFactory:
+    return read_in_state_disconnected_graphs('test_game', state_graphs)
+
+@pytest.fixture
+def test_items(state_disconnected_graphs:StateDisconnectedGraphFactory, actions:NamedFactory[Action], states:StateFactory) -> ItemFactory:
+    return read_in_items('test_game', state_disconnected_graphs, actions, states)
+
+@pytest.fixture
+def test_skills() -> NamedFactory[Skill]:
+    return read_in_skills('test_game')
+
+@pytest.fixture
+def test_skill_sets(skills:NamedFactory[Skill]) -> SkillSetFactory:
+    return read_in_skill_sets('test_game', skills)
+
+@pytest.fixture
+def test_characters(state_disconnected_graphs:StateDisconnectedGraphFactory, skill_sets:SkillSetFactory, items:ItemFactory, actions:NamedFactory[Action], states:StateFactory) -> CharacterFactory:
+    return read_in_characters('test_game', state_disconnected_graphs, skill_sets, items, actions, states)
+
+@pytest.fixture
+def test_rooms(characters:CharacterFactory, items:ItemFactory, directions:NamedFactory[Direction], states:StateFactory) -> LocationFactory:
+    return read_in_rooms('test_game', characters, items, directions, states)
+
+@pytest.fixture
+def test_controls(characters:CharacterFactory) -> CharacterControlFactory:
+    return read_in_character_control('test_game', characters)
+
+@pytest.fixture
+def test_game_details() -> dict[str,Any]:
+    return read_in_game_details('test_game')
+
+@pytest.fixture
+def test_game() -> tuple[LocationFactory, CharacterFactory, CharacterControlFactory, ItemFactory, NamedFactory[Action], NamedFactory[Direction], dict[str,Any]]:
+    return read_in_game('test_game')
