@@ -1,0 +1,42 @@
+[
+    {
+        "name"    : "look",
+        "aliases" : ["look", "inspect", "search"]
+    },
+    {
+        "name"    : "take",
+        "aliases" : ["take", "grab", "pick up"]
+    },
+    {
+        "name"    : "drop",
+        "aliases" : ["drop", "let go"]
+    },
+    {
+        "name"    : "inventory",
+        "aliases" : ["inventory"]
+    },
+    {
+        "name"    : "wait",
+        "aliases" : ["wait"]
+    },
+    {
+        "name"    : "walk",
+        "aliases" : ["walk","go","g","head"]
+    },
+    {
+        "name"    : "break",
+        "aliases" : ["break", "shatter", "smash"]
+    },
+    {
+        "name"    : "turn on",
+        "aliases" : ["turn on"]
+    },
+    {
+        "name"    : "turn off",
+        "aliases" : ["turn off"]
+    },
+    {
+        "name"    : "toggle",
+        "aliases" : ["toggle", "switch"]
+    }
+]
