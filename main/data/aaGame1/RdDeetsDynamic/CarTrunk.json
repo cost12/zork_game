@@ -1,12 +1,13 @@
 {
-    "room"       : "Car Trunk",
-    "exits"      : [
-        {
+    "name"       : "Car Trunk",
+    "description": "For some reason, you are in the car’s trunk. You have to curl up in order to fit. What an odd thing to do!",
+    "paths"      : {
+        "XXXnorth"  : {
             "name"        : "Exit 1",
-            "description" : "",
-            "direction"   : "out",
-            "end"         : "Parking lot"
+            "description" : "outside",
+            "end"         : "Parking Lot"
         }
-    ],
-    "items"      : []
+    },
+    "details"    : [],
+    "contents"   : {}
 }

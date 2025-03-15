@@ -1,18 +1,19 @@
+
 {
-    "room"       : "Dining Room",
-    "exits"      : [
-        {
+    "name"       : "Cargo Hold",
+    "description": "You are standing in a dark, musty shipping container. Its contents are long gone, and only a few piles of rust remain. You hear a shrill sliding melody playing through some hidden speakers.",
+    "paths"      : {
+        "north"  : {
             "name"        : "Exit 1",
-            "description" : "A door",
-            "direction"   : "north",
-            "end"         : "Office"
+            "description" : "the train continues",
+            "end"         : "Conductor's Car"
         },
-        {
+        "south"  : {
             "name"        : "Exit 2",
-            "description" : "A door",
-            "direction"   : "east",
-            "end"         : "Den"
+            "description" : "another train car",
+            "end"         : "Observation Car"
         }
-    ],
-    "items"      : ["Meal", "Plate"]
+    },
+    "details"    : [],
+    "contents"   : {}
 }

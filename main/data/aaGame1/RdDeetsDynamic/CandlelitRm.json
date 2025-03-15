@@ -1,18 +1,26 @@
 {
-    "room"       : "Candlelit Room",
-    "exits"      : [
-        {
+    "name"       : "Candlelit Room",
+    "description": "You stand in an elegant room constructed of short terraced marble steps, all of which are covered with lit candles. Their glow illuminates the arched room elegantly.",
+    "paths"      : {
+        "east"  : {
             "name"        : "Exit 1",
-            "description" : "A thin passage",
-            "direction"   : "north",
-            "end"         : "Office"
+            "description" : "a thin passage",
+            "end"         : "Giang Cave"
         },
-        {
+        "south"  : {
             "name"        : "Exit 2",
-            "description" : "A door",
-            "direction"   : "east",
-            "end"         : "Den"
+            "description" : "a grand, ornate door",
+            "end"         : "Riches Room"
         }
+    },
+    "details"    : [
+        {"name" : "floor",
+    "description" : "amidst the inumerable candles, sitting on the floor"}
     ],
-    "items"      : ["Meal", "Plate"]
+    "contents"   : {
+        "a candle"       : "floor",
+        "another candle" : "floor",
+        "a third candle" : "floor",
+        "a fourth candle": "floor"
+    }
 }

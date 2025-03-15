@@ -1,18 +1,18 @@
 {
-    "room"       : "Dining Room",
-    "exits"      : [
-        {
+    "name"       : "Carpeted Hall",
+    "description": "You stand in a long torch-lit hallway adorned with an ornate, illustrative carpet stretching as far as you can see to the East.",
+    "paths"      : {
+        "west"  : {
             "name"        : "Exit 1",
-            "description" : "A door",
-            "direction"   : "north",
-            "end"         : "Office"
+            "description" : "a simple wooden door",
+            "end"         : "Theatre Stage"
         },
-        {
+        "east"  : {
             "name"        : "Exit 2",
-            "description" : "A door",
-            "direction"   : "east",
-            "end"         : "Den"
+            "description" : "the hallway continues",
+            "end"         : "Carpeted Hall"
         }
-    ],
-    "items"      : ["Meal", "Plate"]
+    },
+    "details"    : [],
+    "contents"   : {}
 }
