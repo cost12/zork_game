@@ -236,10 +236,10 @@ class CheckInventoryAction(GameAction):
 class DefaultAction(GameAction):
 
     def check_inputs(self, inputs:tuple) -> tuple[bool,tuple,str]:
-        return True, (inputs,), "This action is not implemented and may result in errors."
+        return True, (inputs,), None
     
     def take_action(self, character:Actor, inputs:tuple[Target]) -> Feedback:
-        response = []
+        response = ["This action is not implemented and may result in errors."]
         can_act, r = self.__verify_character__(character)
         response.append(r)
         success = False
