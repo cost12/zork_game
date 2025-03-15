@@ -6,10 +6,11 @@
     "value"            : 1,
     "size"             : 1,
     "target_responses" : {
-        "take": "it is surprisingly light"
+        "take": "The lamp is surprisingly light!"
     },
     "state_responses"  : {
-        "on"  : "the lamp is on",
-        "off" : "the lamp is off"
+        "on"          : "The lamp is on.",
+        "off"         : "The lamp is off.",
+        "broken_item" : "The lamp is broken and can't be turned on."
     }
 }

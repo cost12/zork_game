@@ -15,7 +15,7 @@ class GameAction:
     def __init__(self, action:Action):
         self.action = action
 
-    def check_inputs(self, inputs:tuple) -> tuple[bool,tuple,str]:
+    def check_inputs(self, inputs:tuple) -> tuple[bool,tuple,Optional[str]]:
         pass
 
     def take_action(self, character:Actor, inputs) -> Feedback:
@@ -33,19 +33,25 @@ class GameAction:
             first = False
         return result
 
-    def __verify_character__(self, character:Actor) -> tuple[bool,str]:
+    def __verify_character__(self, character:Actor) -> tuple[bool,Optional[str]]:
+        response = character.get_actor_response(self.action)
         if self.action in character.get_actions_as_actor():
-            return True, ''
-        return False, f"You are unable to perform this action."
+            return True, response
+        if response is None:
+            response = f"You are unable to perform this action."
+        return False, response
 
     def __verify_target__(self, character:Actor, target:Target) -> tuple[bool,str]:
         room,_ = character.get_location()
         target_room, detail = target.get_location()
         if target_room == room:
             if not detail.is_hidden() or target in character.get_inventory_items():
+                response = target.get_target_response(self.action)
                 if self.action in target.get_actions_as_target():
-                    return True, ""
-                return False, f"The {target.get_name()} resists the action."
+                    return True, response
+                if response is None:
+                    response = f"The {target.get_name()} resists the action."
+                return False, response
             return False, f"You can't seen any {target.get_name()} here."
         return False, f"There is no {target.get_name()} in this room."
 
@@ -54,151 +60,199 @@ class GameAction:
         tool_room, detail = tool.get_location()
         if tool_room == room:
             if not detail.is_hidden() or tool in character.get_inventory_items():
+                response = tool.get_tool_response(self.action)
                 if self.action in tool.get_actions_as_target():
-                    return True, ""
-                return False, f"The {tool.get_name()} can't be used in this way."
-            return False, f"You can't seen any {tool.get_name()} here."
+                    return True, response
+                if response is None:
+                    response = f"The {tool.get_name()} can't be used in this way."
+                return False, response
+            return False, f"You can't see any {tool.get_name()} here."
         return False, f"There is no {tool.get_name()} in this room."
     
 class LookAction(GameAction):
-    def check_inputs(self, inputs) -> tuple[bool,tuple,str]:
+    def check_inputs(self, inputs) -> tuple[bool,tuple,Optional[str]]:
         if len(inputs) == 0:
-            return True, inputs, ""
+            return True, inputs, None
         elif len(inputs) == 1:
             if isinstance(inputs[0], Target):
-                return True, inputs, ""
+                return True, inputs, None
             return False, None, "You can't look at that."
         return False, None, "Pick something to focus on."
     
     def take_action(self, character:Actor, target:Optional[Target]=None) -> Feedback:
-        can_look, response = self.__verify_character__(character)
+        response = []
+        can_look, r = self.__verify_character__(character)
+        response.append(r)
         if can_look:
             if target is None:
                 location, _ = character.get_location()
-                response1 = character.perform_action_as_actor(self.action)
-                response = self.__combine_responses__([*response1, location.get_description(character)])
-                return Feedback(response, turns=0)
+                response.extend(character.perform_action_as_actor(self.action))
+                response.append(location.get_description(character))
+                return Feedback(self.__combine_responses__(response), turns=0)
             else:
-                can_be_seen, response = self.__verify_target__(character, target)
+                can_be_seen, r = self.__verify_target__(character, target)
+                response.append(r)
                 if can_be_seen:
-                    response = character.perform_action_as_actor(self.action)
+                    response.extend(character.perform_action_as_actor(self.action))
                     response.extend(target.perform_action_as_target(self.action))
-                    response = self.__combine_responses__([*response, target.get_description()])
-                    return Feedback(response)
-        return Feedback(response, success=False, turns=0)
+                    response.append(f"You see a {target.get_description()}.")
+                    return Feedback(self.__combine_responses__(response), turns=0)
+        return Feedback(self.__combine_responses__(response), success=False, turns=0)
 
 class WalkAction(GameAction):
 
-    def check_inputs(self, inputs:tuple) -> tuple[bool,tuple,str]:
+    def check_inputs(self, inputs:tuple) -> tuple[bool,tuple,Optional[str]]:
         if len(inputs) == 1:
             if isinstance(inputs[0], Direction):
-                return True, inputs, ""
+                return True, inputs, None
             return False, None, "What direction?"
         if len(inputs) == 0:
             return False, None, "What direction?"
         return False, None, "That's a lot of words. Which way do you want to go?"
 
     def take_action(self, character:Actor, direction:Direction) -> Feedback:
-        can_walk, response = self.__verify_character__(character)
+        response = []
+        can_walk, r = self.__verify_character__(character)
+        response.append(r)
         if can_walk:
             room, detail = character.get_location()
-            exit, response = room.get_path(direction)
+            exit, r = room.get_path(direction)
+            if r is None and exit is None:
+                r = f"There is nothing {direction.get_name()}."
+            response.append(r)
             if exit is not None:
-                can_pass, reason, response = exit.can_pass(character)
+                can_pass, reason, r = exit.can_pass(character)
+                if r is None and not can_pass:
+                    r = "You are unable to exit."
+                response.append(r)
                 if can_pass:
                     character.change_location(exit.get_end())
-                    response2 = character.perform_action_as_actor(self.action)
-                    response3 = LookAction(Action('look')).take_action(character).as_string()
-                    responses = [response, *response2, response3]
-                    response = self.__combine_responses__(responses)
-                    return Feedback(response)
-                elif response is None:
-                    response = "You are unable to exit."
-            elif response is None:
-                response = f"There is nothing {direction.get_name()}."
-        return Feedback(response, success=False, turns=0)
+                    response.extend(character.perform_action_as_actor(self.action))
+                    response.append(LookAction(Action('look')).take_action(character).as_string())
+                    return Feedback(self.__combine_responses__(response))
+        return Feedback(self.__combine_responses__(response), success=False, turns=0)
 
 class WaitAction(GameAction):
 
-    def check_inputs(self, inputs:tuple) -> tuple[bool,tuple,str]:
+    def check_inputs(self, inputs:tuple) -> tuple[bool,tuple,Optional[str]]:
         if len(inputs) == 0:
-            return True, None, ""
+            return True, None, None
         return False, None, "Thats a lot of words. Do you want to wait?"
 
     def take_action(self, character:Actor):
-        can_wait, response = self.__verify_character__(character)
+        response = []
+        can_wait, r = self.__verify_character__(character)
+        response.append(r)
         if can_wait:
-            responses = character.perform_action_as_actor(self.action)
-            response = self.__combine_responses__(responses)
-            return Feedback(response)
-        return Feedback(response, success=False, turns=0)
+            response.extend(character.perform_action_as_actor(self.action))
+            return Feedback(self.__combine_responses__(response))
+        return Feedback(self.__combine_responses__(response), success=False, turns=0)
 
 class TakeAction(GameAction):
-    # How will inputs be formatted correctly?
 
-    def check_inputs(self, inputs) -> tuple[bool,tuple,str]:
+    def check_inputs(self, inputs) -> tuple[bool,tuple,Optional[str]]:
         for input in inputs:
             if not isinstance(input, Target):
                 return False, None, f"You can't take a {input.get_name()}!"
         if len(inputs) > 0:
-            return True, (inputs,), ""
+            return True, (inputs,), None
         return False, None, "Take what?"
     
     def take_action(self, character:Actor, targets:list[Target]) -> Feedback:
-        can_take, response = self.__verify_character__(character)
+        response = []
+        can_take, r = self.__verify_character__(character)
+        response.append(r)
         success = False
         if can_take:
-            response = ""
             for target in targets:
                 can_be_taken, target_response = self.__verify_target__(character, target)
-                response = self.__combine_responses__([response, target_response])
+                response.append(target_response)
                 if can_be_taken:
                     if character.add_item_to_inventory(target):
                         success = True
-                        target_responses = target.perform_action_as_target(self.action)
-                        response = self.__combine_responses__([response, *target_responses])
+                        response.extend(target.perform_action_as_target(self.action))
                     else:
-                        response = self.__combine_responses__([response, f"The {target.get_name()} didn't fit in your pack."])
+                        response.append(f"The {target.get_name()} doesn't fit in your pack.")
                 if success:
-                    character_responses = character.perform_action_as_actor(self.action)
-                    response = self.__combine_responses__([response, "Taken.", *character_responses])
-        return Feedback(response, success=success, turns=0)
+                    response.append("Taken.")
+                    response.extend(character.perform_action_as_actor(self.action))
+                else:
+                    response.append("No items were taken.")
+        return Feedback(self.__combine_responses__(response), success=success, turns=1 if success else 0)
+
+class DropAction(GameAction):
+
+    def check_inputs(self, inputs) -> tuple[bool,tuple,Optional[str]]:
+        for input in inputs:
+            if not isinstance(input, Target):
+                return False, None, f"You can't drop a {input.get_name()}!"
+        if len(inputs) > 0:
+            return True, (inputs,), None
+        return False, None, "Drop what?"
+    
+    def take_action(self, character:Actor, targets:list[Target]) -> Feedback:
+        response = []
+        can_drop, r = self.__verify_character__(character)
+        response.append(r)
+        success = False
+        if can_drop:
+            for target in targets:
+                can_be_dropped, target_response = self.__verify_target__(character, target)
+                response.append(target_response)
+                if can_be_dropped:
+                    if character.remove_item_from_inventory(target):
+                        success = True
+                        response.extend(target.perform_action_as_target(self.action))
+                    else:
+                        response.append(f"You aren't holding a {target.get_name()}.")
+                if success:
+                    response.append("Dropped.")
+                    response.extend(character.perform_action_as_actor(self.action))
+                else:
+                    response.append("No items were dropped.")
+        return Feedback(self.__combine_responses__(response), success=success, turns=1 if success else 0)
 
 class CheckInventoryAction(GameAction):
 
-    def check_inputs(self, inputs:tuple) -> tuple[bool,tuple,str]:
+    def check_inputs(self, inputs:tuple) -> tuple[bool,tuple,Optional[str]]:
         if len(inputs) == 0:
-            return True, None, ""
+            return True, None, None
         return False, None, f"That's a lot of words."
     
     def take_action(self, character:Actor) -> Feedback:
-        can_check, response = self.__verify_character__(character)
+        response = []
+        can_check, r = self.__verify_character__(character)
+        response.append(r)
         if can_check:
-            response = "Your inventory contains:\n\t"
-            response += "\n\t".join([item.get_name() for item in character.get_inventory_items()])
-            return Feedback(response, turns=0)
-        return Feedback(response, success=False, turns=0)
+            if len(character.get_inventory_items()) > 0:
+                r = "Your inventory contains:\n\t"
+                r += "\n\t".join([item.get_name() for item in character.get_inventory_items()])
+            else:
+                r = "Your inventory is empty."
+            response.append(r)
+            return Feedback(self.__combine_responses__(response), turns=0)
+        return Feedback(self.__combine_responses__(response), success=False, turns=0)
 
 class DefaultAction(GameAction):
 
     def check_inputs(self, inputs:tuple) -> tuple[bool,tuple,str]:
-        return True, (inputs,), ""
+        return True, (inputs,), "This action is not implemented and may result in errors."
     
     def take_action(self, character:Actor, inputs:tuple[Target]) -> Feedback:
-        can_act, response = self.__verify_character__(character)
+        response = []
+        can_act, r = self.__verify_character__(character)
+        response.append(r)
         success = False
         if can_act:
             for target in inputs:
                 can_take_act, target_response = self.__verify_target__(character, target)
-                response = self.__combine_responses__([response,target_response])
+                response.append(target_response)
                 if can_take_act:
                     success = True
-                    target_responses = target.perform_action_as_target(self.action)
-                    response = self.__combine_responses__([response, *target_responses])
+                    response.extend(target.perform_action_as_target(self.action))
             if success:
-                responses = character.perform_action_as_actor(self.action)
-                response = self.__combine_responses__([response, *responses])
-        return Feedback(response, success=success,turns=0)
+                response.extend(character.perform_action_as_actor(self.action))
+        return Feedback(self.__combine_responses__(response), success=success, turns=0)
 
 class GameState:
 
@@ -215,13 +269,14 @@ class GameState:
         self.current_turn    = 0
         self.moves           = 0
         self.action_dict     = dict[Action,GameAction]({
-            self.actions.get_named('walk'): WalkAction(self.actions.get_named('walk')),
             self.actions.get_named('look'): LookAction(self.actions.get_named('look')),
+            self.actions.get_named('walk'): WalkAction(self.actions.get_named('walk')),
             self.actions.get_named('wait'): WaitAction(self.actions.get_named('wait')),
             self.actions.get_named('take'): TakeAction(self.actions.get_named('take')),
+            self.actions.get_named('drop'): DropAction(self.actions.get_named('drop')),
             self.actions.get_named('inventory'):CheckInventoryAction(self.actions.get_named('inventory')),
         })
-        self.default_action = DefaultAction(self.actions.get_named('walk'))
+        self.default_action = DefaultAction(self.actions.get_named('look'))
         #print(rooms.get_locations()[0])
         i = 0
         start_rooms = [room for room in rooms.get_locations() if room.is_start_location()]

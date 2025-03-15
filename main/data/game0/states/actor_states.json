@@ -1,6 +1,7 @@
 [
     {
         "name"             : "normal_character",
-        "actions_as_actor" : ["walk", "wait", "look", "take", "drop", "inventory", "break", "toggle", "turn on", "turn off"]
+        "actions_as_actor" : ["walk", "wait", "look", "take", "drop", "inventory", "break", "toggle", "turn on", "turn off"],
+        "actions_as_target": ["look"]
     }
 ]

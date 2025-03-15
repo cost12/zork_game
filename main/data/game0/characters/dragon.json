@@ -9,7 +9,7 @@
         "weight_limit" : 100
     },
     "target_responses" : {
-        "look" : "the dragon does not like to be looked at",
-        "take" : "a noble effort"
+        "look" : "The dragon does not like to be looked at.",
+        "take" : "A noble effort."
     }
 }

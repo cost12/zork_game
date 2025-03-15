@@ -43,26 +43,32 @@ class Target(Named):
     def get_current_state(self) -> list[State]:
         return self.states.get_current_states()
 
-    def get_actions_as_target(self) -> list['Action']:
+    def get_actions_as_target(self) -> list[Action]:
         return self.states.get_available_actions_as_target()
     
-    def get_actions_as_tool(self) -> list['Action']:
+    def get_actions_as_tool(self) -> list[Action]:
         return self.states.get_available_actions_as_tool()
-
-    def perform_action_as_target(self, action:'Action') -> list[str]:
-        response = list[str]()
+    
+    def get_target_response(self, action:Action) -> Optional[str]:
         if action in self.target_responses:
-            response.append(self.target_responses[action])
+            return self.target_responses[action]
+        return None
+    
+    def get_tool_response(self, action:Action) -> Optional[str]:
+        if action in self.tool_responses:
+            return self.tool_responses[action]
+        return None
+
+    def perform_action_as_target(self, action:Action) -> list[str]:
+        response = list[str]()
         new_states = self.states.perform_action_as_target(action)
         for new_state in new_states:
             if new_state in self.state_responses:
                 response.append(self.state_responses[new_state])
         return response
     
-    def perform_action_as_tool(self, action:'Action') -> list[str]:
+    def perform_action_as_tool(self, action:Action) -> list[str]:
         response = list[str]()
-        if action in self.target_responses:
-            response.append(self.tool_responses[action])
         new_states = self.states.perform_action_as_tool(action)
         for new_state in new_states:
             if new_state in self.state_responses:
@@ -151,10 +157,15 @@ class Actor(Target):
     def lose_proficiency(self, skill:Skill, amount:int=1) -> int:
         return self.skills.lose_proficiency(skill, amount)
 
-    def get_actions_as_actor(self) -> list['Action']:
+    def get_actions_as_actor(self) -> list[Action]:
         return self.states.get_available_actions_as_actor()
 
-    def perform_action_as_actor(self, action:'Action') -> list[str]:
+    def get_actor_response(self, action:Action) -> Optional[str]:
+        if action in self.actor_responses:
+            return self.actor_responses[action]
+        return None
+
+    def perform_action_as_actor(self, action:Action) -> list[str]:
         response = list[str]()
         if action in self.actor_responses:
             response.append(self.actor_responses[action])
