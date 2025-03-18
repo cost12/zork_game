@@ -1,18 +1,25 @@
 {
-    "room"       : "Dining Room",
-    "exits"      : [
-        {
+    "name"       : "Man Cave",
+    "description": "You enter a well-furnished man cave. Posters of scanty models, brawny wrestlers, and feline predators adorn every inch of wall.",
+    "paths"      : {
+        "northwest"  : {
             "name"        : "Exit 1",
-            "description" : "A door",
-            "direction"   : "north",
-            "end"         : "Office"
+            "description" : "a passage",
+            "end"         : "Theatre Stage"
         },
-        {
+        "south"  : {
             "name"        : "Exit 2",
-            "description" : "A door",
-            "direction"   : "east",
-            "end"         : "Den"
+            "description" : "a passage",
+            "end"         : "North of Tight Pass"
+        },
+        "east"  : {
+            "name"        : "Exit 2",
+            "description" : "an ornate doorway",
+            "end"         : "Display Room"
         }
-    ],
-    "items"      : ["Meal", "Plate"]
+    },
+    "details"    : [],
+    "contents"   : {
+        "Bully" : "default"
+    }
 }

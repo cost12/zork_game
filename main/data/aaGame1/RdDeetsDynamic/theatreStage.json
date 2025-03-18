@@ -1,0 +1,35 @@
+{
+    "name"       : "Theatre Stage",
+    "description": "You stand on a meekly lit Theatre Stage. A music stand sits on the stage.",
+    "paths"      : {
+        "north"  : {
+            "name"        : "Exit 1",
+            "description" : "the Theatre continues",
+            "end"         : "Theatre Seats"
+        },
+        "southeast"  : {
+            "name"        : "Exit 2",
+            "description" : "a passage",
+            "end"         : "Carpeted Hall"
+        },
+        "southwest"  : {
+            "name"        : "Exit 2",
+            "description" : "a passage",
+            "end"         : "Hot Room"
+        }
+    },
+    "details"    : [
+        {"name" : "stage",
+    "description" : "laying abandoned on the stage"},
+    {"name" : "stand",
+"description" : "sitting on the music stand"}
+    ],
+    "contents"   : {
+        "Baton" : "stand",
+        "Lyre" : "stage",
+        "Triangle" : "stage",
+        "Slide Whistle" : "stage",
+        "Bongo" : "stage",
+        "Violin" : "stage"
+    }
+}

@@ -1,0 +1,23 @@
+{
+    "name"       : "Puzzle Room",
+    "description": "You are standing in a homey room. On a carpet stands a table.",
+    "paths"      : {
+        "north"  : {
+            "name"        : "Exit 1",
+            "description" : "a stony passage",
+            "end"         : "Bear's Den"
+        },
+        "south"  : {
+            "name"        : "Exit 2",
+            "description" : "a nice walkway",
+            "end"         : "Library"
+        }
+    },
+    "details"    : [
+        {"name" : "table",
+    "description" : "on the table"}
+    ],
+    "contents"   : {
+        "puzzle" : "table"
+    }
+}

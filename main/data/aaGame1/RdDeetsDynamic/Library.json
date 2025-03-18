@@ -1,18 +1,14 @@
+
 {
-    "room"       : "Dining Room",
-    "exits"      : [
-        {
+    "name"       : "Library",
+    "description": "You are standing in a small town library. The single room contains ten shelves numbered 1-10.",
+    "paths"      : {
+        "north"  : {
             "name"        : "Exit 1",
-            "description" : "A door",
-            "direction"   : "north",
-            "end"         : "Office"
-        },
-        {
-            "name"        : "Exit 2",
-            "description" : "A door",
-            "direction"   : "east",
-            "end"         : "Den"
+            "description" : "a regal yet sturdy doouble door",
+            "end"         : "Puzzle Room"
         }
-    ],
-    "items"      : ["Meal", "Plate"]
+    },
+    "details"    : ["shelves??? Exit puzzle?"],
+    "contents"   : {}
 }

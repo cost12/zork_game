@@ -1,18 +1,18 @@
 {
-    "room"       : "Dining Room",
-    "exits"      : [
-        {
+    "name"       : "South of Tight Pass",
+    "description": "You stand in a narrow, claustrophobic cave.",
+    "paths"      : {
+        "north"  : {
             "name"        : "Exit 1",
-            "description" : "A door",
-            "direction"   : "north",
-            "end"         : "Office"
+            "description" : "the tight pass",
+            "end"         : "North of tight Pass"
         },
-        {
+        "south"  : {
             "name"        : "Exit 2",
-            "description" : "A door",
-            "direction"   : "east",
-            "end"         : "Den"
+            "description" : "a passage",
+            "end"         : "Cold Room"
         }
-    ],
-    "items"      : ["Meal", "Plate"]
+    },
+    "details"    : [],
+    "contents"   : {}
 }

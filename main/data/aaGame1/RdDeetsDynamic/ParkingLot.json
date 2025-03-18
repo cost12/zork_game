@@ -1,24 +1,28 @@
 {
-    "room"       : "Parking Lot",
-    "exits"      : [
-        {
+    "name"       : "Parking Lot",
+    "description": "You are standing in a large underground parking lot dotted with square concrete columns. A single car is parked, lonesomely covered in a layer of dust.",
+    "paths"      : {
+        "north"  : {
             "name"        : "Exit 1",
-            "description" : "An exit ramp",
-            "direction"   : "north",
-            "end"         : "Riches Room" 
+            "description" : "an exit ramp",
+            "end"         : "Riches Room"
         },
-        {
-            "name"        : "Exit 1",
-            "description" : "",
-            "direction"   : "in trunk",
-            "end"         : "Car Trunk" 
-        },
-        {
+        "in trunk"  : {
             "name"        : "Exit 2",
             "description" : "",
-            "direction"   : "in car",
+            "end"         : "Trunk"
+        },
+        "in car" :{
+            "name"        : "Exit 3",
+            "description" : "the driver's door",
             "end"         : "Driver's Seat"
-        }
+        }   
+    },
+    "details"    : [
+        {"name" : "trunk",
+    "description" : "in a corner of the trunk"}
     ],
-    "items"      : ["Fuzzy Jacket"]
+    "contents"   : {
+        "Fuzzy Jacket" : "trunk"
+    }
 }

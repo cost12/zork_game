@@ -1,18 +1,18 @@
 {
-    "room"       : "Skate Park",
-    "exits"      : [
-        {
+    "name"       : "Skate Park",
+    "description": "You stand at the top of a halfpipe at one edge of a small yet complex skate park. Graffiti covers the concrete walls and much of the undulating ground. A poster of Tony Hawk adorns one wall.",
+    "paths"      : {
+        "northwest"  : {
             "name"        : "Exit 1",
-            "description" : "An exit",
-            "direction"   : "northwest",
+            "description" : "a passage",
             "end"         : "Beehive Room"
         },
-        {
+        "south"  : {
             "name"        : "Exit 2",
-            "description" : "A newly revealed door",
-            "direction"   : "South",
-            "end"         : "Greenhouse" ,
-            "comment" : "only possible if child has been given skateboard!"
+            "description" : "a passage",
+            "end"         : "Greenhouse"
         }
-    ]
+    },
+    "details"    : [],
+    "contents"   : {}
 }

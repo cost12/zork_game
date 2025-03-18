@@ -1,18 +1,18 @@
 {
-    "room"       : "Dining Room",
-    "exits"      : [
-        {
+    "name"       : "Museum Gallery",
+    "description": "You are standing at the edge of a glorious museum gallery. The walls are gilded and enshrined with curlicue Rococo Era filigree. The walls are sadly bare.",
+    "paths"      : {
+        "north"  : {
             "name"        : "Exit 1",
-            "description" : "A door",
-            "direction"   : "north",
-            "end"         : "Office"
-        },
-        {
-            "name"        : "Exit 2",
-            "description" : "A door",
-            "direction"   : "east",
-            "end"         : "Den"
+            "description" : "a curtained passage",
+            "end"         : "Coach Car"
         }
+    },
+    "details"    : [
+        {"name" : "wall",
+    "description" : "alone on the desolate walls hangs"}
     ],
-    "items"      : ["Meal", "Plate"]
+    "contents"   : {
+        "Hercules" : "wall"
+    }
 }

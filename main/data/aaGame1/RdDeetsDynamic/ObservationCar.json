@@ -1,0 +1,18 @@
+{
+    "name"       : "Observation Car",
+    "description": "You are standing in a train whose walls and ceilings are entirely made of glass. In every direction you can see ocean stretching endlessly. A plucked flurry of a song plays.",
+    "paths"      : {
+        "north"  : {
+            "name"        : "Exit 1",
+            "description" : "the train continues",
+            "end"         : "Cargo Hold"
+        },
+        "south"  : {
+            "name"        : "Exit 2",
+            "description" : "the train continues",
+            "end"         : "Dining Car"
+        }
+    },
+    "details"    : [],
+    "contents"   : {}
+}

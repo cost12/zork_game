@@ -1,17 +1,18 @@
 {
-    "room"       : "Small Cavern",
-    "exits"      : [
-        {
+    "name"       : "Small Cavern",
+    "description": "You enter a small oblong cavern with rocky walls. A strange fragrant smell wafts through the overpowering odor of bat guano.",
+    "paths"      : {
+        "north"  : {
             "name"        : "Exit 1",
-            "description" : "A narrow tunnel",
-            "direction"   : "North",
+            "description" : "a narrow tunnel",
             "end"         : "Earthen Tunnel"
         },
-        {
+        "south"  : {
             "name"        : "Exit 2",
-            "description" : "Amidst stalagmites, a sturdy wooden door is installed",
-            "direction"   : "South",
+            "description" : "amidst stalagmites, a sturdy wooden door is installed",
             "end"         : "Beehive Room"
         }
-    ]
+    },
+    "details"    : [],
+    "contents"   : {}
 }
