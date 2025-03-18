@@ -1,18 +1,18 @@
 {
-    "room"       : "Dining Room",
-    "exits"      : [
-        {
+    "name"       : "Gym",
+    "description": "You are standing in a vintage-feeling gymnasium that feels strangely familiar. On one end is a basketball hoop and a weight rack at the opposite end. Behind the weight rack is a poster of Arnold Schwarzeneger holding up three fingers.",
+    "paths"      : {
+        "north"  : {
             "name"        : "Exit 1",
-            "description" : "A door",
-            "direction"   : "north",
-            "end"         : "Office"
-        },
-        {
-            "name"        : "Exit 2",
-            "description" : "A door",
-            "direction"   : "east",
-            "end"         : "Den"
+            "description" : "a metal doorway",
+            "end"         : "Pool"
         }
+    },
+    "details"    : [
+        {"name" : "racked",
+    "description" : "sitting on a rack"}
     ],
-    "items"      : ["Meal", "Plate"]
+    "contents"   : {
+        "Weights" : "racked"
+    }
 }

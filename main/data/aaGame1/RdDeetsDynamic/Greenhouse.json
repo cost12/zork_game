@@ -1,18 +1,23 @@
 {
-    "room"       : "Dining Room",
-    "exits"      : [
-        {
+    "name"       : "Greenhouse",
+    "description": "You stand in the middle of a large, deserted greenhouse. Any plants that grew here are long dead.",
+    "paths"      : {
+        "north"  : {
             "name"        : "Exit 1",
-            "description" : "A door",
-            "direction"   : "north",
-            "end"         : "Office"
+            "description" : "a passage",
+            "end"         : "Beehive Room"
         },
-        {
+        "east"  : {
             "name"        : "Exit 2",
-            "description" : "A door",
-            "direction"   : "east",
-            "end"         : "Den"
+            "description" : "a passage",
+            "end"         : "Crystal Cave"
         }
+    },
+    "details"    : [
+        {"name" : "wall",
+    "description" : "hanging from a peg in the wall"}
     ],
-    "items"      : ["Meal", "Plate"]
+    "contents"   : {
+        "Dried Herbs" : "wall"
+    }
 }

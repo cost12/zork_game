@@ -1,12 +1,27 @@
 {
-    "room"       : "Cellar",
-    "exits"      : [
-        {
+    "name"       : "Cellar",
+    "description": "You enter a damp, dark cellar with stone walls. Water leaks down one wall slowly. In a corner is a large trunk.",
+    "paths"      : {
+        "east"  : {
             "name"        : "Exit 1",
-            "description" : "A staircase",
-            "direction"   : "East",
+            "description" : "a stone step",
             "end"         : "Garden"
         }
+    },
+    "details"    : [
+        {"name" : "trunk",
+    "description" : "sitting at the bottom of the trunk"},
+        {"name" : "locked",
+    "description" : "closed and locked with a brass lock"},
+        {"name" : "ontrunk",
+    "description" : "sitting on top of the trunk"}
     ],
-    "items"      : ["Jar of Peppers", "Lantern", "Brass Lock", "Trunk", "Basketball", "Skateboard"]
+    "contents"   : {
+        "Trunk" : "locked",
+        "Jar of Peppers" : "ontrunk",
+        "Lantern" : "ontrunk",
+        "Brass Lock" : "default",
+        "Basketball" : "trunk",
+        "Skateboard" : "trunk"
+    }
 }

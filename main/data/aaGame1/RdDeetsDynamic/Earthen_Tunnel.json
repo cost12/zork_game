@@ -1,17 +1,18 @@
 {
-    "room"       : "Earthen Tunnel",
-    "exits"      : [
-        {
+    "name"       : "Earthen Tunnel",
+    "description": "You find yourself crouched in a squat earthen tunnel that runs north-south. The smells of minerals and decay fill your nostrils.",
+    "paths"      : {
+        "north"  : {
             "name"        : "Exit 1",
-            "description" : "The passage",
-            "direction"   : "north",
+            "description" : "a sloping passage",
             "end"         : "Garden"
         },
-        {
+        "south"  : {
             "name"        : "Exit 2",
-            "description" : "The passage",
-            "direction"   : "South",
+            "description" : "a passage",
             "end"         : "Small Cavern"
         }
-    ]
+    },
+    "details"    : [],
+    "contents"   : {}
 }

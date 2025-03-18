@@ -1,18 +1,24 @@
 {
-    "room"       : "Garden",
-    "exits"      : [
-        {
+    "name"       : "Garden",
+    "description": "You are standing in a small garden. The planter beds are devoid of life, the soil seems dry. The drab facade of a house in disrepair forms the northern border of the yard, with tall wooden fences on all other sides.",
+    "paths"      : {
+        "west"  : {
             "name"        : "Exit 1",
-            "description" : "A stone staircase descends",
-            "direction"   : "West",
+            "description" : "a stone stiarcase descends",
             "end"         : "Cellar"
         },
-        {
+        "south"  : {
             "name"        : "Exit 2",
-            "description" : "A thin earthen burrow",
-            "direction"   : "South",
+            "description" : "a narrow earthen burrow",
             "end"         : "Earthen Tunnel"
         }
+    },
+    "details"    : [
+        {"name" : "ground",
+    "description" : "laying on the ground"}
     ],
-    "items"      : ["Thick Gloves", "Trowel", "Worms"]
+    "contents"   : {
+        "Thick Gloves" : "ground",
+        "Trowel"       : "ground"
+    }
 }

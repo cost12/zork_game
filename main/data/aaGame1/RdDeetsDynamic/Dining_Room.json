@@ -1,18 +1,26 @@
 {
-    "room"       : "Dining Room",
-    "exits"      : [
-        {
+    "name"       : "Dining Room",
+    "description": "You are standing in a rectangular room with a rough-hewn wooden table in the middle.",
+    "paths"      : {
+        "north"  : {
             "name"        : "Exit 1",
-            "description" : "A door",
-            "direction"   : "north",
+            "description" : "a door",
             "end"         : "Office"
         },
-        {
+        "XXXsouth"  : {
             "name"        : "Exit 2",
-            "description" : "A door",
-            "direction"   : "east",
+            "description" : "a door",
             "end"         : "Den"
         }
+    },
+    "details"    : [
+        {"name" : "table",
+    "description" : "on a title"},
+    { "name" : "plate",
+"description" : "on the plate"}
     ],
-    "items"      : ["Meal", "Plate"]
+    "contents"   : {
+        "Plate" : "table",
+        "Meal" : "plate"
+    }
 }

@@ -1,13 +1,13 @@
 {
-    "room"       : "Chimney",
-    "exits"      : [
-        {
+    "name"       : "Chimney",
+    "description": "You are standing in a cramped dark space. It smells of smoke. You are quickly covered in soot and ash. Blegh!",
+    "paths"      : {
+        "out"  : {
             "name"        : "Exit 1",
-            "description" : "A fireplace opening at your feet",
-            "direction"   : ["down","out"],
+            "description" : "the fireplace opening",
             "end"         : "Attic"
         }
-       
-    ]
-
+    },
+    "details"    : [],
+    "contents"   : {}
 }

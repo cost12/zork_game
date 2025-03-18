@@ -27,5 +27,6 @@
         "Mug of Water" : "bedside",
         "Brown Book"   : "bedside",
         "Trap door"    : "default"
-    }
+    },
+    "start" : "True"
 }
