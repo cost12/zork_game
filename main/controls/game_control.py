@@ -1,8 +1,8 @@
 from typing import Any, Optional
 
-from models.actors import Direction, Target, Actor, Location
+from models.actors import Direction, Target, Actor
 from models.action import Action
-from factories.factories import ItemFactory, NamedFactory, StateFactory, LocationFactory, SkillSetFactory, CharacterFactory, StateGraphFactory, LocationDetailFactory, CharacterControlFactory, StateDisconnectedGraphFactory
+from factories.factories import ItemFactory, NamedFactory, LocationFactory, CharacterFactory, CharacterControlFactory
 from controls.character_control import CommandLineController, Feedback
 from controls.translate import get_input_translator
 
