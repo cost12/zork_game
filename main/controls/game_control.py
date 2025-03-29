@@ -6,22 +6,56 @@ from factories.factories import ItemFactory, NamedFactory, StateFactory, Locatio
 from controls.character_control import CommandLineController, Feedback
 from controls.translate import get_input_translator
 
-# Where do target/actor/tool responses go?
-# What if the action is/isn't successful?
-# Targets/tools might have requirements for being used
+# TODO: Target/actor/tool response should depend on Action, State, and success (of Action)
+# Targets/tools might have requirements for being used -> State?
+# TODO: responses should be their own class?
 
 class GameAction:
+    """This is an abstract class and should not be instantiated.
+    Represents an Action a Character can make during a Game.
+    Verifies the Action inputs and determines the results of the Action
+    """
 
     def __init__(self, action:Action):
+        """Creates a GameAction
+
+        :param action: The Action that corresponds to this GameAction.
+        The Action determines what words can be used to call this Action and how internal States of Characters and Items will be updated.
+        :type action: Action
+        """
         self.action = action
 
     def check_inputs(self, inputs:tuple) -> tuple[bool,tuple,Optional[str]]:
+        """Verifies that the inputs to this GameAction are valid.
+
+        :param inputs: The inputs to check
+        :type inputs: tuple
+        :return: A tuple describing if the inputs are valid, the reformatted inputs to be used (if valid), and a response
+        :rtype: tuple[bool,tuple,Optional[str]]
+        """
         pass
 
     def take_action(self, character:Actor, inputs) -> Feedback:
+        """Performs the GameAction and modifies the Characters/Items accordingly. 
+        Returns a summary of the resulst in Feedback
+
+        :param character: The Character performing the GameAction
+        :type character: Actor
+        :param inputs: The inputs to the GameAction, including any targets or tools used
+        :type inputs: Any
+        :return: A summary of the result of the GameAction
+        :rtype: Feedback
+        """
         pass
 
     def __combine_responses__(self, responses:list[str|None]) -> str:
+        """Combines responses from various sources into one readable string
+
+        :param responses: Character/Item responses to different parts of a GameAction
+        :type responses: list[str | None]
+        :return: A readable string of the combined responses
+        :rtype: str
+        """
         result = ""
         first = True
         for response in responses:
@@ -34,6 +68,13 @@ class GameAction:
         return result
 
     def __verify_character__(self, character:Actor) -> tuple[bool,Optional[str]]:
+        """Verifies that character can perform the requested GameAction.
+
+        :param character: The Character attempting to perform a GameAction
+        :type character: Actor
+        :return: A bool that describes whether character can perform the GameAction and the character's response
+        :rtype: tuple[bool,Optional[str]]
+        """
         response = character.get_actor_response(self.action)
         if self.action in character.get_actions_as_actor():
             return True, response
@@ -42,6 +83,15 @@ class GameAction:
         return False, response
 
     def __verify_target__(self, character:Actor, target:Target) -> tuple[bool,str]:
+        """Verifies that target can have the GameAction performed on it.
+
+        :param character: The Character attempting to perform the GameAction
+        :type character: Actor
+        :param target: The Target character is attempting to target with this GameAction
+        :type target: Target
+        :return: A bool that describes whether target can have the GameAction performed on it and the target's response
+        :rtype: tuple[bool,str]
+        """
         room,_ = character.get_location()
         target_room, detail = target.get_location()
         if target_room == room:
@@ -56,6 +106,15 @@ class GameAction:
         return False, f"There is no {target.get_name()} in this room."
 
     def __verify_tool__(self, character:Actor, tool:Target) -> tuple[bool,str]:
+        """Verifies that tool can be used to perform this GameAction.
+
+        :param character: The Character using the tool
+        :type character: Actor
+        :param tool: The tool used
+        :type tool: Target
+        :return: A bool that describes whether tool can be used by character to perform the GameAction and the tool's response
+        :rtype: tuple[bool,str]
+        """
         room,_ = character.get_location()
         tool_room, detail = tool.get_location()
         if tool_room == room:
@@ -70,6 +129,10 @@ class GameAction:
         return False, f"There is no {tool.get_name()} in this room."
     
 class LookAction(GameAction):
+    """Inherits from GameAction.
+    A GameAction that tells a Character what they see
+    """
+
     def check_inputs(self, inputs) -> tuple[bool,tuple,Optional[str]]:
         if len(inputs) == 0:
             return True, inputs, None
@@ -100,6 +163,9 @@ class LookAction(GameAction):
         return Feedback(self.__combine_responses__(response), success=False, turns=0)
 
 class WalkAction(GameAction):
+    """Inherits from GameAction
+    A GameAction that allows a Character to move from one room to another
+    """
 
     def check_inputs(self, inputs:tuple) -> tuple[bool,tuple,Optional[str]]:
         if len(inputs) == 1:
@@ -133,6 +199,9 @@ class WalkAction(GameAction):
         return Feedback(self.__combine_responses__(response), success=False, turns=0)
 
 class WaitAction(GameAction):
+    """Inherits from GameAction
+    A GameAction that allows a Character to let time pass without doing anything.
+    """
 
     def check_inputs(self, inputs:tuple) -> tuple[bool,tuple,Optional[str]]:
         if len(inputs) == 0:
@@ -149,6 +218,9 @@ class WaitAction(GameAction):
         return Feedback(self.__combine_responses__(response), success=False, turns=0)
 
 class TakeAction(GameAction):
+    """Inherits from GameAction
+    A GameAction that allows a Character to add an item (or items) to their Inventory
+    """
 
     def check_inputs(self, inputs) -> tuple[bool,tuple,Optional[str]]:
         for input in inputs:
@@ -181,6 +253,9 @@ class TakeAction(GameAction):
         return Feedback(self.__combine_responses__(response), success=success, turns=1 if success else 0)
 
 class DropAction(GameAction):
+    """Inherits from GameAction
+    A GameAction that allows a Character to drop an item (or items) from their Inventory
+    """
 
     def check_inputs(self, inputs) -> tuple[bool,tuple,Optional[str]]:
         for input in inputs:
@@ -213,6 +288,9 @@ class DropAction(GameAction):
         return Feedback(self.__combine_responses__(response), success=success, turns=1 if success else 0)
 
 class CheckInventoryAction(GameAction):
+    """Inherits from GameAction
+    A GameAction that allows a Character to view the contents of their Inventory
+    """
 
     def check_inputs(self, inputs:tuple) -> tuple[bool,tuple,Optional[str]]:
         if len(inputs) == 0:
@@ -234,6 +312,9 @@ class CheckInventoryAction(GameAction):
         return Feedback(self.__combine_responses__(response), success=False, turns=0)
 
 class DefaultAction(GameAction):
+    """Inherits from GameAction
+    A default GameAction that updates Character/Target states but has no other effect
+    """
 
     def check_inputs(self, inputs:tuple) -> tuple[bool,tuple,str]:
         return True, (inputs,), None
@@ -255,8 +336,29 @@ class DefaultAction(GameAction):
         return Feedback(self.__combine_responses__(response), success=success, turns=0)
 
 class GameState:
+    """Represents an instance of a Zork game
+    """
 
     def __init__(self, details:dict[str,Any], rooms:LocationFactory, characters:CharacterFactory, extra_characters:list[Actor], controllers:CharacterControlFactory, actions:NamedFactory[Action], items:ItemFactory, directions:NamedFactory[Direction]):
+        """Creates a GameState
+
+        :param details: Any details not captured in the other inputs. Includes the welcome text
+        :type details: dict[str,Any]
+        :param rooms: All the Rooms in the game
+        :type rooms: LocationFactory
+        :param characters: All the Characters in the game
+        :type characters: CharacterFactory
+        :param extra_characters: If there are more users than default playable Characters (and the game allows it) these are additional user created and controlled Characters.
+        :type extra_characters: list[Actor]
+        :param controllers: A factory that determines how Characters in the game will be controlled (user input vs cpu controlled)
+        :type controllers: CharacterControlFactory
+        :param actions: All the Actions that can be taken in the game
+        :type actions: NamedFactory[Action]
+        :param items: All the Items in the game
+        :type items: ItemFactory
+        :param directions: All the directions in the game
+        :type directions: NamedFactory[Direction]
+        """
         self.game_details    = details
         self.rooms           = rooms
         self.characters      = characters
@@ -291,18 +393,38 @@ class GameState:
     # Getters
     ##########################################################################
     def whose_turn(self) -> Actor:
+        """Determines which Character makes the next Action
+
+        :return: The Character whose turn it is
+        :rtype: Actor
+        """
         return self.character_order[self.current_turn%len(self.character_order)]
 
     def game_over(self) -> bool:
+        """Determines when the game is over
+
+        :return: Whether the game is over or not
+        :rtype: bool
+        """
         pass
 
     def translate(self, user_input:str) -> tuple[Action,list]:
+        """Translates user input into a GameAction
+
+        :param user_input: Input from a Character. Can be any string
+        :type user_input: str
+        :return: A GameAction and its inputs or an error message
+        :rtype: tuple[Action,list]
+        """
         return self.translator.interpret(user_input, self.actions.aliases, self.characters.aliases, self.rooms.aliases, self.items.aliases, self.directions.aliases)
     
     ###########################################################################
     # Main driver
     ###########################################################################
     def play(self) -> None:
+        """Driving function to advance GameState.
+        Prompts Characters for input on their turn and performs the GameActions until the game is over
+        """
         print(self.game_details["welcome_text"])
         while not self.game_over():
             character = self.whose_turn()
@@ -316,6 +438,17 @@ class GameState:
     # Actions
     ###########################################################################
     def action(self, character:Actor, action:Action, inputs:tuple) -> Feedback:
+        """Mutates the GameState by completing the specified Action
+
+        :param character: The Character to perform the action
+        :type character: Actor
+        :param action: The Action to be performed
+        :type action: Action
+        :param inputs: The inputs to the Action
+        :type inputs: tuple
+        :return: Notable results of the Action
+        :rtype: Feedback
+        """
         feedback = None
         if action == 'error':
             feedback = Feedback(inputs.message,success=False,turns=0)
