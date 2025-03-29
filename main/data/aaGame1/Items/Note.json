@@ -1,0 +1,15 @@
+{
+    "name"             : "Note",
+    "description"      : "a small handwritten note, scrawled in dark black ink",
+    "states"           : "standard_item",
+    "weight"           : 1,
+    "value"            : 1,
+    "size"             : 1,
+    "target_responses" : {
+        "take": "You take the note",
+        "read": "It says: 'May the single instrument transport. When we arrive, let us go on with it in our hearts, if not on our personage.'"
+    },
+    "state_responses"  : {
+        "broken_item" : "You rip the note in two, and then four, then eight. Its shreds fall to the floor."
+    }
+}

@@ -1,0 +1,15 @@
+{
+    "name"             : "Baton",
+    "description"      : "An elegant conductor's baton, wrought from ivory",
+    "states"           : "standard_item",
+    "weight"           : 1,
+    "value"            : 10,
+    "size"             : 1,
+    "target_responses" : {
+        "take": "This must have belonged to a prolific maestro, for you feel years of orchestral experience flowing through you",
+        "conduct" : "You hear a stunning Baritone sing operatically: 'One instrument, One Journey'. Or is it an Alto?"
+    },
+    "state_responses"  : {
+        "broken_item" : "Why oh why? You hear the echo of an audience groan as you snap the baton."
+    }
+}

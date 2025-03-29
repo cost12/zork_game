@@ -1,0 +1,15 @@
+{
+    "name"             : "Old Painting",
+    "description"      : "a medium-sized painting depictiong Hercules wrestling the Nemean Lion, gracefully rendered in romantic fashion.",
+    "states"           : "standard_item",
+    "weight"           : 3,
+    "value"            : 1,
+    "size"             : 4,
+    "target_responses" : {
+        "take": "You take the painting from its resting place, marveling at the detail from so close. Be careful!",
+        "hang": "The painting rests on the wall, proudly displayed"
+    },
+    "state_responses"  : {
+        "broken_item" : "As a complete vandal, shitting on the annals of history, you destroy this priceless work of art."
+    }
+}

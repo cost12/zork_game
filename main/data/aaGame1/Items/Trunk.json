@@ -2,14 +2,18 @@
     "name"             : "Trunk",
     "description"      : "An honest, squat trunk",
     "states"           : "standard_item",
-    "weight"           : 3,
+    "weight"           : 100,
     "value"            : 3,
-    "size"             : 5,
+    "size"             : 30,
     "target_responses" : {
-        "take": "The sword is well-balanced. Its maker speaks to you through it, warning you of the deathly power it hold, expressing himself through sheer emotion, lest words sully the message's import."
+        "take": "The trunk's a bit too heavy for you to bear on."
+    
     },
     "state_responses"  : {
         "open" : "The trunk's lid squeaks open, revealing its contents",
+        "close" : "The trunk's lid slams shut dramatically",
+        "unlock" : "The trunk's lock disengages with a satisfying click",
+        "lock" : "You re-engage the trunk's lock",
         "broken_item" : "Why would you want to do a thing like that?"
     }
 }

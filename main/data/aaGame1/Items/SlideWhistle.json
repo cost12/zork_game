@@ -1,0 +1,15 @@
+{
+    "name"             : "Slide Whistle",
+    "description"      : "Although it is a simple toy, the slide whistle posesses an attractive potential for unforseen elevation and unlikely craft. ",
+    "states"           : "standard_item",
+    "weight"           : 2,
+    "value"            : 10,
+    "size"             : 1,
+    "target_responses" : {
+        "take": "The whistle feels less flimsy than you expected",
+        "play" : "You produce a few shrill, slippery notes. It sounds niether great, nor horrible, evoking little emotion."
+    },
+    "state_responses"  : {
+        "broken_item" : "Bullishly, you rend the slide whistle into mishapen pieces."
+    }
+}

@@ -11,7 +11,7 @@
     },
     "state_responses"  : {
         "on"          : "The boots are a little stiff but feel highly protective against all pernicious elements",
-        "off"         : "You take the boots off, revealing your bare, rough feet.",
+        "off"         : "You take the boots off, revealing your bare, rough, gnarled feet.",
         "broken_item" : "You tear at the boots, but their construction is such that you do little damage."
     }
 }
