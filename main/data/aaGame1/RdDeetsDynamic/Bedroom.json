@@ -20,8 +20,10 @@
         }
     },
     "details"    : [
-        {"name" : "bedside",
-    "description" : "on the bedside table"}
+        {
+            "name" : "bedside",
+            "description" : "on the bedside table"
+        }
     ],
     "contents"   : {
         "Mug of Water" : "bedside",

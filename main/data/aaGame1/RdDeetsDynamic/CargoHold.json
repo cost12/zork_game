@@ -13,7 +13,5 @@
             "description" : "another train car",
             "end"         : "Observation Car"
         }
-    },
-    "details"    : [],
-    "contents"   : {}
+    }
 }

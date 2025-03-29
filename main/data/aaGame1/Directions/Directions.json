@@ -1,6 +1,10 @@
 {
     "data" : [
         {
+            "name"    : "any",
+            "aliases" : ["any"]
+        },
+        {
             "name"    : "north",
             "aliases" : ["north", "n"]
         },

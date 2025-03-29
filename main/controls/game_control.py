@@ -10,6 +10,8 @@ from controls.translate import get_input_translator
 # Targets/tools might have requirements for being used -> State?
 # TODO: responses should be their own class?
 # TODO: need a way to place Items in LocationDetails
+# TODO: handle multiple items with same name
+# TODO: low priority: exit text when passing through an exit
 
 class GameAction:
     """This is an abstract class and should not be instantiated.

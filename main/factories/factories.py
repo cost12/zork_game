@@ -539,7 +539,7 @@ class LocationFactory:
             description = location_dict['description']
             paths = dict[Direction,Path]()
             if 'paths' in location_dict:
-                for direction_name,path_dict in location_dict['paths'].items():
+                for direction_name, path_dict in location_dict['paths'].items():
                     direction = direction_factory.get_named(direction_name)
                     path = self.__path_from_dict(path_dict, item_factory, character_factory, state_factory)
                     paths[direction] = path

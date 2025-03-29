@@ -2,12 +2,10 @@
     "name"       : "Car Trunk",
     "description": "For some reason, you are in the car’s trunk. You have to curl up in order to fit. What an odd thing to do!",
     "paths"      : {
-        "XXXnorth"  : {
+        "any"  : {
             "name"        : "Exit 1",
             "description" : "outside",
             "end"         : "Parking Lot"
         }
-    },
-    "details"    : [],
-    "contents"   : {}
+    }
 }

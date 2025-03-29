@@ -343,6 +343,10 @@ class Location(Named):
         path = None
         if direction in self.paths:
             path = self.paths[direction]
+        if path is None:
+            for direction, path2 in self.paths.items():
+                if direction.get_name() == 'any':
+                    path = path2
         response = None
         if direction in self.direction_responses:
             response = self.direction_responses[direction]

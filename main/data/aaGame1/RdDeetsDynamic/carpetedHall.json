@@ -12,7 +12,5 @@
             "description" : "the hallway continues",
             "end"         : "Carpeted Hall"
         }
-    },
-    "details"    : [],
-    "contents"   : {}
+    }
 }
