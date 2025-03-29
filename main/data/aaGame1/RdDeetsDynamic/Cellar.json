@@ -9,15 +9,28 @@
         }
     },
     "details"    : [
-        {"name" : "trunk",
-    "description" : "sitting at the bottom of the trunk"},
-        {"name" : "locked",
-    "description" : "closed and locked with a brass lock"},
-        {"name" : "ontrunk",
-    "description" : "sitting on top of the trunk"}
+        {
+            "name" : "trunk",
+            "description" : "sitting at the bottom of the trunk",
+            "hidden_when" : [
+                "trunk",
+                {
+                    "locked" : true,
+                    "unlocked": false
+                }
+            ]
+        },
+        {
+            "name" : "TODO: should be displayed for lock",
+            "description" : "closed and locked with a brass lock"
+        },
+        {
+            "name" : "ontrunk",
+            "description" : "sitting on top of the trunk"
+        }
     ],
     "contents"   : {
-        "Trunk" : "locked",
+        "Trunk" : "default",
         "Jar of Peppers" : "ontrunk",
         "Lantern" : "ontrunk",
         "Brass Lock" : "default",

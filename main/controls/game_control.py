@@ -12,6 +12,8 @@ from controls.translate import get_input_translator
 # TODO: need a way to place Items in LocationDetails
 # TODO: handle multiple items with same name
 # TODO: low priority: exit text when passing through an exit
+# TODO: handle json input of bools correctly
+# TODO: is hidden needed in LocationDetail? (replaced by hidden_when)
 
 class GameAction:
     """This is an abstract class and should not be instantiated.

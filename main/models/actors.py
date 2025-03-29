@@ -259,13 +259,14 @@ class Path(Named):
 
 class LocationDetail(Named):
 
-    def __init__(self, name:str="default", description:str="", note_worthy:bool=False, hidden:bool=False, item_limit:int=None, responses:dict[Target,str]=None, aliases:list[str]=None):
+    def __init__(self, name:str="default", description:str="", note_worthy:bool=False, hidden:bool=False, item_limit:int=None, responses:dict[Target,str]=None, hidden_when:tuple[Target,dict[State,bool]]=None, aliases:list[str]=None):
         super().__init__(name, aliases)
         self.description = description
         self.note_worthy = note_worthy
         self.item_limit = item_limit
         self.hidden = hidden
         self.responses = dict[Target, str]() if responses is None else responses
+        self.hidden_when = hidden_when
 
     def __repr__(self):
         return f"[LocationDetail {self.name}]\n\t{self.description}\n\tN: {self.note_worthy} H: {self.hidden}"
@@ -277,7 +278,13 @@ class LocationDetail(Named):
         return self.description
     
     def is_hidden(self) -> bool:
-        return self.hidden
+        if self.hidden_when is None:
+            return self.hidden
+        target, states = self.hidden_when
+        for state, is_hidden in states.items():
+            if state in target.get_current_state():
+                return is_hidden
+        return False
     
     def place_item(self, target:Target) -> Optional[str]:
         if target in self.responses:

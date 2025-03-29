@@ -432,8 +432,8 @@ class LocationDetailFactory:
     def get_details(self) -> list[LocationDetail]:
         return list(self.details.values())
 
-    def create_detail(self, name:str="default", description:str="", note_worthy:bool=False, hidden:bool=False, responses:dict[Target,str]=None, aliases:list[str]=None) -> SkillSet:
-        new_detail = LocationDetail(name, description, note_worthy, hidden, responses, aliases)
+    def create_detail(self, name:str="default", description:str="", note_worthy:bool=False, hidden:bool=False, hidden_when:tuple[Target,dict[State,bool]]=None, responses:dict[Target,str]=None, aliases:list[str]=None) -> SkillSet:
+        new_detail = LocationDetail(name=name, description=description, note_worthy=note_worthy, hidden=hidden, hidden_when=hidden_when, responses=responses, aliases=aliases)
         if new_detail in self.details:
             return self.details[new_detail]
         for alias in new_detail.get_aliases():
@@ -448,27 +448,36 @@ class LocationDetailFactory:
     def get_detail(self, alias:str) -> Optional[LocationDetail]:
         return self.aliases.get(alias.lower(), None)
     
-    def one_from_dict(self, detail_dict:dict[str,Any], items:ItemFactory) -> LocationDetail:
+    def one_from_dict(self, detail_dict:dict[str,Any], item_factory:ItemFactory, state_factory:StateFactory) -> LocationDetail:
         name = detail_dict['name']
         description = detail_dict['description']
         note_worthy = len(description) > 0
         hidden = False
         if 'hidden' in detail_dict:
             hidden = detail_dict['hidden']
+        hidden_when = None
+        if 'hidden_when' in detail_dict:
+            target_name, states_dict = detail_dict['hidden_when']
+            target = item_factory.get_item(target_name)
+            states = dict[State,bool]()
+            for state_name, is_hidden in states_dict.items():
+                state = state_factory.get_state(state_name)
+                states[state] = is_hidden
+            hidden_when = (target, states)
         aliases = None
         responses = dict[Target,str]()
         if 'responses' in detail_dict:
             for item_name, response in detail_dict['responses'].items():
-                item = items.get_item(item_name)
+                item = item_factory.get_item(item_name)
                 responses[item] = response
         if 'aliases' in detail_dict:
             aliases = detail_dict['aliases']
-        return self.create_detail(name, description, note_worthy, hidden, responses, aliases=aliases)
+        return self.create_detail(name, description, note_worthy, hidden, hidden_when, responses, aliases=aliases)
     
-    def many_from_dict(self, detail_dicts:list[dict[str,Any]], items:ItemFactory) -> list[LocationDetail]:
+    def many_from_dict(self, detail_dicts:list[dict[str,Any]], items:ItemFactory, states:StateFactory) -> list[LocationDetail]:
         details = list[LocationDetail]()
         for detail_dict in detail_dicts:
-            details.append(self.one_from_dict(detail_dict, items))
+            details.append(self.one_from_dict(detail_dict, items, states))
         return details
 
 class LocationFactory:
@@ -550,7 +559,7 @@ class LocationFactory:
                     direction_responses[direction] = response
             detail_factory = LocationDetailFactory()
             if 'details' in location_dict:
-                detail_factory.many_from_dict(location_dict['details'], item_factory)
+                detail_factory.many_from_dict(location_dict['details'], item_factory, state_factory)
             contents = dict[Target,LocationDetail]()
             if 'contents' in location_dict:
                 for target_name,detail_name in location_dict['contents'].items():
