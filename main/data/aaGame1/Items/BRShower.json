@@ -1,9 +1,17 @@
+
 {
-    "name"        : "Bathroom Shower",
-    "description" : "A stained shower",
-    "weight"      : 0.5,
-    "value"       : 1,
-    "origin_text" : " occupies one corner.",
-    "comments"    : "Can't be taken, only interacted with, states: on/off"
-    
+    "name"             : "Shower",
+    "description"      : "a stained shower occupies one wall",
+    "states"           : "standard_item",
+    "weight"           : 100,
+    "value"            : 5,
+    "size"             : 50,
+    "target_responses" : {
+        "take": "You can't take the shower, dummy. Besides, it's pretty gross... whoever lives here must be a bit of a slob"
+    },
+    "state_responses"  : {
+        "on"          : "The shower's faucet turns, but only a trickle of dust comes out of the showerhead.",
+        "off"         : "The faucet turns is off.",
+        "broken_item" : "Now that's just gratuitous!"
+    }
 }

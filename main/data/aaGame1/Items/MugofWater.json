@@ -1,9 +1,15 @@
 {
-    "name"        : "Mug of Water",
-    "description" : "A small, rustic mug full of water",
-    "weight"      : 2,
-    "value"       : 1,
-    "origin_text" : " is sitting on the bedside table.",
-    "comments"    : "water can be drinken, goes to empty state"
-    
+    "name"             : "Muf of Water",
+    "description"      : "A small ceramic mug full of water",
+    "states"           : "standard_item",
+    "weight"           : 1,
+    "value"            : 1,
+    "size"             : 1,
+    "target_responses" : {
+        "take": "You take the mug. Be fareful not to slosh!",
+        "pour": "You empty the mug's contents, making a bit of a mess..."
+    },
+    "state_responses"  : {
+        "broken_item" : "The mug is broken and can't be put back together again. Pity..."
+    }
 }

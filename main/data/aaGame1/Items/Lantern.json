@@ -1,9 +1,16 @@
 {
-    "name"        : "Lantern",
-    "description" : "A sturdy, battery-powered survival lantern",
-    "weight"      : 3,
-    "value"       : 3,
-    "origin_text" : " is on top of the trunk.",
-    "comments"    : "on/off states. Must be on in order to see exits/descriptions of rooms, on list in RmDeets."
-    
+    "name"             : "Lantern",
+    "description"      : "a small survival lantern",
+    "states"           : "standard_item",
+    "weight"           : 1,
+    "value"            : 1,
+    "size"             : 1,
+    "target_responses" : {
+        "take": "The lamp is surprisingly light!"
+    },
+    "state_responses"  : {
+        "on"          : "The lamp is on.",
+        "off"         : "The lamp is off.",
+        "broken_item" : "The lamp is broken and can't be turned on. Pity..."
+    }
 }

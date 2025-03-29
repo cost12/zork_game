@@ -1,9 +1,14 @@
 {
-    "name"        : "Basketball",
-    "description" : "A well-worn basketball",
-    "weight"      : 2,
-    "value"       : 3,
-    "origin_text" : " sits at the bottom of the trunk.",
-    "comments"    : ""
-    
+    "name"             : "Basketball",
+    "description"      : "A well-worn basketball",
+    "states"           : "standard_item",
+    "weight"           : 2,
+    "value"            : 3,
+    "size"             : 3,
+    "target_responses" : {
+        "take": "You can feel many hours of play on the ball's surface"
+    },
+    "state_responses"  : {
+        "broken_item" : "The basketball deflates sadly, making itself unusable"
+    }
 }

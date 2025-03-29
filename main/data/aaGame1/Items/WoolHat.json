@@ -1,9 +1,17 @@
+
 {
-    "name"        : "Mug of Water",
-    "description" : "A rustic mug full of water",
-    "weight"      : 0.5,
-    "value"       : 1,
-    "origin_text" : " is sitting on the bedside table.",
-    "comments"    : ""
-    
+    "name"             : "Wool Hat",
+    "description"      : "a lovely knit hat, as if done by a grandmother",
+    "states"           : "standard_item",
+    "weight"           : 1,
+    "value"            : 3,
+    "size"             : 1,
+    "target_responses" : {
+        "take": "You take the woolen hat, feeling its soft warmth"
+    },
+    "state_responses"  : {
+        "on"          : "Though it itches minorly, the hat should keep your head nice and cozy.",
+        "off"         : "You take the hat off.",
+        "broken_item" : "You rip the hat to shreds, defiling the gentle work of a caring, lovely grandma somewhere."
+    }
 }

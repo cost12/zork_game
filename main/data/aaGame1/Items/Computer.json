@@ -1,9 +1,17 @@
+
 {
-    "name"        : "Computer",
-    "description" : "An old-school desktop computer open to a console",
-    "weight"      : 80,
-    "value"       : 10,
-    "origin_text" : " hums softly. Its light eerily illuminates the room with a blue glow.",
-    "comments"    : ""
-    
+    "name"             : "Computer",
+    "description"      : "an old-school computer hums soflty, the gentle light of its screen illuminating the space.",
+    "states"           : "standard_item",
+    "weight"           : 100,
+    "value"            : 100,
+    "size"             : 25,
+    "target_responses" : {
+        "take": "The computer is a bit heavy for you. Plus, you don't want to risk unplugging it!"
+    },
+    "state_responses"  : {
+        "on"          : "The computer is on.",
+        "off"         : "The computer is off.",
+        "broken_item" : "The screen breaks as you destroy a perfectly fine old machine."
+    }
 }

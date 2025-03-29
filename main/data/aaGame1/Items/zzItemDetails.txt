@@ -1,0 +1,2 @@
+Can't be taken: Shower, BR Sink, KitchenSink, Meal, Boots, Fork
+Deleted: Cabinet, Worms

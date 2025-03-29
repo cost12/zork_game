@@ -1,9 +1,14 @@
 {
-    "name"        : "Mug of Water",
-    "description" : "A rustic mug full of water",
-    "weight"      : 0.5,
-    "value"       : 1,
-    "origin_text" : " is sitting on the bedside table.",
-    "comments"    : ""
-    
+    "name"             : "Sword",
+    "description"      : "A classic yet deadly-looking sword. It glints as if mocking its slain enemies",
+    "states"           : "standard_item",
+    "weight"           : 3,
+    "value"            : 3,
+    "size"             : 5,
+    "target_responses" : {
+        "take": "The sword is well-balanced. Its maker speaks to you through it, warning you of the deathly power it hold, expressing himself through sheer emotion, lest words sully the message's import."
+    },
+    "state_responses"  : {
+        "broken_item" : "A blade of this making cannot be broken by one such as you. HA!"
+    }
 }

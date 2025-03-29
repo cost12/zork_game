@@ -1,9 +1,17 @@
+
 {
-    "name"        : "Mug of Water",
-    "description" : "A rustic mug full of water",
-    "weight"      : 0.5,
-    "value"       : 1,
-    "origin_text" : " is sitting on the bedside table.",
-    "comments"    : ""
-    
+    "name"             : "Warm Boots",
+    "description"      : "a pair of hefty hiking boots",
+    "states"           : "standard_item",
+    "weight"           : 5,
+    "value"            : 3,
+    "size"             : 1,
+    "target_responses" : {
+        "take": "You take the hefty boots"
+    },
+    "state_responses"  : {
+        "on"          : "The boots are a little stiff but feel highly protective against all pernicious elements",
+        "off"         : "You take the boots off, revealing your bare, rough feet.",
+        "broken_item" : "You tear at the boots, but their construction is such that you do little damage."
+    }
 }
