@@ -1,8 +1,8 @@
 from tests.conftest      import characters
 from factories.factories import CharacterFactory
-from models.actors       import Actor, Inventory
+from models.actors       import Actor, Inventory, LocationDetail
 from models.action       import Action
-from models.state        import State, FullState, SkillSet, LocationDetail
+from models.state        import State, FullState, SkillSet
 
 def test_read_in(characters:CharacterFactory):
     factory = characters

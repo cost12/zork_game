@@ -9,12 +9,13 @@
             "end"         : "Bedroom"
         }
     },
-    "details"    : [
-        {"name" : "table",
-        "description" : "on the spindly table"
-    }
-],
-    "contents"   : {
+    "details" : [
+        {
+            "name" : "table",
+            "description" : "on the spindly table"
+        }
+    ],
+    "contents" : {
         "Leaflet"      : "table",
         "Hourglass"    : "table",
         "Yellow Book"  : "table"

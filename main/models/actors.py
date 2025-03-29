@@ -1,6 +1,6 @@
 from typing import Optional
 
-from models.state  import State, Skill, FullState, SkillSet, LocationDetail
+from models.state  import State, Skill, FullState, SkillSet
 from models.action import Named, Action
 
 # Should Items know which character has them?
@@ -75,16 +75,16 @@ class Target(Named):
                 response.append(self.state_responses[new_state])
         return response
     
-    def get_location(self) -> tuple['Location',LocationDetail]:
+    def get_location(self) -> tuple['Location','LocationDetail']:
         return self.location, self.location_detail
     
-    def _set_location(self, location:'Location', detail:LocationDetail, *, origin=False) -> None:
+    def _set_location(self, location:'Location', detail:'LocationDetail', *, origin=False) -> None:
         self.location = location
         self.location_detail = detail
         if origin:
             self.origin = location
 
-    def change_location(self, location:'Location', detail:Optional[LocationDetail]=None) -> None:
+    def change_location(self, location:'Location', detail:Optional['LocationDetail']=None) -> None:
         detail = LocationDetail() if detail is None else detail
         self.location.remove_target(self)
         location.add_target(self, detail)
@@ -198,11 +198,14 @@ class Actor(Target):
             return True
         return False
     
-    def remove_item_from_inventory(self, item:Target) -> bool:
+    def remove_item_from_inventory(self, item:Target, detail:Optional['LocationDetail']=None) -> tuple[bool,Optional[str]]:
+        response = None
         if self.inventory.drop_item(item):
-            item.change_location(self.location)
-            return True
-        return False
+            item.change_location(self.location, detail)
+            if detail is not None:
+                response = detail.place_item(item)
+            return True, response
+        return False, response
     
     def get_inventory_items(self) -> list[Target]:
         return self.inventory.get_items()
@@ -253,6 +256,33 @@ class Path(Named):
             if state not in item.get_current_state():
                 return False, (item, state), self.exit_response
         return True, None, self.exit_response
+
+class LocationDetail(Named):
+
+    def __init__(self, name:str="default", description:str="", note_worthy:bool=False, hidden:bool=False, item_limit:int=None, responses:dict[Target,str]=None, aliases:list[str]=None):
+        super().__init__(name, aliases)
+        self.description = description
+        self.note_worthy = note_worthy
+        self.item_limit = item_limit
+        self.hidden = hidden
+        self.responses = dict[Target, str]() if responses is None else responses
+
+    def __repr__(self):
+        return f"[LocationDetail {self.name}]\n\t{self.description}\n\tN: {self.note_worthy} H: {self.hidden}"
+
+    def is_note_worthy(self) -> bool:
+        return self.note_worthy
+    
+    def get_description(self) -> str:
+        return self.description
+    
+    def is_hidden(self) -> bool:
+        return self.hidden
+    
+    def place_item(self, target:Target) -> Optional[str]:
+        if target in self.responses:
+            return self.responses[target]
+        return None 
 
 class Location(Named):
 

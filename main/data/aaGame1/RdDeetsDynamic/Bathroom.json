@@ -9,12 +9,13 @@
         }
     },
     "details"    : [
-        {"name" : "toilet",
-        "description" : "sitting next to the toilet"
-    }
-],
+        {
+            "name" : "toilet",
+            "description" : "sitting next to the toilet"
+        }
+    ],
     "contents"   : {
-        "Vermilion Book"      : "toilet",
+        "Vermilion Book" : "toilet",
         "Shower"    : "default",
         "Sink"    : "default"
     }

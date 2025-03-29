@@ -10,15 +10,23 @@
         }
     },
     "details"    : [
-        {"name" : "spear rack",
-        "description" : "when you place the spear on the rack, a poof of smoke reveals"
-    },{
-        "name": "pitchfork rack",
-        "description": "when you place the pitchfork in its rack, a poof of smoke reveals"
-    }
-],
+        {
+            "name" : "spear rack",
+            "desciption" : "on a spear rack",
+            "responses" : {
+                "spear" : "When you place the spear on the rack, a poof of smoke reveals."
+            }
+        },
+        {
+            "name": "pitchfork rack",
+            "desciption" : "on a pitchfork rack",
+            "responses" : {
+                "pitchfork" : "When you place the pitchfork in its rack, a poof of smoke reveals."
+            }
+        }
+    ],
     "contents"   : {
-        "Rubber Ducky"      : "spear rack",
+        "Rubber Ducky"  : "spear rack",
         "Warm Boots"    : "pitchfork rack"
     }
 }

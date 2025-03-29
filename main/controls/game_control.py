@@ -1,6 +1,6 @@
 from typing import Any, Optional
 
-from models.actors import Direction, Target, Actor
+from models.actors import Direction, Target, Actor, LocationDetail
 from models.action import Action
 from factories.factories import ItemFactory, NamedFactory, LocationFactory, CharacterFactory, CharacterControlFactory
 from controls.character_control import CommandLineController, Feedback
@@ -9,6 +9,7 @@ from controls.translate import get_input_translator
 # TODO: Target/actor/tool response should depend on Action, State, and success (of Action)
 # Targets/tools might have requirements for being used -> State?
 # TODO: responses should be their own class?
+# TODO: need a way to place Items in LocationDetails
 
 class GameAction:
     """This is an abstract class and should not be instantiated.
@@ -265,7 +266,7 @@ class DropAction(GameAction):
             return True, (inputs,), None
         return False, None, "Drop what?"
     
-    def take_action(self, character:Actor, targets:list[Target]) -> Feedback:
+    def take_action(self, character:Actor, targets:list[Target], placement:Optional[LocationDetail]) -> Feedback:
         response = []
         can_drop, r = self.__verify_character__(character)
         response.append(r)
@@ -275,7 +276,9 @@ class DropAction(GameAction):
                 can_be_dropped, target_response = self.__verify_target__(character, target)
                 response.append(target_response)
                 if can_be_dropped:
-                    if character.remove_item_from_inventory(target):
+                    dropped, r = character.remove_item_from_inventory(target, placement)
+                    response.extend(r)
+                    if dropped:
                         success = True
                         response.extend(target.perform_action_as_target(self.action))
                     else:

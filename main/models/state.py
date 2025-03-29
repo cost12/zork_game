@@ -272,24 +272,3 @@ class SkillSet(Named):
         if skill in self.skills:
             return self.skills[skill]
         return self.default_proficiency
-
-class LocationDetail(Named):
-
-    def __init__(self, name:str="default", description:str="", note_worthy:bool=False, hidden:bool=False, item_limit:int=None, aliases:list[str]=None):
-        super().__init__(name, aliases)
-        self.description = description
-        self.note_worthy = note_worthy
-        self.item_limit = item_limit
-        self.hidden = hidden
-
-    def __repr__(self):
-        return f"[LocationDetail {self.name}]\n\t{self.description}\n\tN: {self.note_worthy} H: {self.hidden}"
-
-    def is_note_worthy(self) -> bool:
-        return self.note_worthy
-    
-    def get_description(self) -> str:
-        return self.description
-    
-    def is_hidden(self) -> bool:
-        return self.hidden

@@ -3,18 +3,19 @@
     "name"       : "Armory",
     "description": "You stand in an old armory that once held many armaments and much armor. All that remains are a few neglected weapons. On the floor is a mosaic resembling an hourglass with both glass canisters cracked.",
     "paths"      : {
-        "west"  : {
+        "west"   : {
             "name"        : "Exit 1",
             "description" : "a passage",
             "end"         : "Beehive Room"
         }
     },
-    "details"    : [
-        {"name" : "rack",
-        "description" : "hanging on a wall-mounted rack"
-    }
-],
-    "contents"   : {
-        "Spear"    : "rack"
+    "details" : [
+        {
+            "name"        : "rack",
+            "description" : "hanging on a wall-mounted rack"
+        }
+    ],
+    "contents"  : {
+        "Spear" : "rack"
     }
 }
