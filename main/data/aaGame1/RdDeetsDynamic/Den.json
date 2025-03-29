@@ -1,29 +1,34 @@
 {
-    "room"       : "Bedroom",
-    "exits"      : [
-        {
+    "name"       : "Den",
+    "description": "You are standing in a cozy room lit by an overhead lamp with a soft red shade. A once-plump couch sits on a rug in the center of the room, leaking stuffage. ",
+    "paths"      : {
+        "north"  : {
             "name"        : "Exit 1",
-            "description" : "A passage",
-            "direction"   : "north",
+            "description" : "a doorway",
             "end"         : "Hallway"
         },
-        {
+        "south"  : {
             "name"        : "Exit 2",
-            "description" : "A passage",
-            "direction"   : "south",
+            "description" : "a passageway",
             "end"         : "Garden"
-        },{
-            "name"        : "Exit 3",
-            "description" : "A passage",
-            "direction"   : "east",
+        },
+        "east"  : {
+            "name"        : "Exit 1",
+            "description" : "a doorway",
             "end"         : "Kitchen"
-        },{
-            "name"        : "Exit 4",
-            "description" : "A passage",
-            "direction"   : "west",
+        },
+        "west"  : {
+            "name"        : "Exit 1",
+            "description" : "a closed swinging door",
             "end"         : "Dining Room"
         }
+    },
+    "details"    : [
+        {"name" : "couch",
+    "description" : "sitting on a trodden couch cushion"}
     ],
-    "items"      : ["Red Book", "Woolen Hat"]
-
+    "contents"   : {
+        "Red Book" : "couch",
+        "Woolen Hat" : "couch"
+    }
 }

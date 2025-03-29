@@ -1,18 +1,18 @@
 {
-    "room"       : "Dining Room",
-    "exits"      : [
-        {
+    "name"       : "Cold Room",
+    "description": "You enter what feels like a blast chiller. Frost covers the walls and floor. Your breath forms a thick cloud in front of your face and you shiver violently. Embedded in the floor in front of the passage opposite your entrance it is a vent that must be the source of the cold.",
+    "paths"      : {
+        "north"  : {
             "name"        : "Exit 1",
-            "description" : "A door",
-            "direction"   : "north",
-            "end"         : "Office"
+            "description" : "a small passage",
+            "end"         : "South of Tight Pass"
         },
-        {
+        "south"  : {
             "name"        : "Exit 2",
-            "description" : "A door",
-            "direction"   : "east",
-            "end"         : "Den"
+            "description" : "an earthen passage",
+            "end"         : "Bear's Den"
         }
-    ],
-    "items"      : ["Meal", "Plate"]
+    },
+    "details"    : [],
+    "contents"   : {}
 }

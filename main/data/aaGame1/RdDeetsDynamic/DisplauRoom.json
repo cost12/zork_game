@@ -1,18 +1,18 @@
 {
-    "room"       : "Dining Room",
-    "exits"      : [
-        {
+    "name"       : "Display Room",
+    "description": "You enter a small, dark room with a luxurious velvet carpet.",
+    "paths"      : {
+        "west"  : {
             "name"        : "Exit 1",
-            "description" : "A door",
-            "direction"   : "north",
-            "end"         : "Office"
-        },
-        {
-            "name"        : "Exit 2",
-            "description" : "A door",
-            "direction"   : "east",
-            "end"         : "Den"
+            "description" : "a simple slanted passage",
+            "end"         : "Man Cave"
         }
+    },
+    "details"    : [
+        {"name" : "cushion",
+    "description" : "resting on a delicate cushion"}
     ],
-    "items"      : ["Meal", "Plate"]
+    "contents"   : {
+        "Wallet" : "cushion"
+    }
 }

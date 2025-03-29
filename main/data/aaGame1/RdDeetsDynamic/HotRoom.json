@@ -1,18 +1,18 @@
 {
-    "room"       : "Dining Room",
-    "exits"      : [
-        {
+    "name"       : "Hot Room",
+    "description": "You are standing in a room that is unbelievably hot, the air shimmering, rich with energy. In the center of the narrow room lies a vent that must be the source of the heat.",
+    "paths"      : {
+        "northeast"  : {
             "name"        : "Exit 1",
-            "description" : "A door",
-            "direction"   : "north",
-            "end"         : "Office"
+            "description" : "a passage",
+            "end"         : "Theatre Stage"
         },
-        {
+        "south"  : {
             "name"        : "Exit 2",
-            "description" : "A door",
-            "direction"   : "east",
-            "end"         : "Den"
+            "description" : "a passage",
+            "end"         : "Conductor's Car"
         }
-    ],
-    "items"      : ["Meal", "Plate"]
+    },
+    "details"    : [],
+    "contents"   : {}
 }

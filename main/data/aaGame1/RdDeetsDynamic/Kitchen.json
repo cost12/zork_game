@@ -1,18 +1,27 @@
 {
-    "room"       : "Kitchen",
-    "exits"      : [
-        {
+    "name"       : "Kitchen",
+    "description": "You are standing in a modest kitchen. There is a beaten stove, linoleum counter, and an oxidized sink. You hear a rush of footsteps in a nearby room. A cabinet hangs on one wall.",
+    "paths"      : {
+        "north"  : {
             "name"        : "Exit 1",
-            "description" : "A doorway",
-            "direction"   : "north",
+            "description" : "a doorway",
             "end"         : "Hallway"
         },
-        {
+        "west"  : {
             "name"        : "Exit 2",
-            "description" : "A door",
-            "direction"   : "west",
+            "description" : "a doorway",
             "end"         : "Den"
         }
+    },
+    "details"    : [
+        {"name" : "cabinet",
+    "description" : "sitting inside the cabinet"}
     ],
-    "items"      : ["cabinet", "Mason Jar", "Rusty Fork", "Stove", "KSink"]
+    "contents"   : {
+        "Mason Jar" : "cabinet",
+        "Rusty Fork" : "cabinet",
+        "Cabinet" : "default",
+        "Stove" : "default",
+        "Kitchen Sink" : "default"
+    }
 }

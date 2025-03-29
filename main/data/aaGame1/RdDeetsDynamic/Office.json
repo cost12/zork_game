@@ -1,12 +1,19 @@
 {
-    "room"       : "Office",
-    "exits"      : [
-        {
-            "name"        : "Exit 1",
-            "description" : "A door",
-            "direction"   : "south",
+    "name"       : "Office",
+    "description": "You are in a simple home office. At a desk sits a large, heavy desktop computer open to a console, its light eerily illuminating the room with a blue glow. There is a spindly chair at the desk.",
+    "paths"      : {
+        "south"  : {
+            "name"        : "Exit 2",
+            "description" : "a doorway",
             "end"         : "Dining Room"
         }
+    },
+    "details"    : [
+        {"name" : "desk",
+    "description" : "sitting on the desk"}
     ],
-    "items"      : ["Computer", "Emerald Book", "Magnifying Glass"]
+    "contents"   : {
+        "Emerald Book" : "desk",
+        "Magnifying Glass" : "desk"
+    }
 }

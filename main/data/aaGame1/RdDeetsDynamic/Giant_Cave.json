@@ -1,17 +1,18 @@
 {
-    "room"       : "Giant Cave",
-    "exits"      : [
-        {
+    "name"       : "Giant Cave",
+    "description": "You stand in a massive cave whose ceiling is nearly too tall to see. Bats screeches echo distantly. Guano coats most the walls.",
+    "paths"      : {
+        "south"  : {
             "name"        : "Exit 1",
-            "description" : "A distant hole in the stone",
-            "direction"   : "South",
+            "description" : "a distant hole in the stone room",
             "end"         : "Candlelit Room"
         },
-        {
+        "northeast"  : {
             "name"        : "Exit 2",
-            "description" : "A passage",
-            "direction"   : "Northeast",
+            "description" : "a passage",
             "end"         : "Beehive Room"
         }
-    ]
+    },
+    "details"    : [],
+    "contents"   : {}
 }

@@ -1,18 +1,18 @@
 {
-    "room"       : "Dining Room",
-    "exits"      : [
-        {
+    "name"       : "Pool",
+    "description": "You stand at the edge of a large pool lying between you and the opposite exit, stretching from wall to wall. Small waves lap at the pool's edge. It looks deep, and the room is cold. Carrying too much weight while swimming across seems unwise.",
+    "paths"      : {
+        "north"  : {
             "name"        : "Exit 1",
-            "description" : "A door",
-            "direction"   : "north",
-            "end"         : "Office"
+            "description" : "a passage",
+            "end"         : "Crystal Cave"
         },
-        {
+        "south"  : {
             "name"        : "Exit 2",
-            "description" : "A door",
-            "direction"   : "east",
-            "end"         : "Den"
+            "description" : "a passage",
+            "end"         : "Gymnasium"
         }
-    ],
-    "items"      : ["Meal", "Plate"]
+    },
+    "details"    : [],
+    "contents"   : {}
 }

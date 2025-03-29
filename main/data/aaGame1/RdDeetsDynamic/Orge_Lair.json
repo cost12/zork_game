@@ -1,17 +1,20 @@
 {
-    "room"       : "Orge Lair",
-    "exits"      : [
-        {
+    "name"       : "Orge Lair",
+    "description": "You are standing in a smelly, humid room that smells like a well-used locker room, rancid and almost spicy. Roots poke through the ceiling and crude pornographic etchings cover the walls.",
+    "paths"      : {
+        "north"  : {
             "name"        : "Exit 1",
-            "description" : "A door",
-            "direction"   : "north",
+            "description" : "a door",
             "end"         : "Beehive Room"
         },
-        {
+        "south"  : {
             "name"        : "Exit 2",
-            "description" : "A passage",
-            "direction"   : "South",
+            "description" : "a passage",
             "end"         : "Bright Room"
         }
-    ]
+    },
+    "details"    : [],
+    "contents"   : {
+        "Orge" : "default"
+    }
 }

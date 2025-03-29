@@ -1,18 +1,23 @@
 {
-    "room"       : "Dining Room",
-    "exits"      : [
-        {
+    "name"       : "Coach Car",
+    "description": "You are standing in a moving train car full of seats. The train jostles as it rides to the North. Through the windows you can vaguely make out a snowy mountainscape through a thick blizzardy tempest. Thumping, primordial music thumps through the air. ",
+    "paths"      : {
+        "north"  : {
             "name"        : "Exit 1",
-            "description" : "A door",
-            "direction"   : "north",
-            "end"         : "Office"
+            "description" : "the trian continues",
+            "end"         : "Dining Car"
         },
-        {
+        "south"  : {
             "name"        : "Exit 2",
-            "description" : "A door",
-            "direction"   : "east",
-            "end"         : "Den"
+            "description" : "a sliding door",
+            "end"         : "Museum Gallery"
         }
+    },
+    "details"    : [
+        {"name" : "seated",
+    "description" : "sitting in a chair"}
     ],
-    "items"      : ["Meal", "Plate"]
+    "contents"   : {
+        "child" : "seated"
+    }
 }

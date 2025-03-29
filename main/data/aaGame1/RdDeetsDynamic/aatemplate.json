@@ -2,15 +2,15 @@
     "name"       : "Name",
     "description": "",
     "paths"      : {
-        "XXXnorth"  : {
+        "north"  : {
             "name"        : "Exit 1",
-            "description" : "a narrow escape",
-            "end"         : "Cold Room"
+            "description" : "a passage",
+            "end"         : "room"
         },
-        "XXXsouth"  : {
+        "south"  : {
             "name"        : "Exit 2",
             "description" : "a passage",
-            "end"         : "Puzzle Room"
+            "end"         : "room"
         }
     },
     "details"    : [

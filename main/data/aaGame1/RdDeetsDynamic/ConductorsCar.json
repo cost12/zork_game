@@ -1,18 +1,23 @@
 {
-    "room"       : "Dining Room",
-    "exits"      : [
-        {
+    "name"       : "Conductor's Car",
+    "description": "You are in the conductor’s car. A complex control panel is next to an exit at the North of the car. An elegant violin concerto plays through the room’s speakers.",
+    "paths"      : {
+        "north"  : {
             "name"        : "Exit 1",
-            "description" : "A door",
-            "direction"   : "north",
-            "end"         : "Office"
+            "description" : "the train's exit",
+            "end"         : "Hot Room"
         },
-        {
+        "south"  : {
             "name"        : "Exit 2",
-            "description" : "A door",
-            "direction"   : "east",
-            "end"         : "Den"
+            "description" : "the train continues",
+            "end"         : "Cargo Hold"
         }
+    },
+    "details"    : [
+        {"name" : "dashboard",
+    "description" : "on a the dashboard, amidst myriad knobs and buttons rusted beyond use, lies"}
     ],
-    "items"      : ["Meal", "Plate"]
+    "contents"   : {
+        "Burgundy Book" : "dashboard"
+    }
 }

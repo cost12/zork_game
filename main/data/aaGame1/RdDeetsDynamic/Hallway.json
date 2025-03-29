@@ -1,24 +1,23 @@
 {
-    "room"       : "Hallway",
-    "exits"      : [
-        {
+    "name"       : "Hallway",
+    "description": "You are standing in a shadowy hallway. There is a faint smell of mildew.",
+    "paths"      : {
+        "north"  : {
             "name"        : "Exit 1",
-            "description" : "A doorway",
-            "direction"   : "N",
+            "description" : "a doorway",
             "end"         : "Bedroom"
         },
-        {
+        "south"  : {
             "name"        : "Exit 2",
-            "description" : "A doorway",
-            "direction"   : "S",
+            "description" : "a doorway",
             "end"         : "Den"
         },
-        {
+        "east"  : {
             "name"        : "Exit 3",
-            "description" : "A doorway",
-            "direction"   : "E",
+            "description" : "a doorway",
             "end"         : "Kitchen"
         }
-    ]
-
+    },
+    "details"    : [],
+    "contents"   : {}
 }
