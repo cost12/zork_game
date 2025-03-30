@@ -1,6 +1,6 @@
 from typing import Optional
 
-from models.state  import State, Skill, FullState, SkillSet
+from models.state  import State, Skill, FullState, SkillSet, Feat
 from models.action import Named, Action
 
 # Should Items know which character has them?
@@ -137,13 +137,14 @@ class Actor(Target):
     DEFAULT_SIZE   = 100
     DEFAULT_VALUE  = 0
 
-    def __init__(self, name:str, description:str, type:str, states:FullState, skills:SkillSet, inventory:Inventory, *, weight:float=DEFAULT_WEIGHT, size:float=DEFAULT_SIZE, value:float=DEFAULT_VALUE, actor_responses:Optional[dict['Action',str]]=None, target_responses:Optional[dict['Action',str]]=None, tool_responses:Optional[dict['Action',str]]=None, state_responses:Optional[dict[State,str]]=None, aliases:Optional[list[str]]=None):
+    def __init__(self, name:str, description:str, type:str, states:FullState, skills:SkillSet, inventory:Inventory, *, feats:set[Feat]=None, weight:float=DEFAULT_WEIGHT, size:float=DEFAULT_SIZE, value:float=DEFAULT_VALUE, actor_responses:Optional[dict['Action',str]]=None, target_responses:Optional[dict['Action',str]]=None, tool_responses:Optional[dict['Action',str]]=None, state_responses:Optional[dict[State,str]]=None, aliases:Optional[list[str]]=None):
         super().__init__(name, description, states, weight=weight, size=size, value=value, target_responses=target_responses, tool_responses=tool_responses, state_responses=state_responses, aliases=aliases)
         self.actor_responses = dict[Action,str]() if actor_responses is None else actor_responses
         self.inventory = inventory
         self.inventory_location = LocationDetail(f"{self.name}'s inventory", True, hidden=True)
         self.type = type
         self.skills = skills
+        self.feats = set[Feat]() if feats is None else feats
 
     def __repr__(self):
         return f"[Actor {self.name}]\n\tOrigin: {self.origin.name}\n\tLoc: {self.location.name}\n\tDet: {self.location_detail}\n\tStates: {self.states}\n\tSkills: {self.skills}"
@@ -212,6 +213,12 @@ class Actor(Target):
     
     def is_holding(self, item:Target) -> bool:
         return self.inventory.contains(item)
+    
+    def has_completed_feat(self, feat:Feat) -> bool:
+        return feat in self.feats
+    
+    def complete_feat(self, feat:Feat) -> None:
+        self.feats.add(feat)
 
 class Direction(Named):
     """The Directions a Character can move to get from Room to Room.
@@ -222,40 +229,146 @@ class Direction(Named):
     def __repr__(self):
         return f"[Direction {self.name}]"
 
-class Path(Named):
+class PathRequirement():
+    def can_pass(self, character:Actor) -> tuple[bool,str]:
+        pass
 
-    def __init__(self, name:str, description:str, end:'Location', hidden:bool=False, exit_response:Optional[str]=None, linked_targets:Optional[dict[Target,State]]=None, passing_requirements:Optional[dict[Actor,State]]=None, aliases:Optional[list[str]]=None):
+class CharacterStateRequirement(PathRequirement):
+    def __init__(self, states_needed:dict[State,tuple[bool,str]]):
+        self.states_needed = states_needed
+
+    def can_pass(self, character:Actor) -> tuple[bool,Optional[str]]:
+        for state, tup in self.states_needed.items():
+            needed, response = tup
+            if not state in character.get_current_state() == needed:
+                return False, response
+        return True, None
+    
+class CharacterFeatRequirement(PathRequirement):
+    def __init__(self, feats_needed:dict[Feat,tuple[bool,str]]):
+        self.feats_needed = feats_needed
+
+    def can_pass(self, character:Actor) -> tuple[bool,Optional[str]]:
+        for feat, tup in self.feats_needed.items():
+            needed, response = tup
+            if not character.has_completed_feat(feat) == needed:
+                return False, response
+        return True, None
+    
+class ItemStateRequirement(PathRequirement):
+    def __init__(self, item_states:dict[Target,dict[State,tuple[bool,str]]]):
+        self.item_states_needed = item_states
+
+    def can_pass(self, character:Actor) -> tuple[bool,Optional[str]]:
+        for item, states_needed in self.item_states_needed.items():
+            for state, tup in states_needed.items():
+                needed, response = tup
+                if not state in item.get_current_state() == needed:
+                    return False, response
+        return True, None
+    
+class ItemsHeldRequirement(PathRequirement):
+    def __init__(self, items_needed:dict[Target,tuple[bool,str]]):
+        self.items_needed = items_needed
+
+    def can_pass(self, character:Actor) -> tuple[bool,Optional[str]]:
+        for item, tup in self.items_needed.items():
+            needed, response = tup
+            if not character.is_holding(item) == needed:
+                return False, response
+        return True, None
+    
+class ItemPlacementRequirement(PathRequirement):
+    def __init__(self, item_placements:dict[Target,tuple['Location',Optional['LocationDetail'],bool,str]]):
+        self.item_placements = item_placements
+
+    def can_pass(self, character:Actor):
+        for item, placement_info in self.item_placements.items():
+            location, detail, needed, response = placement_info
+            matches = item.get_location() == (location, detail) or \
+                      item.get_location()[0] == location and detail is None
+            if not matches == needed:
+                return False, response
+        return True, None                
+
+class Path(Named):
+    def __init__(self, name:str, description:str, hidden:bool=False, exit_response:Optional[str]=None, passing_requirements:list[PathRequirement]=None, aliases:Optional[list[str]]=None):
         super().__init__(name, aliases)
         self.description = description
-        self.end = end
         self.hidden = hidden
-        self.linked_targets = dict[Target,State]() if linked_targets is None else linked_targets
-        self.passing_requirements = dict[Actor,State]() if passing_requirements is None else passing_requirements
         self.exit_response = exit_response
+        self.passing_requirements = passing_requirements
 
     def __repr__(self):
         return f"[Path {self.name}]"
 
     def get_description(self) -> str:
         return self.description
-    
-    def set_end(self, end:'Location') -> None:
-        self.end = end
-    
-    def get_end(self) -> 'Location':
-        return self.end
+
+    def get_end(self, character:Actor) -> 'Location':
+        pass
     
     def is_hidden(self) -> bool:
         return self.hidden
     
-    def can_pass(self, actor:Actor) -> tuple[bool,tuple[Target,State],str]:
-        for state in self.passing_requirements:
-            if state not in actor.get_current_state():
-                return False, (actor, state), self.exit_response
-        for item,state in self.linked_targets.items():
-            if state not in item.get_current_state():
-                return False, (item, state), self.exit_response
-        return True, None, self.exit_response
+    def _set_end(self, location_factory, location_detail_factory) -> None:
+        for requirement in self.passing_requirements:
+            if isinstance(requirement, ItemPlacementRequirement):
+                for item, location_info in requirement.item_placements.items():
+                    location_name, detail_name, needed, response = location_info
+                    location = location_factory.get_location(location_name)
+                    detail = None if detail_name is None else location_detail_factory.get_detail(detail_name)
+                    requirement.item_placements[item] = (location, detail, needed, response)
+    
+    def can_pass(self, character:Actor) -> tuple[bool,Optional[str]]:
+        # TODO: optional response strings based on the reason a character couldn't pass (instead of the tuple)
+        if self.passing_requirements is not None:
+            for requirement in self.passing_requirements:
+                can_pass, response = requirement.can_pass(character)
+                if not can_pass:
+                    return False, response
+        return True, self.exit_response
+
+class MultiEndPath(Path):
+    def __init__(self, name:str, description:str, end:'Location', multi_end:dict[Target,'Location'], hidden:bool=False, exit_response:Optional[str]=None, *, passing_requirements:list[PathRequirement]=None, aliases:Optional[list[str]]=None):
+        super().__init__(name, description, hidden, exit_response, passing_requirements=passing_requirements, aliases=aliases)
+        self.multi_end = multi_end
+        self.default_end = end
+
+    def _set_end(self, location_factory, location_detail_factory):
+        super()._set_end(location_factory, location_detail_factory)
+        if self.default_end is not None:
+            self.default_end = location_factory.get_location(self.default_end)
+        for target in self.multi_end.keys():
+            self.multi_end[target] = location_factory.get_location(self.multi_end[target])
+
+    def can_pass(self, character:Actor) -> tuple[bool,Optional[str]]:
+        can_pass, response = super().can_pass(character)
+        if not can_pass:
+            return False, response
+        items_holding = len([1 for item in self.multi_end.keys() if character.is_holding(item)])
+        return items_holding == 1 or items_holding == 0 and self.default_end is not None, self.exit_response
+
+    def get_end(self, character:Actor):
+        if self.can_pass(character):
+            for item, location in self.multi_end.items():
+                if character.is_holding(item):
+                    return location
+            return self.default_end
+        return None
+
+class SingleEndPath(Path):
+
+    def __init__(self, name:str, description:str, end:'Location', hidden:bool=False, exit_response:Optional[str]=None, passing_requirements:list[PathRequirement]=None, *, aliases:Optional[list[str]]=None):
+        super().__init__(name, description, hidden, exit_response, passing_requirements, aliases=aliases)
+        self.end = end
+    
+    def get_end(self, character:Actor) -> 'Location':
+        return self.end
+    
+    def _set_end(self, location_factory, location_detail_factory) -> None:
+        super()._set_end(location_factory, location_detail_factory)
+        self.end = location_factory.get_location(self.end)
 
 class LocationDetail(Named):
 
@@ -345,7 +458,7 @@ class Location(Named):
     
     def is_start_location(self) -> bool:
         return self.start_location
-    
+
     def get_path(self, direction:Direction) -> tuple[Path,str]:
         path = None
         if direction in self.paths:

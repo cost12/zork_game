@@ -10,19 +10,39 @@
         "southeast"  : {
             "name"        : "Exit 2",
             "description" : "a passage",
-            "end"         : "Carpeted Hall"
+            "end"         : null,
+            "multi_end"   : {
+                "baton"   : "Carpeted Hall",
+                "lyre"    : "Museum Gallery",
+                "triangle": "Parking Lot",
+                "slide whistle": "Chimney",
+                "bongo"   : "Gym",
+                "violin"  : "Library"
+            }
         },
         "southwest"  : {
             "name"        : "Exit 2",
             "description" : "a passage",
-            "end"         : "Hot Room"
+            "end"         : null,
+            "multi_end"   : {
+                "baton"   : "Hot Room",
+                "lyre"    : "Museum Gallery",
+                "triangle": "Parking Lot",
+                "slide whistle": "Chimney",
+                "bongo"   : "Gym",
+                "violin"  : "Library"
+            }
         }
     },
     "details"    : [
-        {"name" : "stage",
-    "description" : "laying abandoned on the stage"},
-    {"name" : "stand",
-"description" : "sitting on the music stand"}
+        {
+            "name" : "stage",
+            "description" : "laying abandoned on the stage"
+        },
+        {
+            "name" : "stand",
+            "description" : "sitting on the music stand"
+        }
     ],
     "contents"   : {
         "Baton" : "stand",

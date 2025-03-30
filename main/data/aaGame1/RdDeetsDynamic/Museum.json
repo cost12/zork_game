@@ -5,12 +5,17 @@
         "north"  : {
             "name"        : "Exit 1",
             "description" : "a curtained passage",
-            "end"         : "Coach Car"
+            "end"         : "Coach Car",
+            "multi_end"   : {
+                "lyre"    : "Theatre Stage"
+            }
         }
     },
     "details"    : [
-        {"name" : "wall",
-    "description" : "alone on the desolate walls hangs"}
+        {
+            "name" : "wall",
+            "description" : "alone on the desolate walls hangs"
+        }
     ],
     "contents"   : {
         "Hercules" : "wall"

@@ -6,14 +6,20 @@
         "north"  : {
             "name"        : "Exit 1",
             "description" : "a passage",
-            "end"         : "Birght Room"
+            "end"         : null,
+            "multi_end"   : {
+                "baton"   : "Bright Room",
+                "lyre"    : "Museum Gallery",
+                "triangle": "Parking Lot",
+                "slide whistle": "Chimney",
+                "bongo"   : "Gym",
+                "violin"  : "Library"
+            }
         },
         "south"  : {
             "name"        : "Exit 2",
             "description" : "the Theatre's seats",
             "end"         : "Theatre Seats"
         }
-    },
-    "details"    : [],
-    "contents"   : {}
+    }
 }

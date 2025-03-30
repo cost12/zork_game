@@ -14,10 +14,12 @@
         }
     },
     "details"    : [
-        {"name" : "seated",
-    "description" : "sitting in a chair"}
+        {
+            "name" : "seated",
+            "description" : "sitting in a chair"
+        }
     ],
-    "contents"   : {
+    "contents"  : {
         "child" : "seated"
     }
 }

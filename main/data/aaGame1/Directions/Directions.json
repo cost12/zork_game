@@ -43,6 +43,18 @@
         {
             "name"    : "down",
             "aliases" : ["down", "d"]
+        },
+        {
+            "name"    : "out",
+            "aliases" : ["out"]
+        },
+        {
+            "name"    : "in trunk",
+            "aliases" : ["in trunk"]
+        },
+        {
+            "name"    : "in car",
+            "aliases" : ["in car"]
         }
     ]
 }

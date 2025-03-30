@@ -17,7 +17,5 @@
             "description" : "a doorway",
             "end"         : "Kitchen"
         }
-    },
-    "details"    : [],
-    "contents"   : {}
+    }
 }

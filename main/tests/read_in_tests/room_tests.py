@@ -1,6 +1,6 @@
 from tests.conftest      import rooms
 from factories.factories import LocationFactory
-from models.actors       import Location, LocationDetail, Target, Direction, Path, Actor
+from models.actors       import Location, LocationDetail, Target, Direction, Path, Actor, PathRequirement
 from models.state        import State
 
 def test_read_in(rooms:LocationFactory):
@@ -28,9 +28,5 @@ def test_read_in(rooms:LocationFactory):
             assert isinstance(path.description, str)
             assert isinstance(path.end, Location)
             assert isinstance(path.hidden, bool)
-            for target, state in path.linked_targets.items():
-                assert isinstance(target, Target)
-                assert isinstance(state, State)
-            for actor, state in path.passing_requirements.items():
-                assert isinstance(actor, Actor)
-                assert isinstance(state, State)
+            for requirement in path.passing_requirements:
+                assert isinstance(requirement, PathRequirement)

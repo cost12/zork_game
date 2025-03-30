@@ -5,14 +5,23 @@
         "north"  : {
             "name"        : "Exit 1",
             "description" : "a metal doorway",
-            "end"         : "Pool"
-        }
+            "end"         : "Pool",
+            "multi_end"   : {
+                "Bongo"   : "Theatre Stage"
+            },
+            "character_feat_requirements" : {
+                "shot" : true
+            }
+        },
+        "comment" : "Need to shoot ball"
     },
     "details"    : [
-        {"name" : "racked",
-    "description" : "sitting on a rack"}
+        {
+            "name" : "rack",
+            "description" : "sitting on a rack"
+        }
     ],
     "contents"   : {
-        "Weights" : "racked"
+        "Weights" : "rack"
     }
 }

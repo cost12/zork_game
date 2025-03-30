@@ -24,8 +24,10 @@
         }
     },
     "details"    : [
-        {"name" : "couch",
-    "description" : "sitting on a trodden couch cushion"}
+        {
+            "name" : "couch",
+            "description" : "sitting on a trodden couch cushion"
+        }
     ],
     "contents"   : {
         "Red Book" : "couch",

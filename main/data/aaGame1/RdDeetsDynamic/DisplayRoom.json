@@ -9,8 +9,10 @@
         }
     },
     "details"    : [
-        {"name" : "cushion",
-    "description" : "resting on a delicate cushion"}
+        {
+            "name" : "cushion",
+            "description" : "resting on a delicate cushion"
+        }
     ],
     "contents"   : {
         "Wallet" : "cushion"

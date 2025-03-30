@@ -7,17 +7,21 @@
             "description" : "a door",
             "end"         : "Office"
         },
-        "XXXsouth"  : {
+        "east"  : {
             "name"        : "Exit 2",
             "description" : "a door",
             "end"         : "Den"
         }
     },
-    "details"    : [
-        {"name" : "table",
-    "description" : "on a title"},
-    { "name" : "plate",
-"description" : "on the plate"}
+    "details" : [
+        {
+            "name" : "table",
+            "description" : "on a table"
+        },
+        {
+            "name" : "plate",
+            "description" : "on the plate"
+        }
     ],
     "contents"   : {
         "Plate" : "table",

@@ -1,7 +1,7 @@
 from typing import Optional, Any, Callable
 
 from models.action    import Named, Action
-from models.actors    import Location, Direction, Path, Target, Actor, Inventory, LocationDetail
+from models.actors    import Location, Direction, Path, Target, Actor, Inventory, LocationDetail, SingleEndPath, MultiEndPath, Feat, PathRequirement, CharacterFeatRequirement, CharacterStateRequirement, ItemsHeldRequirement, ItemStateRequirement, ItemPlacementRequirement
 from models.state     import State, StateGroup, StateGraph, StateDisconnectedGraph, Skill, SkillSet
 from controls.character_control import CharacterController, CommandLineController, NPCController
 
@@ -347,8 +347,9 @@ class CharacterFactory:
                          target_responses:dict[Action,str], 
                          tool_responses:dict[Action,str],
                          state_responses:dict[State,str],
+                         feats:list[Feat],
                          aliases:list[str]) -> Actor:
-        new_character = Actor(name, description, type, states, skills, inventory, weight=weight, size=size, value=value, actor_responses=actor_responses, target_responses=target_responses, tool_responses=tool_responses, state_responses=state_responses, aliases=aliases)
+        new_character = Actor(name, description, type, states, skills, inventory, weight=weight, size=size, value=value, actor_responses=actor_responses, target_responses=target_responses, tool_responses=tool_responses, state_responses=state_responses, feats=feats, aliases=aliases)
         if new_character in self.characters:
             return self.characters[new_character]
         for alias in new_character.get_aliases():
@@ -379,7 +380,8 @@ class CharacterFactory:
                        skills_factory:SkillSetFactory,
                        item_factory:ItemFactory,
                        action_factory:NamedFactory[Action],
-                       state_factory:StateFactory) -> Actor:
+                       state_factory:StateFactory,
+                       feat_factory:NamedFactory[Feat]) -> Actor:
         characters = list[Actor]()
         for character_dict in character_dicts:
             name = character_dict['name']
@@ -397,6 +399,10 @@ class CharacterFactory:
             value = Actor.DEFAULT_VALUE
             if 'value' in character_dict:
                 value = character_dict['value']
+            feats = list[Feat]()
+            if 'feats' in character_dict:
+                for feat_name in character_dict['feats']:
+                    feats.append(feat_factory.get_named(feat_name))
             actor_responses = dict[Action,str]()
             if 'actor_responses' in character_dict:
                 for action_name in character_dict['actor_responses']:
@@ -420,7 +426,7 @@ class CharacterFactory:
             aliases = None
             if 'aliases' in character_dict:
                 aliases = character_dict['aliases']
-            characters.append(self.create_character(name, description, type, states, skills, inventory, weight, size, value, actor_responses, target_responses, tool_responses, state_responses, aliases))
+            characters.append(self.create_character(name, description, type, states, skills, inventory, weight, size, value, actor_responses, target_responses, tool_responses, state_responses, feats, aliases))
         return characters
 
 class LocationDetailFactory:
@@ -512,36 +518,99 @@ class LocationFactory:
     def get_location(self, alias:str) -> Optional[Location]:
         return self.aliases.get(alias.lower(), None)
     
-    def __path_from_dict(self, path_dict:dict[str,Any], item_factory:ItemFactory, character_factory:CharacterFactory, state_factory:StateFactory) -> Path:
+    def __path_from_dict(self, path_dict:dict[str,Any], item_factory:ItemFactory, character_factory:CharacterFactory, state_factory:StateFactory, feat_factory:NamedFactory[Feat]) -> Path:
         name = path_dict['name']
         description = path_dict['description']
-        end = None
+        path_type = None
+        if 'end' in path_dict:
+            path_type = 'restricted'
+            end = path_dict['end']
+        if 'multi_end' in path_dict:
+            path_type = 'multi'
+            multi_end = dict[Target, str]()
+            for item_name, room_name in path_dict['multi_end']:
+                item = item_factory.get_item(item_name)
+                multi_end[item] = room_name
+        if path_type is None:
+            print(f"ERROR: path {name} has no type")
         hidden = False
         if 'hidden' in path_dict:
-            hidden = bool(path_dict['hidden'])
+            hidden = path_dict['hidden']
         exit_response = None
         if 'exit_response' in path_dict:
             exit_response = path_dict['exit_response']
-        linked_targets = dict[Target,State]()
-        if 'linked_targets' in path_dict:
-            for target_name,state_name in path_dict['linked_targets'].items():
-                target = item_factory.get_item(target_name)
-                if target is None:
-                    target = character_factory.get_character(target_name)
+        
+        passing_requirements = list[PathRequirement]()
+        if 'character_state_requirements' in path_dict:
+            states_needed = dict[State,tuple[bool,str]]()
+            states_needed_raw = path_dict['character_state_requirements']
+            for state_name, needed in states_needed_raw.items():
                 state = state_factory.get_state(state_name)
-                linked_targets[target] = state
-        passing_requirements = dict[Actor,State]()
-        if 'passing_requirements' in path_dict:
-            for actor_name, state_name in path_dict['passing_requirements'].items():
-                actor = character_factory.get_character(actor_name)
-                state = state_factory.get_state(state_name)
-                passing_requirements[actor] = state
+                if isinstance(needed, bool):
+                    states_needed[state] = (needed,None)
+                else:
+                    states_needed[state] = (needed[0], needed[1])
+            passing_requirements.append(CharacterStateRequirement(states_needed))
+        if 'character_feat_requirements' in path_dict:
+            feats_needed = dict[Feat,tuple[bool,str]]()
+            feats_needed_raw = path_dict['character_feat_requirements']
+            for feat_name, needed in feats_needed_raw.items():
+                feat = feat_factory.get_named(feat_name)
+                if isinstance(needed, bool):
+                    feats_needed[feat] = (needed,None)
+                else:
+                    feats_needed[feat] = (needed[0], needed[1])
+            passing_requirements.append(CharacterFeatRequirement(feats_needed))
+        if 'item_state_requirements' in path_dict:
+            item_states = dict[Target,dict[State,tuple[bool,str]]]()
+            item_states_raw = path_dict['item_state_requirements']
+            for item_name, states_needed_raw in item_states_raw.items():
+                item = item_factory.get_item(item_name)
+                states_needed = dict[State,tuple[bool,str]]()
+                for state_name, needed in states_needed_raw.items():
+                    state = state_factory.get_state(state_name)
+                    if isinstance(needed, bool):
+                        states_needed[state] = (needed,None)
+                    else:
+                        states_needed[state] = (needed[0], needed[1])
+                item_states[item] = states_needed
+            passing_requirements.append(ItemStateRequirement(item_states))
+        if 'items_held_requirements' in path_dict:
+            items_needed = dict[Target,tuple[bool,str]]()
+            items_needed_raw = path_dict['items_held_requirements']
+            for item_name, needed in items_needed_raw.items():
+                item = item_factory.get_item(item_name)
+                if isinstance(needed, bool):
+                    items_needed[item] = (needed,None)
+                else:
+                    items_needed[item] = (needed[0], needed[1])
+            passing_requirements.append(ItemsHeldRequirement(items_needed))
+        if 'item_placement_requirements' in path_dict:
+            item_placements = dict[Target,tuple['Location',Optional['LocationDetail'],bool,str]]()
+            item_placements_raw = path_dict['item_placement_requirements']
+            for item_name, location_info in item_placements_raw.items():
+                item = item_factory.get_item(item_name)
+                location_name = location_info[0]
+                detail_name = None
+                needed = location_info[1]
+                response = None
+                if isinstance(location_info[1], str):
+                    detail_name = location_info[1]
+                    needed = location_info[2]
+                if isinstance(location_info[-1], str):
+                    response = location_info[-1]
+                item_placements[item] = (location_name, detail_name, needed, response)
+            passing_requirements.append(ItemPlacementRequirement(item_placements))
+        
         aliases = None
         if 'aliases' in path_dict:
             aliases = path_dict['aliases']
-        return Path(name, description, end, hidden, exit_response, linked_targets, passing_requirements, aliases)
+        if path_type == 'restricted':
+            return SingleEndPath(name, description, end, hidden, exit_response, passing_requirements=passing_requirements, aliases=aliases)
+        elif path_type == 'multi':
+            return MultiEndPath(name, description, end, multi_end, hidden, exit_response, passing_requirements=passing_requirements, aliases=aliases)
 
-    def many_from_dict(self, location_dicts:list[dict[str,Any]], character_factory:CharacterFactory, item_factory:ItemFactory, direction_factory:NamedFactory[Direction], state_factory:StateFactory) -> list[Location]:
+    def many_from_dict(self, location_dicts:list[dict[str,Any]], character_factory:CharacterFactory, item_factory:ItemFactory, direction_factory:NamedFactory[Direction], state_factory:StateFactory, feat_factory:NamedFactory[Feat]) -> list[Location]:
         locations = list[Location]()
         for location_dict in location_dicts:
             name = location_dict['name']
@@ -550,7 +619,7 @@ class LocationFactory:
             if 'paths' in location_dict:
                 for direction_name, path_dict in location_dict['paths'].items():
                     direction = direction_factory.get_named(direction_name)
-                    path = self.__path_from_dict(path_dict, item_factory, character_factory, state_factory)
+                    path = self.__path_from_dict(path_dict, item_factory, character_factory, state_factory, feat_factory)
                     paths[direction] = path
             direction_responses = dict[Direction,str]()
             if 'direction_responses' in location_dict:
@@ -583,10 +652,7 @@ class LocationFactory:
             if 'paths' in location_dict:
                 for direction_name,path_dict in location_dict['paths'].items():
                     direction = direction_factory.get_named(direction_name)
-                    if 'end' in path_dict:
-                        end_name = path_dict['end']
-                        end = self.get_location(end_name)
-                        location.get_path(direction)[0].set_end(end)
+                    location.get_path(direction)[0]._set_end(self, detail_factory)
         return locations
 
 class CharacterControlFactory:

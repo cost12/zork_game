@@ -14,8 +14,10 @@
         }
     },
     "details"    : [
-        {"name" : "cabinet",
-    "description" : "sitting inside the cabinet"}
+        {
+            "name" : "cabinet",
+            "description" : "sitting inside the cabinet"
+        }
     ],
     "contents"   : {
         "Mason Jar" : "cabinet",

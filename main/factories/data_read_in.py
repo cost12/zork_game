@@ -4,7 +4,7 @@ from typing import Any
 
 from models.actors              import Direction
 from models.action              import Action
-from models.state               import Skill
+from models.state               import Skill, Feat
 
 from factories.factories import ItemFactory, NamedFactory, StateFactory, StateGraphFactory, StateDisconnectedGraphFactory, SkillSetFactory, CharacterFactory, LocationFactory, CharacterControlFactory
 
@@ -28,6 +28,14 @@ def read_in_directions(game:str) -> NamedFactory[Direction]:
 def read_in_actions(game:str) -> NamedFactory[Action]:
     factory = NamedFactory[Action](Action)
     folder = f"data/{game}/actions"
+    data = __read_in_folder(folder)
+    data = [data_dict for data_list in data for data_dict in data_list]
+    factory.many_from_dict(data)
+    return factory
+
+def read_in_feats(game:str) -> NamedFactory[Feat]:
+    factory = NamedFactory[Feat](Feat)
+    folder = f"data/{game}/feats"
     data = __read_in_folder(folder)
     data = [data_dict for data_list in data for data_dict in data_list]
     factory.many_from_dict(data)
@@ -77,18 +85,18 @@ def read_in_skill_sets(game:str, skill_factory:NamedFactory[Skill]) -> SkillSetF
     factory.many_from_dict(data[0], skill_factory)
     return factory
 
-def read_in_characters(game:str, state_graphs:StateDisconnectedGraphFactory, skill_sets_factory:SkillSetFactory, item_factory:ItemFactory, action_factory:NamedFactory[Action], state_factory:StateFactory) -> CharacterFactory:
+def read_in_characters(game:str, state_graphs:StateDisconnectedGraphFactory, skill_sets_factory:SkillSetFactory, item_factory:ItemFactory, action_factory:NamedFactory[Action], state_factory:StateFactory, feat_factory:NamedFactory[Feat]) -> CharacterFactory:
     factory = CharacterFactory()
     folder = f"data/{game}/characters"
     data = __read_in_folder(folder)
-    factory.many_from_dict(data, state_graphs, skill_sets_factory, item_factory, action_factory, state_factory)
+    factory.many_from_dict(data, state_graphs, skill_sets_factory, item_factory, action_factory, state_factory, feat_factory)
     return factory
 
-def read_in_rooms(game:str, character_factory:CharacterFactory, item_factory:ItemFactory, direction_factory:NamedFactory[Direction], state_factory:StateFactory) -> LocationFactory:
+def read_in_rooms(game:str, character_factory:CharacterFactory, item_factory:ItemFactory, direction_factory:NamedFactory[Direction], state_factory:StateFactory, feat_factory:NamedFactory[Feat]) -> LocationFactory:
     factory = LocationFactory()
     folder = f"data/{game}/rooms"
     data = __read_in_folder(folder)
-    factory.many_from_dict(data, character_factory, item_factory, direction_factory, state_factory)
+    factory.many_from_dict(data, character_factory, item_factory, direction_factory, state_factory, feat_factory)
     return factory
 
 def read_in_character_control(game:str, character_factory:CharacterFactory) -> CharacterControlFactory:
@@ -105,14 +113,15 @@ def read_in_game_details(game:str) -> Any:
 def read_in_game(game:str) -> tuple[LocationFactory, CharacterFactory, CharacterControlFactory, ItemFactory, NamedFactory[Action], NamedFactory[Direction], dict[str,Any]]:
     directions   = read_in_directions(game)
     actions      = read_in_actions(game)
+    feats        = read_in_feats(game)
     states       = read_in_states(game, actions)
     graphs       = read_in_state_graphs(game, states, actions)
     full_graphs  = read_in_state_disconnected_graphs(game, graphs)
     items        = read_in_items(game, full_graphs, actions, states)
     skills       = read_in_skills(game)
     skill_sets   = read_in_skill_sets(game, skills)
-    characters   = read_in_characters(game, full_graphs, skill_sets, items, actions, states)
-    rooms        = read_in_rooms(game, characters, items, directions, states)
+    characters   = read_in_characters(game, full_graphs, skill_sets, items, actions, states, feats)
+    rooms        = read_in_rooms(game, characters, items, directions, states, feats)
     controllers  = read_in_character_control(game, characters)
     game_details = read_in_game_details(game)
     game_details['playable_characters'] = controllers.playable_characters()

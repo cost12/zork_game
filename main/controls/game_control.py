@@ -14,6 +14,7 @@ from controls.translate import get_input_translator
 # TODO: low priority: exit text when passing through an exit
 # TODO: handle json input of bools correctly
 # TODO: is hidden needed in LocationDetail? (replaced by hidden_when)
+# TODO: for many items with same name: have unique id for equality/ dicts, dict[str,Named] -> dict[str,list[Named]] and figure out which one based on context/ asking questions
 
 class GameAction:
     """This is an abstract class and should not be instantiated.
@@ -197,7 +198,7 @@ class WalkAction(GameAction):
                     r = "You are unable to exit."
                 response.append(r)
                 if can_pass:
-                    character.change_location(exit.get_end())
+                    character.change_location(exit.get_end(character))
                     response.extend(character.perform_action_as_actor(self.action))
                     response.append(LookAction(Action('look')).take_action(character).as_string())
                     return Feedback(self.__combine_responses__(response))

@@ -5,7 +5,10 @@
         "north"  : {
             "name"        : "Exit 1",
             "description" : "an exit ramp",
-            "end"         : "Riches Room"
+            "end"         : "Riches Room",
+            "multi_end"   : {
+                "triangle": "Theatre Stage"
+            }
         },
         "in trunk"  : {
             "name"        : "Exit 2",
@@ -19,10 +22,19 @@
         }   
     },
     "details"    : [
-        {"name" : "trunk",
-    "description" : "in a corner of the trunk"}
+        {
+            "name" : "in trunk",
+            "description" : "in a corner of the trunk",
+            "hidden_when" : [
+                "trunk",
+                {
+                    "open" : true,
+                    "closed" : false
+                }
+            ]
+        }
     ],
     "contents"   : {
-        "Fuzzy Jacket" : "trunk"
+        "Fuzzy Jacket" : "in trunk"
     }
 }

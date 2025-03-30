@@ -3,9 +3,9 @@ from typing import Any
 
 from models.action          import Action
 from models.actors          import Direction
-from models.state           import Skill
+from models.state           import Skill, Feat
 from factories.factories    import NamedFactory, StateFactory, StateGraphFactory, StateDisconnectedGraphFactory, ItemFactory, SkillSetFactory, CharacterFactory, LocationFactory, CharacterControlFactory
-from factories.data_read_in import read_in_directions, read_in_actions, read_in_skills, read_in_states, read_in_state_graphs, read_in_state_disconnected_graphs, read_in_items, read_in_skill_sets, read_in_characters, read_in_rooms, read_in_character_control, read_in_game_details, read_in_game
+from factories.data_read_in import read_in_directions, read_in_actions, read_in_feats, read_in_skills, read_in_states, read_in_state_graphs, read_in_state_disconnected_graphs, read_in_items, read_in_skill_sets, read_in_characters, read_in_rooms, read_in_character_control, read_in_game_details, read_in_game
 
 from tests.test_constants import GAME_TO_TEST
 
@@ -16,6 +16,10 @@ def directions() -> NamedFactory[Direction]:
 @pytest.fixture
 def actions() -> NamedFactory[Action]:
     return read_in_actions(GAME_TO_TEST)
+
+@pytest.fixture
+def feats() -> NamedFactory[Feat]:
+    return read_in_feats(GAME_TO_TEST)
 
 @pytest.fixture
 def states(actions:NamedFactory[Action]) -> StateFactory:
@@ -42,12 +46,12 @@ def skill_sets(skills:NamedFactory[Skill]) -> SkillSetFactory:
     return read_in_skill_sets(GAME_TO_TEST, skills)
 
 @pytest.fixture
-def characters(state_disconnected_graphs:StateDisconnectedGraphFactory, skill_sets:SkillSetFactory, items:ItemFactory, actions:NamedFactory[Action], states:StateFactory) -> CharacterFactory:
-    return read_in_characters(GAME_TO_TEST, state_disconnected_graphs, skill_sets, items, actions, states)
+def characters(state_disconnected_graphs:StateDisconnectedGraphFactory, skill_sets:SkillSetFactory, items:ItemFactory, actions:NamedFactory[Action], states:StateFactory, feats:NamedFactory[Feat]) -> CharacterFactory:
+    return read_in_characters(GAME_TO_TEST, state_disconnected_graphs, skill_sets, items, actions, states, feats)
 
 @pytest.fixture
-def rooms(characters:CharacterFactory, items:ItemFactory, directions:NamedFactory[Direction], states:StateFactory) -> LocationFactory:
-    return read_in_rooms(GAME_TO_TEST, characters, items, directions, states)
+def rooms(characters:CharacterFactory, items:ItemFactory, directions:NamedFactory[Direction], states:StateFactory, feats:NamedFactory[Feat]) -> LocationFactory:
+    return read_in_rooms(GAME_TO_TEST, characters, items, directions, states, feats)
 
 @pytest.fixture
 def controls(characters:CharacterFactory) -> CharacterControlFactory:

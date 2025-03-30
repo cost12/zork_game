@@ -1,13 +1,14 @@
 {
     "name"       : "Chimney",
     "description": "You are standing in a cramped dark space. It smells of smoke. You are quickly covered in soot and ash. Blegh!",
-    "paths"      : {
-        "out"  : {
+    "paths"    : {
+        "any"  : {
             "name"        : "Exit 1",
             "description" : "the fireplace opening",
-            "end"         : "Attic"
+            "end"         : "Attic",
+            "multi_end"   : {
+                "slide whistle" : "Theatre Stage"
+            }
         }
-    },
-    "details"    : [],
-    "contents"   : {}
+    }
 }

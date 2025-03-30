@@ -1,17 +1,31 @@
 State of item should have continuity with actions
 
 Bedroom: trap door open/closed
+
 Attic: trap door open/closed
+
 Bathroom: Cupboard open/closed
+
 Garden: Day/Night Day: stark, sunlight shines from a colorless sky, and you squint. Night: A hidden moon lends a soft glow to the clouds that oscure the stars above, for it is night time. 
+
 Cellar: trunk open/closed
-Orge Lair: Orge guarding/happy/dead:  (if not dead :In the middle stands a hulking orge holding a large club, blocking the way to a passage going South. (if given peppers: The Orge recognizes you as his pepper-providing pal and steps aside, allowing you to pass unscathed) 
+
+Orge Lair: Orge guarding/happy/dead:  (if not dead :In the middle stands a hulking orge holding a large club, blocking the way to a passage going South. (if given peppers: The Orge recognizes you as his pepper-providing pal and steps aside, allowing you to pass unscathed)) 
+
 Barn: Day/night: "(If day): Sunlight drips through thin cracks in the lofty slatted roof. (If night): Stars twinkle through gaps in the wooden roof. "
+
 Beehive Room: Bees sting every 10 seconds up to 3x, at which point player dies. Burning herbs with lit candle pacifies the bees for 30 turns
+
 Armory: Any added inventory items disappear unless hourglass is broken
+
 SkatePark: ((if given skateboard to Child): The child from the train skates happily around, doing sick tricks deftly. They flash you a thumbs up midair). Also makes door to Greenhouse appear/possible
+
 Bright Room: Two different descriptions based on if sunglasses are worn or not (in static description text)
+
 Library: Shelves should reflect the books that have been placed on them in description? Make items with states for each shelf?
+
 Man Cave: bully challenges if not yet beaten, sulks on couch if beaten
+
 Conditional exits: North in Library, Museum, Gym, Parking Lot, Theatre Entrance. SW, N, SE in Theatre Seats
+
 Parking Lot: directions/exits for "get in car" and "get in trunk"?

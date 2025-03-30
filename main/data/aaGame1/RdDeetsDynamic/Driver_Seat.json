@@ -9,8 +9,10 @@
         }
     },
     "details"    : [
-        {"name" : "mirror",
-    "description" : "hanging from the rear view mirrow"}
+        {
+            "name" : "mirror",
+            "description" : "hanging from the rear view mirrow"
+        }
     ],
     "contents"   : {
         "Sunglasses" : "mirror"

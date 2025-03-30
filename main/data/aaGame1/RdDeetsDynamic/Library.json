@@ -5,10 +5,50 @@
     "paths"      : {
         "north"  : {
             "name"        : "Exit 1",
-            "description" : "a regal yet sturdy doouble door",
-            "end"         : "Puzzle Room"
+            "description" : "a regal yet sturdy double door",
+            "end"         : "Puzzle Room",
+            "multi_end"   : {
+                "violin"  : "Theatre Stage"
+            },
+            "item_placement_requirements" : {
+                "Red book" : ["Library", "shelf 3", true, null],
+                "Gray book" : ["Library", "shelf 4", true, null],
+                "Brown book" : ["Library", "shelf 5", true, null],
+                "Yellow book" : ["Library", "shelf 6", true, null],
+                "Emerald book" : ["Library", "shelf 7", true, null],
+                "Burgundy book" : ["Library", "shelf 8", true, null],
+                "Vermilion book" : ["Library", "shelf 9", true, null]
+            }
         }
     },
-    "details"    : ["shelves??? Exit puzzle?"],
-    "contents"   : {}
+    "details"    : [
+        {
+            "name" : "shelf 3",
+            "description" : "on the third slot"
+        },
+        {
+            "name" : "shelf 4",
+            "description" : "on the fourth slot"
+        },
+        {
+            "name" : "shelf 5",
+            "description" : "on the fifth slot"
+        },
+        {
+            "name" : "shelf 6",
+            "description" : "on the sixth slot"
+        },
+        {
+            "name" : "shelf 7",
+            "description" : "on the seventh slot"
+        },
+        {
+            "name" : "shelf 8",
+            "description" : "on the eighth slot"
+        },
+        {
+            "name" : "shelf 9",
+            "description" : "on the ninth slot"
+        }
+    ]
 }
