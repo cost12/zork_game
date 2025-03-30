@@ -292,15 +292,19 @@ class ItemPlacementRequirement(PathRequirement):
         return True, None                
 
 class Path(Named):
-    def __init__(self, name:str, description:str, hidden:bool=False, exit_response:Optional[str]=None, passing_requirements:list[PathRequirement]=None, aliases:Optional[list[str]]=None):
+    def __init__(self, name:str, description:str, *, path_items:list[Target]=None, hidden:bool=False, exit_response:Optional[str]=None, passing_requirements:list[PathRequirement]=None, aliases:Optional[list[str]]=None):
         super().__init__(name, aliases)
         self.description = description
         self.hidden = hidden
         self.exit_response = exit_response
         self.passing_requirements = passing_requirements
+        self.path_items = list[Target]() if path_items is None else path_items
 
     def __repr__(self):
         return f"[Path {self.name}]"
+    
+    def contains_item(self, item:Target) -> bool:
+        return item in self.path_items
 
     def get_description(self) -> str:
         return self.description
@@ -330,8 +334,8 @@ class Path(Named):
         return True, self.exit_response
 
 class MultiEndPath(Path):
-    def __init__(self, name:str, description:str, end:'Location', multi_end:dict[Target,'Location'], hidden:bool=False, exit_response:Optional[str]=None, *, passing_requirements:list[PathRequirement]=None, aliases:Optional[list[str]]=None):
-        super().__init__(name, description, hidden, exit_response, passing_requirements=passing_requirements, aliases=aliases)
+    def __init__(self, name:str, description:str, end:'Location', multi_end:dict[Target,'Location'], hidden:bool=False, exit_response:Optional[str]=None, *, path_items:list[Target]=None, passing_requirements:list[PathRequirement]=None, aliases:Optional[list[str]]=None):
+        super().__init__(name, description, hidden=hidden, exit_response=exit_response, path_items=path_items, passing_requirements=passing_requirements, aliases=aliases)
         self.multi_end = multi_end
         self.default_end = end
 
@@ -359,8 +363,8 @@ class MultiEndPath(Path):
 
 class SingleEndPath(Path):
 
-    def __init__(self, name:str, description:str, end:'Location', hidden:bool=False, exit_response:Optional[str]=None, passing_requirements:list[PathRequirement]=None, *, aliases:Optional[list[str]]=None):
-        super().__init__(name, description, hidden, exit_response, passing_requirements, aliases=aliases)
+    def __init__(self, name:str, description:str, end:'Location', hidden:bool=False, exit_response:Optional[str]=None, *, passing_requirements:list[PathRequirement]=None, path_items:list[Target]=None, aliases:Optional[list[str]]=None):
+        super().__init__(name, description, hidden=hidden, exit_response=exit_response, path_items=path_items, passing_requirements=passing_requirements, aliases=aliases)
         self.end = end
     
     def get_end(self, character:Actor) -> 'Location':
@@ -448,13 +452,13 @@ class Location(Named):
             return True
         return False
     
-    def contains(self, target:Target) -> tuple[bool,LocationDetail|None]:
+    def contains(self, target:Target) -> tuple[bool,LocationDetail|Path|None]:
         if target in self.contents:
             return True, self.contents[target]
+        for path in self.paths.values():
+            if path.contains_item(target):
+                return True, path
         return False, None
-    
-    def get_contents(self) -> list[Target]:
-        return self.contents.keys()
     
     def is_start_location(self) -> bool:
         return self.start_location

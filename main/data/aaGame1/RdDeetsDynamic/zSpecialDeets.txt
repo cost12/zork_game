@@ -1,8 +1,8 @@
 State of item should have continuity with actions
 
-Bedroom: trap door open/closed
+x Bedroom: trap door open/closed
 
-Attic: trap door open/closed
+x Attic: trap door open/closed
 
 Bathroom: Cupboard open/closed
 

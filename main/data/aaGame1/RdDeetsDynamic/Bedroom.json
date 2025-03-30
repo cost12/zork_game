@@ -11,7 +11,13 @@
         "Up"  : {
             "name"        : "Exit 1",
             "description" : "A trapdoor on the ceiling",
-            "end"         : "Attic"
+            "end"         : "Attic",
+            "path_items"  : "trapdoor",
+            "item_state_requirements" : {
+                "trapdoor" : {
+                    "open" : [true, null]
+                }
+            }
         },
         "south"  : {
             "name"        : "Exit 2",
@@ -27,8 +33,7 @@
     ],
     "contents"   : {
         "Mug of Water" : "bedside",
-        "Brown Book"   : "bedside",
-        "Trap door"    : "default"
+        "Brown Book"   : "bedside"
     },
-    "start" : "True"
+    "start" : true
 }

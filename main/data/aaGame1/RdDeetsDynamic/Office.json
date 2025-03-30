@@ -9,8 +9,10 @@
         }
     },
     "details"    : [
-        {"name" : "desk",
-    "description" : "sitting on the desk"}
+        {
+            "name" : "desk",
+            "description" : "sitting on the desk"
+        }
     ],
     "contents"   : {
         "Emerald Book" : "desk",

@@ -14,8 +14,11 @@
         }
     },
     "details"    : [
-        {"name" : "inseat",
-    "description" : "sewn inside of the seat"}
+        {
+            "name" : "inseat",
+            "description" : "sewn inside of the seat",
+            "hidden": true
+        }
     ],
     "contents"   : {
         "keys" : "inseat"

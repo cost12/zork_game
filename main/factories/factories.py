@@ -539,6 +539,10 @@ class LocationFactory:
         exit_response = None
         if 'exit_response' in path_dict:
             exit_response = path_dict['exit_response']
+        path_items = list[Target]()
+        if 'path_items' in path_dict:
+            for item_name in path_dict['path_items']:
+                path_items.append(item_factory.get_item('path_items'))
         
         passing_requirements = list[PathRequirement]()
         if 'character_state_requirements' in path_dict:
@@ -606,9 +610,9 @@ class LocationFactory:
         if 'aliases' in path_dict:
             aliases = path_dict['aliases']
         if path_type == 'restricted':
-            return SingleEndPath(name, description, end, hidden, exit_response, passing_requirements=passing_requirements, aliases=aliases)
+            return SingleEndPath(name, description, end, hidden, exit_response, path_items=path_items, passing_requirements=passing_requirements, aliases=aliases)
         elif path_type == 'multi':
-            return MultiEndPath(name, description, end, multi_end, hidden, exit_response, passing_requirements=passing_requirements, aliases=aliases)
+            return MultiEndPath(name, description, end, multi_end, hidden, exit_response, path_items=path_items, passing_requirements=passing_requirements, aliases=aliases)
 
     def many_from_dict(self, location_dicts:list[dict[str,Any]], character_factory:CharacterFactory, item_factory:ItemFactory, direction_factory:NamedFactory[Direction], state_factory:StateFactory, feat_factory:NamedFactory[Feat]) -> list[Location]:
         locations = list[Location]()

@@ -6,7 +6,13 @@
         "down"  : {
             "name"        : "Exit 1",
             "description" : "a trapdoor flush with the floor",
-            "end"         : "Bedroom"
+            "end"         : "Bedroom",
+            "path_items"  : "trapdoor",
+            "item_state_requirements" : {
+                "trapdoor" : {
+                    "open" : [true, null]
+                }
+            }
         }
     },
     "details" : [

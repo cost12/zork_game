@@ -28,8 +28,8 @@
             "hidden_when" : [
                 "trunk",
                 {
-                    "open" : true,
-                    "closed" : false
+                    "open" : false,
+                    "closed" : true
                 }
             ]
         }

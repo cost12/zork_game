@@ -12,7 +12,5 @@
             "description" : "the train continues",
             "end"         : "Dining Car"
         }
-    },
-    "details"    : [],
-    "contents"   : {}
+    }
 }
