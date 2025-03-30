@@ -10,7 +10,11 @@
         "south"  : {
             "name"        : "Exit 2",
             "description" : "a passage",
-            "end"         : "Greenhouse"
+            "end"         : "Greenhouse",
+            "hidden_when_locked" : true,
+            "character_feat_requirements" : {
+                "gift skateboard to child" : true
+            }
         }
     }
 }

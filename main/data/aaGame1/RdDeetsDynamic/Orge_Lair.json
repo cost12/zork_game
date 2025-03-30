@@ -10,7 +10,12 @@
         "south"  : {
             "name"        : "Exit 2",
             "description" : "a passage",
-            "end"         : "Bright Room"
+            "end"         : "Bright Room",
+            "item_state_requirements" : {
+                "Orge" : {
+                    "guarding" : [false, "In the middle stands a hulking orge holding a large club, blocking the way to a passage going South."]
+                }
+            }
         }
     },
     "contents"   : {

@@ -536,6 +536,9 @@ class LocationFactory:
         hidden = False
         if 'hidden' in path_dict:
             hidden = path_dict['hidden']
+        hidden_when_locked = False
+        if 'hidden_when_locked' in path_dict:
+            hidden_when_locked = path_dict['hidden_when_locked']
         exit_response = None
         if 'exit_response' in path_dict:
             exit_response = path_dict['exit_response']

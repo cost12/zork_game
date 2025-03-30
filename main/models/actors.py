@@ -292,13 +292,14 @@ class ItemPlacementRequirement(PathRequirement):
         return True, None                
 
 class Path(Named):
-    def __init__(self, name:str, description:str, *, path_items:list[Target]=None, hidden:bool=False, exit_response:Optional[str]=None, passing_requirements:list[PathRequirement]=None, aliases:Optional[list[str]]=None):
+    def __init__(self, name:str, description:str, *, hidden_when_locked:bool=False, path_items:list[Target]=None, hidden:bool=False, exit_response:Optional[str]=None, passing_requirements:list[PathRequirement]=None, aliases:Optional[list[str]]=None):
         super().__init__(name, aliases)
         self.description = description
         self.hidden = hidden
         self.exit_response = exit_response
         self.passing_requirements = passing_requirements
         self.path_items = list[Target]() if path_items is None else path_items
+        self.hidden_when_locked = hidden_when_locked
 
     def __repr__(self):
         return f"[Path {self.name}]"
@@ -312,7 +313,9 @@ class Path(Named):
     def get_end(self, character:Actor) -> 'Location':
         pass
     
-    def is_hidden(self) -> bool:
+    def is_hidden(self, character:Actor) -> bool:
+        if self.hidden_when_locked:
+            return self.can_pass(character)
         return self.hidden
     
     def _set_end(self, location_factory, location_detail_factory) -> None:
@@ -429,7 +432,7 @@ class Location(Named):
         full_description = self.description
 
         for direction,path in self.paths.items():
-            if not path.is_hidden():
+            if not path.is_hidden(actor):
                 full_description += f"\nTo the {direction.get_name()} {path.get_description()}."
 
         for target,detail in self.contents.items():
@@ -460,10 +463,20 @@ class Location(Named):
                 return True, path
         return False, None
     
+    def can_interact_with(self, character:Actor, item:Target) -> bool:
+        if character.is_holding(item):
+            return True
+        if item in self.contents:
+            return self.contents[item].is_hidden()
+        for path in self.paths.values():
+            if path.contains_item(item) and not path.is_hidden(character):
+                return True
+        return False
+    
     def is_start_location(self) -> bool:
         return self.start_location
 
-    def get_path(self, direction:Direction) -> tuple[Path,str]:
+    def get_path(self, character:Actor, direction:Direction) -> tuple[Path,str]:
         path = None
         if direction in self.paths:
             path = self.paths[direction]

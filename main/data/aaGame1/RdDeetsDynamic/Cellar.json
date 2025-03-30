@@ -15,8 +15,8 @@
             "hidden_when" : [
                 "trunk",
                 {
-                    "locked" : true,
-                    "unlocked": false
+                    "closed" : true,
+                    "open": false
                 }
             ]
         },

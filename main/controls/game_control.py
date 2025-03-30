@@ -188,7 +188,7 @@ class WalkAction(GameAction):
         response.append(r)
         if can_walk:
             room, detail = character.get_location()
-            exit, r = room.get_path(direction)
+            exit, r = room.get_path(character, direction)
             if r is None and exit is None:
                 r = f"There is nothing {direction.get_name()}."
             response.append(r)
