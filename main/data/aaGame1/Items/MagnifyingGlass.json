@@ -1,9 +1,16 @@
 {
-    "name"        : "Magnifying Glass",
-    "description" : "A simple magnifying glass",
-    "weight"      : 2,
-    "value"       : 3,
-    "origin_text" : " is sitting on the table, catching and intensifying the monitor's light.",
-    "comments"    : ""
-    
+    "name"             : "Magnifying Glass",
+    "description"      : "a simple, plastic-handled magnifying glass",
+    "states"           : "standard_item",
+    "weight"           : 2,
+    "value"            : 5,
+    "size"             : 1,
+    "target_responses" : {
+        "take": "You take the magnifying glass.",
+        "light candle": "Using the magnifying glass to refract the light, you light the candle"
+        
+    },
+    "state_responses"  : {
+        "broken_item" : "Now that's just a waste!"
+    }
 }

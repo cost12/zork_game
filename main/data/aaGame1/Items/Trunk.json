@@ -1,9 +1,19 @@
 {
-    "name"        : "Mug of Water",
-    "description" : "A rustic mug full of water",
-    "weight"      : 0.5,
-    "value"       : 1,
-    "origin_text" : " is sitting on the bedside table.",
-    "comments"    : ""
+    "name"             : "Trunk",
+    "description"      : "An honest, squat trunk",
+    "states"           : "standard_item",
+    "weight"           : 100,
+    "value"            : 3,
+    "size"             : 30,
+    "target_responses" : {
+        "take": "The trunk's a bit too heavy for you to bear on."
     
+    },
+    "state_responses"  : {
+        "open" : "The trunk's lid squeaks open, revealing its contents",
+        "close" : "The trunk's lid slams shut dramatically",
+        "unlock" : "The trunk's lock disengages with a satisfying click",
+        "lock" : "You re-engage the trunk's lock",
+        "broken_item" : "Why would you want to do a thing like that?"
+    }
 }

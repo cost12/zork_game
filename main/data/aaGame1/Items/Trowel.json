@@ -1,9 +1,15 @@
 {
-    "name"        : "Mug of Water",
-    "description" : "A rustic mug full of water",
-    "weight"      : 0.5,
-    "value"       : 1,
-    "origin_text" : " is sitting on the bedside table.",
-    "comments"    : ""
-    
+    "name"             : "Trowel",
+    "description"      : "A humble trowel, still clung to by a pernicious clod of soil",
+    "states"           : "standard_item",
+    "weight"           : 2,
+    "value"            : 1,
+    "size"             : 1,
+    "target_responses" : {
+        "take": "Taken",
+        "dig" : "You try to dig but give it up quickly as a bad job. There is no treasure buried here."
+    },
+    "state_responses"  : {
+        "broken_item" : "You can't break the trowel."
+    }
 }

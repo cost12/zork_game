@@ -1,9 +1,19 @@
 {
-    "name"        : "Mason Jar",
-    "description" : "A smudged and empty mason jar",
-    "weight"      : 1,
-    "value"       : 1,
-    "origin_text" : " is inside the cabinet.",
-    "comments"    : "Seen when kitchen cabinet is opened. States: full of dirt, water, honey (add 2lbs in these states)"
-    
+    "name"             : "Mason Jar",
+    "description"      : "A smudged and empty mason jar",
+    "states"           : "recepticle",
+    "weight"           : 1,
+    "value"            : 3,
+    "size"             : 2,
+    "target_responses" : {
+        "take": "The jar is cool to the touch."
+    },
+    "state_responses"  : {
+        "on"          : "The jar is empty",
+        "off"         : "The jar is full.",
+        "water"       : "The jar is filled with water",
+        "honey"       : "The jar is filled with honey",
+        "other"       : "Why would you put something like that in a nice simple jar?",
+        "broken_item" : "The jar shatters, rendering itself unusable. Nice going"
+    }
 }

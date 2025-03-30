@@ -1,9 +1,14 @@
 {
-    "name"        : "Mug of Water",
-    "description" : "A rustic mug full of water",
-    "weight"      : 0.5,
-    "value"       : 1,
-    "origin_text" : " is sitting on the bedside table.",
-    "comments"    : ""
-    
+    "name"             : "Spear",
+    "description"      : "A dope-ass long spear with a tuft to catch the blood of your foes",
+    "states"           : "standard_item",
+    "weight"           : 3,
+    "value"            : 3,
+    "size"             : 5,
+    "target_responses" : {
+        "take": "The spear fills you with a sense of confidence and competence. What a rush"
+    },
+    "state_responses"  : {
+        "broken_item" : "Seems odd. You break the handle in two."
+    }
 }

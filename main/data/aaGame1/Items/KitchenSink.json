@@ -1,9 +1,17 @@
+
 {
-    "name"        : "Kitchen Sink",
-    "description" : "A rusty aluminium sink basin",
-    "weight"      : 0.5,
-    "value"       : 1,
-    "origin_text" : " is embedded in the counter.",
-    "comments"    : ""
-    
+    "name"             : "Kitchen Sink",
+    "description"      : "A stained metal sink",
+    "states"           : "standard_item",
+    "weight"           : 50,
+    "value"            : 5,
+    "size"             : 30,
+    "target_responses" : {
+        "take": "And do what with it? Nice try."
+    },
+    "state_responses"  : {
+        "on"          : "The sink's tap turns, buy only a sad gurgling sound emerges.",
+        "off"         : "The sink's tap is off.",
+        "broken_item" : "What are you, part of a demolition crew? The sink is dented."
+    }
 }

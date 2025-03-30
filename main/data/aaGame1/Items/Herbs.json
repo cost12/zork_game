@@ -1,0 +1,16 @@
+{
+    "name"             : "Bundle of Dried Herbs",
+    "description"      : "a small, tightly packed bundle of herbs bound by a short length of hemp twine.",
+    "states"           : "standard_item",
+    "weight"           : 1,
+    "value"            : 1,
+    "size"             : 1,
+    "target_responses" : {
+        "burn": "With what?",
+        "untie" : "You untie the bundle. The hempen twine disintigrates at your touch, and the herbacious leaves fall to the ground, scattered. You cannot gather them.",
+        "burn with candle": "You burn the herbs, releasing a deliciously perfumed and aromatic smoke into the air.  You feel yourself relax, becoming nigh on drowsy."
+    },
+    "state_responses"  : {
+        "broken_item" : "You scatter the desicated leaves to the ground"
+    }
+}

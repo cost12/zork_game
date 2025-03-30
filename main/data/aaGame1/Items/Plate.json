@@ -1,9 +1,15 @@
+
 {
-    "name"        : "Mug of Water",
-    "description" : "A rustic mug full of water",
-    "weight"      : 0.5,
-    "value"       : 1,
-    "origin_text" : " is sitting on the bedside table.",
-    "comments"    : ""
-    
+    "name"             : "Plate",
+    "description"      : "A simple plate",
+    "states"           : "standard_item",
+    "weight"           : 2,
+    "value"            : 1,
+    "size"             : 1,
+    "target_responses" : {
+        "take": "You the plate, only getting a little food on your hand."
+    },
+    "state_responses"  : {
+        "broken_item" : "The plate shatters and is useless."
+    }
 }

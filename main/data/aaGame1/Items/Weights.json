@@ -1,0 +1,15 @@
+{
+    "name"             : "Weights",
+    "description"      : "A lone rusty dumbbell,",
+    "states"           : "standard_item",
+    "weight"           : 25,
+    "value"            : 10,
+    "size"             : 1,
+    "target_responses" : {
+        "take": "You take the weights, they are heavy ",
+        "lift" : "Nice rep. Your form isn't perfect but you feel a bit stronger for having done it."
+    },
+    "state_responses"  : {
+        "broken_item" : "Ha! Even Arnold couldn't break this."
+    }
+}

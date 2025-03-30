@@ -1,9 +1,17 @@
+
 {
-    "name"        : "Hourglass",
-    "description" : "An ancient, fragile hourglass",
-    "weight"      : 0.5,
-    "value"       : 5,
-    "origin_text" : " is sitting on the table.",
-    "comments"    : "When broken, Armory can be used/taken from"
-    
+    "name"             : "Hourglass",
+    "description"      : "an ancient, fragile hourglass",
+    "states"           : "standard_item",
+    "weight"           : 0.5,
+    "value"            : 5,
+    "size"             : 1,
+    "target_responses" : {
+        "take": "The hourglass is delicate in your grasp."
+    },
+    "state_responses"  : {
+        "on"          : "Grains of sand tumble through the hourglass, mezmerising you.",
+        "off"         : "Grains of sand tumble through the hourglass, mesmerizing you.",
+        "broken_item" : "The hourglass easily snaps, the sang spilling. You hear a whooshing sound, as if some spell or curse has been lifted somewhere."
+    }
 }

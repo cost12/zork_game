@@ -1,0 +1,17 @@
+
+{
+    "name"             : "sunglasses",
+    "description"      : "a pair of simple, black pplastic sunglasses",
+    "states"           : "standard_item",
+    "weight"           : 1,
+    "value"            : 3,
+    "size"             : 1,
+    "target_responses" : {
+        "take": "You take the sunglasses"
+    },
+    "state_responses"  : {
+        "on"          : "Okay cool guy. The room gets darker. ",
+        "off"         : "You take the glasses off, getting a brighter view of your surroundings.",
+        "broken_item" : "You're able to break the sunglasses in half without much effort, but they are now unwearable."
+    }
+}

@@ -1,0 +1,7 @@
+Can't be taken: Shower, BR Sink, KitchenSink, Meal, Boots, Fork, jacket, triangle, weights
+Deleted: Cabinet, Worms
+Needed: Magnifying glass and candle: make sure you are in the right room to do the action (bright room or Garden). 
+Trunk and Car: need keys in inventory in order to lock/unlock
+Forgot to add note to Theatre Stage
+Repeated weight lifting has different responses
+

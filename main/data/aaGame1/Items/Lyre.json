@@ -1,0 +1,15 @@
+{
+    "name"             : "Lyre",
+    "description"      : "A rustic Greek lyre, surely loved as is evident from the well-worn neck. ",
+    "states"           : "standard_item",
+    "weight"           : 2,
+    "value"            : 10,
+    "size"             : 1,
+    "target_responses" : {
+        "take": "You momentarily feel transported back to Ancient Athênai as a the spirit of a minstrel fleetingly posesses you.",
+        "play" : "You're not very good, but the spirit seems to stay your novice hand, and you are able to stumble through a simple yet haunting melody."
+    },
+    "state_responses"  : {
+        "broken_item" : "Why oh why? The olden lyre so lovingly passed down between generations is no more."
+    }
+}

@@ -1,12 +1,12 @@
 {
-    "name"             : "Emerald Book",
-    "description"      : "a hearty volume with an emerald cover",
+    "name"             : "Burgundy Book",
+    "description"      : "a majestic leather-bound volume with a burgundy hue",
     "states"           : "standard_item",
     "weight"           : 1,
     "value"            : 1,
     "size"             : 1,
     "target_responses" : {
-        "take": "You take the Emerald Book",
+        "take": "You take the Burgundy Book",
         "read": "You try to read the book, but its script is one which you can neither recognize nor decipher"
     },
     "state_responses"  : {

@@ -1,9 +1,0 @@
-{
-    "name"        : "Kitchen Cabinet",
-    "description" : "A single stained cabinet",
-    "weight"      : 0.5,
-    "value"       : 1,
-    "origin_text" : " hangs from one wall.",
-    "comments"    : "When open, rusty fork and Mason jar revealed. When opened: [It opens with a squeak]"
-    
-}

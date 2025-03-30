@@ -1,9 +1,18 @@
+
 {
-    "name"        : "Jar of Peppers",
-    "description" : "A jar of pickled hot peppers",
-    "weight"      : 5,
-    "value"       : 2,
-    "origin_text" : " is sitting on the trunk.",
-    "comments"    : "State: eaten/empty, loses 3 weight. If given to Orge, allowed to pass. If given to child, child cries. If given to bear, bear attacks."
-    
+    "name"             : "Jar of Peppers",
+    "description"      : "A jar of hot peppers pickling in brine",
+    "states"           : "standard_item",
+    "weight"           : 3,
+    "value"            : 3,
+    "size"             : 2,
+    "target_responses" : {
+        "take": "Taken.",
+        "eat" : "Yum! That was quite filling!",
+        "give to orge" : "The Orge loves peppers! He quickly slurps them up and sits back contentedly",
+        "give to child" : "The Child tentativly samples the peppers and hates them. They start crying hard. Nice going."
+    },
+    "state_responses"  : {
+        "broken_item" : "Now that's just gratuitous! The peppers and their brine spill everywhere"
+    }
 }
