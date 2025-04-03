@@ -1,0 +1,19 @@
+{
+    "name"         : "Child",
+    "type"         : "standard",
+    "description"  : "a small child with a face reflecting acquired ugliness",
+    "states"       : "standard_character",
+    "skills"       : "standard",
+    "inventory"    : {
+        "size_limit" : 20,
+        "weight_limit" : 100
+    },
+    "target_responses" : {
+        "look" : "You feel sorry for the lonesome child. They do not meet your gaze",
+        "take" : "Amber alert!",
+        "kill" : "A child???",
+        "hug"  : "This briefly comforts the sorry child.",
+        "kiss" : "Okay Drake",
+        "" : ""
+    }
+}

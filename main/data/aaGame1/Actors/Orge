@@ -1,0 +1,19 @@
+{
+    "name"         : "Orge",
+    "type"         : "orge",
+    "description"  : "a hulking brute, more scar tissue than clear skin, greenish, rank, and steaming.",
+    "states"       : "standard_character",
+    "skills"       : "standard",
+    "inventory"    : {
+        "size_limit" : 200,
+        "weight_limit" : 100
+    },
+    "target_responses" : {
+        "look" : "You feel repulsed as you look at the Orge and struggle to keep it within its gaze",
+        "take" : "A foolish endeavor.",
+        "kill" : "With what?",
+        "hug"  : "This merely confuses and angers the Orge",
+        "kiss" : "The Orge thinks you are cute and kisses you back. With gusto!",
+        "" : ""
+    }
+}
