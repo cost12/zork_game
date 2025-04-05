@@ -1,0 +1,19 @@
+{
+    "name"         : "Bear",
+    "type"         : "bear",
+    "description"  : "a bear.",
+    "states"       : "standard_character",
+    "skills"       : "standard",
+    "inventory"    : {
+        "size_limit" : 200,
+        "weight_limit" : 100
+    },
+    "target_responses" : {
+        "look" : "see a bear",
+        "take" : "A foolish endeavor.",
+        "kill" : "With what?",
+        "hug"  : "This merely confuses and angers the Bear",
+        "kiss" : "The Bear thinks you are cute and kisses you back. With gusto!",
+        "" : ""
+    }
+}

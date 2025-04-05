@@ -1,5 +1,5 @@
 {
-    "name"         : "player",
+    "name"         : "player1",
     "type"         : "player",
     "description"  : "well, it's you",
     "states"       : "standard_character",
