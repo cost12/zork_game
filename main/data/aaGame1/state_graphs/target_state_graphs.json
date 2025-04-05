@@ -1,0 +1,71 @@
+[
+    {
+        "state_groups"    : [
+            {
+                "name"    : "normal",
+                "states"  : ["visible","breakable"]
+            },
+            {
+                "name"    : "broken",
+                "states"  : ["broken"]
+            },
+            {
+                "name"    : "held",
+                "states"  : ["held"]
+            },
+            {
+                "name"    : "takeable",
+                "states"  : ["takeable"]
+            },
+            {
+                "name"    : "off",
+                "states"  : ["off"]
+            },
+            {
+                "name"    : "broken_off",
+                "states"  : ["off"]
+            },
+            {
+                "name"    : "on",
+                "states"  : ["on"]
+            }
+        ]
+    },
+    {
+        "name"            : "standard_item",
+        "current_state"   : "normal",
+        "target_graph"    : {
+            "normal" : {
+                "break"   : "broken"
+            }
+        }
+    },
+    {
+        "name"            : "held_item",
+        "current_state"   : "takeable",
+        "target_graph"    : {
+            "takeable"    : {
+                "take"    : "held"
+            },
+            "held"        : {
+                "drop"    : "takeable"
+            }
+        }
+    },
+    {
+        "name"            : "switch",
+        "current_state"   : "off",
+        "target_graph"    : {
+            "off"         : {
+                "toggle"  : "on",
+                "turn on" : "on",
+                "break"   : "broken_off"
+            },
+            "on"          : {
+                "toggle"  : "off",
+                "turn off": "off",
+                "break"   : "broken_off"
+            }
+        }
+    }
+]

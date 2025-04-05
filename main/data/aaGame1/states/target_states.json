@@ -1,0 +1,105 @@
+[
+    {
+        "name"              : "visible",
+        "actions_as_target" : ["look"]
+    },
+    {
+        "name"              : "breakable",
+        "actions_as_target" : ["break"]
+    },
+    {
+        "name"              : "broken"
+    },
+    {
+        "name"              : "on",
+        "actions_as_target" : ["toggle", "turn off"]
+    },
+    {
+        "name"              : "off",
+        "actions_as_target" : ["toggle", "turn on"]
+    },
+    {
+        "name"              : "held",
+        "actions_as_target" : ["drop", "give"]
+    },
+    {
+        "name"              : "takeable",
+        "actions_as_target" : ["take"]
+    },
+    {
+        "name"              : "open",
+        "actions_as_target" : ["close"]
+    },
+    {
+        "name"              : "closed",
+        "actions_as_target" : ["open"]
+    },
+    {
+        "name"              : "locked",
+        "actions_as_target" : ["unlock"]
+    },
+    {
+        "name"              : "unlocked",
+        "actions_as_target" : ["lock"]
+    },
+    {
+        "name"              : "key",
+        "actions_as_tool"   : ["unlock", "lock"]
+    },
+    {
+        "name"              : "on fire",
+        "actions_as_target" : ["extinguish"],
+        "actions_as_tool"   : ["light"]
+    },
+    {
+        "name"              : "flammable",
+        "actions_as_target" : ["light"]
+    },
+    {
+        "name"              : "burned"
+    },
+    {
+        "name"              : "bouncy",
+        "actions_as_tool"   : ["bounce"]
+    },
+    {
+        "name"              : "throwable",
+        "actions_as_tool"   : ["shoot"]
+    },
+    {
+        "name"              : "sharp",
+        "actions_as_tool" : ["attack"]
+    },
+    {
+        "name"              : "musical",
+        "actions_as_tool"   : ["play"]
+    },
+    {
+        "name"              : "edible",
+        "actions_as_target" : ["eat"]
+    },
+    {
+        "name"              : "drinkable",
+        "actions_as_target" : ["drink"]
+    },
+    {
+        "name"              : "diggable",
+        "actions_as_target" : ["dig"]
+    },
+    {
+        "name"              : "wearable",
+        "actions_as_target" : ["wear"]
+    },
+    {
+        "name"              : "worn",
+        "actions_as_target" : ["take off"]
+    },
+    {
+        "name"              : "conductable",
+        "actions_as_tool"   : ["conduct"]
+    },
+    {
+        "name"              : "readable",
+        "actions_as_target" : ["read"]
+    }
+]

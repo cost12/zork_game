@@ -1,0 +1,8 @@
+{
+    "name"             : "Honey",
+    "description"      : "a bit of honey.",
+    "states"           : "standard_item",
+    "weight"           : 1,
+    "value"            : 1,
+    "size"             : 1
+}

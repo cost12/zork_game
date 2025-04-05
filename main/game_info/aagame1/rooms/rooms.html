@@ -1,0 +1,168 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 600px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+             #config {
+                 float: left;
+                 width: 400px;
+                 height: 600px;
+             }
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+            <div id="config"></div>
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "id": "bedroom", "label": "bedroom", "shape": "dot", "title": "Contains:\nMug of Water\nBrown Book\nplayer1", "x": 0, "y": 0}, {"color": "#97c2fc", "id": "bathroom", "label": "bathroom", "shape": "dot", "title": "Contains:\nVermilion Book\nShower\nSink", "x": 150, "y": 0}, {"color": "#97c2fc", "id": "attic", "label": "attic", "shape": "dot", "title": "Contains:\nLeaflet\nHourglass\nYellow Book", "x": 0, "y": -150}, {"color": "#97c2fc", "id": "hallway", "label": "hallway", "shape": "dot", "title": "Contains:\n", "x": 150, "y": 150}, {"color": "#97c2fc", "id": "den", "label": "den", "shape": "dot", "title": "Contains:\nRed Book\nWool Hat", "x": 0, "y": 300}, {"color": "#97c2fc", "id": "kitchen", "label": "kitchen", "shape": "dot", "title": "Contains:\nMason Jar\nRusty Fork\ncabinet\nstove\nKitchen Sink", "x": 150, "y": 300}, {"color": "#97c2fc", "id": "garden", "label": "garden", "shape": "dot", "title": "Contains:\nThick Gloves\nTrowel", "x": 0, "y": 450}, {"color": "#97c2fc", "id": "dining room", "label": "dining room", "shape": "dot", "title": "Contains:\nPlate\nMeal", "x": -150, "y": 300}, {"color": "#97c2fc", "id": "cellar", "label": "cellar", "shape": "dot", "title": "Contains:\nTrunk\nJar of Peppers\nLantern\nBasketball\nSkateboard", "x": -150, "y": 450}, {"color": "#97c2fc", "id": "earthen tunnel", "label": "earthen tunnel", "shape": "dot", "title": "Contains:\n", "x": 0, "y": 600}, {"color": "#97c2fc", "id": "office", "label": "office", "shape": "dot", "title": "Contains:\nEmerald Book\nMagnifying Glass", "x": -150, "y": 150}, {"color": "#97c2fc", "id": "small cavern", "label": "small cavern", "shape": "dot", "title": "Contains:\n", "x": 0, "y": 750}, {"color": "#97c2fc", "id": "beehive room", "label": "beehive room", "shape": "dot", "title": "Contains:\nHoney", "x": 106.06601717798213, "y": 1006.0660171779821}, {"color": "#97c2fc", "id": "barn", "label": "barn", "shape": "dot", "title": "Contains:\nRubber Ducky\nWarm Boots", "x": -106.06601717798213, "y": 793.9339828220179}, {"color": "#97c2fc", "id": "armory", "label": "armory", "shape": "dot", "title": "Contains:\nSpear", "x": 106.06601717798213, "y": 793.9339828220179}, {"color": "#97c2fc", "id": "skate park", "label": "skate park", "shape": "dot", "title": "Contains:\n", "x": 106.06601717798213, "y": 1006.0660171779821}, {"color": "#97c2fc", "id": "orge lair", "label": "orge lair", "shape": "dot", "title": "Contains:\nOrge", "x": 0, "y": 1050}, {"color": "#97c2fc", "id": "giant cave", "label": "giant cave", "shape": "dot", "title": "Contains:\n", "x": 43.93398282201787, "y": 1156.066017177982}, {"color": "#97c2fc", "id": "greenhouse", "label": "greenhouse", "shape": "dot", "title": "Contains:\nDried Herbs", "x": 106.06601717798213, "y": 1156.066017177982}, {"color": "#97c2fc", "id": "bright room", "label": "bright room", "shape": "dot", "title": "Contains:\n", "x": 0, "y": 1200}, {"color": "#97c2fc", "id": "candlelit room", "label": "candlelit room", "shape": "dot", "title": "Contains:\nA candle\nAnother candle\nA third candle\nA fourth candle", "x": -106.06601717798213, "y": 1156.066017177982}, {"color": "#97c2fc", "id": "crystal cave", "label": "crystal cave", "shape": "dot", "title": "Contains:\n", "x": 256.06601717798213, "y": 1156.066017177982}, {"color": "#97c2fc", "id": "theatre entrance", "label": "theatre entrance", "shape": "dot", "title": "Contains:\n", "x": -106.06601717798213, "y": 1306.066017177982}, {"color": "#97c2fc", "id": "riches room", "label": "riches room", "shape": "dot", "title": "Contains:\n", "x": -106.06601717798213, "y": 1306.066017177982}, {"color": "#97c2fc", "id": "pool", "label": "pool", "shape": "dot", "title": "Contains:\n", "x": 256.06601717798213, "y": 1306.066017177982}, {"color": "#97c2fc", "id": "museum gallery", "label": "museum gallery", "shape": "dot", "title": "Contains:\nHercules", "x": 0, "y": 150}, {"color": "#97c2fc", "id": "parking lot", "label": "parking lot", "shape": "dot", "title": "Contains:\nFuzzy Jacket", "x": -106.06601717798213, "y": 1456.066017177982}, {"color": "#97c2fc", "id": "chimney", "label": "chimney", "shape": "dot", "title": "Contains:\n", "x": 0, "y": 0}, {"color": "#97c2fc", "id": "gym", "label": "gym", "shape": "dot", "title": "Contains:\nWeights", "x": 256.06601717798213, "y": 1456.066017177982}, {"color": "#97c2fc", "id": "library", "label": "library", "shape": "dot", "title": "Contains:\n", "x": 0, "y": 150}, {"color": "#97c2fc", "id": "theatre seats", "label": "theatre seats", "shape": "dot", "title": "Contains:\nKeys", "x": -106.06601717798213, "y": 1456.066017177982}, {"color": "#97c2fc", "id": "theatre stage", "label": "theatre stage", "shape": "dot", "title": "Contains:\nBaton\nLyre\nTriangle\nSlide Whistle\nbongo\nViolin", "x": -106.06601717798213, "y": -856.0660171779821}, {"color": "#97c2fc", "id": "coach car", "label": "coach car", "shape": "dot", "title": "Contains:\nChild", "x": 0, "y": 0}, {"color": "#97c2fc", "id": "car trunk", "label": "car trunk", "shape": "dot", "title": "Contains:\n", "x": -106.06601717798213, "y": 1606.066017177982}, {"color": "#97c2fc", "id": "driver\u0027s seat", "label": "driver\u0027s seat", "shape": "dot", "title": "Contains:\nsunglasses", "x": -106.06601717798213, "y": 1606.066017177982}, {"color": "#97c2fc", "id": "puzzle room", "label": "puzzle room", "shape": "dot", "title": "Contains:\npuzzle", "x": 0, "y": 0}, {"color": "#97c2fc", "id": "carpeted hall", "label": "carpeted hall", "shape": "dot", "title": "Contains:\n", "x": 1200, "y": 0}, {"color": "#97c2fc", "id": "hot room", "label": "hot room", "shape": "dot", "title": "Contains:\n", "x": 0, "y": 0}, {"color": "#97c2fc", "id": "dining car", "label": "dining car", "shape": "dot", "title": "Contains:\nGray Book", "x": 0, "y": -150}, {"color": "#97c2fc", "id": "bear\u0027s den", "label": "bear\u0027s den", "shape": "dot", "title": "Contains:\nBear", "x": 0, "y": -150}, {"color": "#97c2fc", "id": "conductor\u0027s car", "label": "conductor\u0027s car", "shape": "dot", "title": "Contains:\nBurgundy Book", "x": 0, "y": 150}, {"color": "#97c2fc", "id": "observation car", "label": "observation car", "shape": "dot", "title": "Contains:\n", "x": 0, "y": 450}, {"color": "#97c2fc", "id": "cold room", "label": "cold room", "shape": "dot", "title": "Contains:\n", "x": 0, "y": -300}, {"color": "#97c2fc", "id": "cargo hold", "label": "cargo hold", "shape": "dot", "title": "Contains:\n", "x": 0, "y": 300}, {"color": "#97c2fc", "id": "south of tight pass", "label": "south of tight pass", "shape": "dot", "title": "Contains:\n", "x": 0, "y": -450}, {"color": "#97c2fc", "id": "north of tight pass", "label": "north of tight pass", "shape": "dot", "title": "Contains:\n", "x": 0, "y": -600}, {"color": "#97c2fc", "id": "man cave", "label": "man cave", "shape": "dot", "title": "Contains:\nBully", "x": 0, "y": -750}, {"color": "#97c2fc", "id": "display room", "label": "display room", "shape": "dot", "title": "Contains:\nWallet", "x": 150, "y": -750}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "bedroom", "label": "east", "to": "bathroom"}, {"arrows": "to", "from": "bedroom", "label": "up", "to": "attic"}, {"arrows": "to", "from": "bedroom", "label": "south", "to": "hallway"}, {"arrows": "to", "from": "bathroom", "label": "west", "to": "bedroom"}, {"arrows": "to", "from": "attic", "label": "down", "to": "bedroom"}, {"arrows": "to", "from": "hallway", "label": "north", "to": "bedroom"}, {"arrows": "to", "from": "hallway", "label": "south", "to": "den"}, {"arrows": "to", "from": "hallway", "label": "east", "to": "kitchen"}, {"arrows": "to", "from": "den", "label": "north", "to": "hallway"}, {"arrows": "to", "from": "den", "label": "south", "to": "garden"}, {"arrows": "to", "from": "den", "label": "east", "to": "kitchen"}, {"arrows": "to", "from": "den", "label": "west", "to": "dining room"}, {"arrows": "to", "from": "kitchen", "label": "north", "to": "hallway"}, {"arrows": "to", "from": "kitchen", "label": "west", "to": "den"}, {"arrows": "to", "from": "garden", "label": "west", "to": "cellar"}, {"arrows": "to", "from": "garden", "label": "south", "to": "earthen tunnel"}, {"arrows": "to", "from": "dining room", "label": "north", "to": "office"}, {"arrows": "to", "from": "dining room", "label": "east", "to": "den"}, {"arrows": "to", "from": "cellar", "label": "east", "to": "garden"}, {"arrows": "to", "from": "earthen tunnel", "label": "north", "to": "garden"}, {"arrows": "to", "from": "earthen tunnel", "label": "south", "to": "small cavern"}, {"arrows": "to", "from": "office", "label": "south", "to": "dining room"}, {"arrows": "to", "from": "small cavern", "label": "north", "to": "earthen tunnel"}, {"arrows": "to", "from": "small cavern", "label": "south", "to": "beehive room"}, {"arrows": "to", "from": "beehive room", "label": "north", "to": "small cavern"}, {"arrows": "to", "from": "beehive room", "label": "northwest", "to": "barn"}, {"arrows": "to", "from": "beehive room", "label": "northeast", "to": "armory"}, {"arrows": "to", "from": "beehive room", "label": "southeast", "to": "skate park"}, {"arrows": "to", "from": "beehive room", "label": "south", "to": "orge lair"}, {"arrows": "to", "from": "beehive room", "label": "southwest", "to": "giant cave"}, {"arrows": "to", "from": "barn", "label": "east", "to": "beehive room"}, {"arrows": "to", "from": "armory", "label": "west", "to": "beehive room"}, {"arrows": "to", "from": "skate park", "label": "northwest", "to": "beehive room"}, {"arrows": "to", "from": "skate park", "label": "south", "to": "greenhouse"}, {"arrows": "to", "from": "orge lair", "label": "north", "to": "beehive room"}, {"arrows": "to", "from": "orge lair", "label": "south", "to": "bright room"}, {"arrows": "to", "from": "giant cave", "label": "south", "to": "candlelit room"}, {"arrows": "to", "from": "giant cave", "label": "northeast", "to": "beehive room"}, {"arrows": "to", "from": "greenhouse", "label": "north", "to": "beehive room"}, {"arrows": "to", "from": "greenhouse", "label": "east", "to": "crystal cave"}, {"arrows": "to", "from": "bright room", "label": "north", "to": "orge lair"}, {"arrows": "to", "from": "bright room", "label": "southwest", "to": "theatre entrance"}, {"arrows": "to", "from": "candlelit room", "label": "east", "to": "giant cave"}, {"arrows": "to", "from": "candlelit room", "label": "south", "to": "riches room"}, {"arrows": "to", "from": "crystal cave", "label": "west", "to": "greenhouse"}, {"arrows": "to", "from": "crystal cave", "label": "south", "to": "pool"}, {"arrows": "to", "from": "theatre entrance", "label": "north", "to": "bright room"}, {"arrows": "to", "from": "theatre entrance", "label": "north", "to": "museum gallery"}, {"arrows": "to", "from": "theatre entrance", "label": "north", "to": "parking lot"}, {"arrows": "to", "from": "theatre entrance", "label": "north", "to": "chimney"}, {"arrows": "to", "from": "theatre entrance", "label": "north", "to": "gym"}, {"arrows": "to", "from": "theatre entrance", "label": "north", "to": "library"}, {"arrows": "to", "from": "theatre entrance", "label": "south", "to": "theatre seats"}, {"arrows": "to", "from": "riches room", "label": "north", "to": "candlelit room"}, {"arrows": "to", "from": "riches room", "label": "south", "to": "parking lot"}, {"arrows": "to", "from": "pool", "label": "north", "to": "crystal cave"}, {"arrows": "to", "from": "pool", "label": "south", "to": "gym"}, {"arrows": "to", "from": "museum gallery", "label": "north", "to": "theatre stage"}, {"arrows": "to", "from": "museum gallery", "label": "north", "to": "coach car"}, {"arrows": "to", "from": "parking lot", "label": "north", "to": "theatre stage"}, {"arrows": "to", "from": "parking lot", "label": "north", "to": "riches room"}, {"arrows": "to", "from": "parking lot", "label": "in trunk", "to": "car trunk"}, {"arrows": "to", "from": "parking lot", "label": "in car", "to": "driver\u0027s seat"}, {"arrows": "to", "from": "chimney", "label": "any", "to": "theatre stage"}, {"arrows": "to", "from": "chimney", "label": "any", "to": "attic"}, {"arrows": "to", "from": "gym", "label": "north", "to": "theatre stage"}, {"arrows": "to", "from": "gym", "label": "north", "to": "pool"}, {"arrows": "to", "from": "library", "label": "north", "to": "theatre stage"}, {"arrows": "to", "from": "library", "label": "north", "to": "puzzle room"}, {"arrows": "to", "from": "theatre seats", "label": "north", "to": "theatre entrance"}, {"arrows": "to", "from": "theatre seats", "label": "south", "to": "theatre stage"}, {"arrows": "to", "from": "theatre stage", "label": "north", "to": "theatre seats"}, {"arrows": "to", "from": "theatre stage", "label": "southeast", "to": "carpeted hall"}, {"arrows": "to", "from": "theatre stage", "label": "southeast/southwest", "to": "museum gallery"}, {"arrows": "to", "from": "theatre stage", "label": "southeast/southwest", "to": "parking lot"}, {"arrows": "to", "from": "theatre stage", "label": "southeast/southwest", "to": "chimney"}, {"arrows": "to", "from": "theatre stage", "label": "southeast/southwest", "to": "gym"}, {"arrows": "to", "from": "theatre stage", "label": "southeast/southwest", "to": "library"}, {"arrows": "to", "from": "theatre stage", "label": "southwest", "to": "hot room"}, {"arrows": "to", "from": "coach car", "label": "north", "to": "dining car"}, {"arrows": "to", "from": "coach car", "label": "south", "to": "museum gallery"}, {"arrows": "to", "from": "car trunk", "label": "any", "to": "parking lot"}, {"arrows": "to", "from": "driver\u0027s seat", "label": "out", "to": "parking lot"}, {"arrows": "to", "from": "puzzle room", "label": "north", "to": "bear\u0027s den"}, {"arrows": "to", "from": "puzzle room", "label": "south", "to": "library"}, {"arrows": "to", "from": "carpeted hall", "label": "west", "to": "theatre stage"}, {"arrows": "to", "from": "carpeted hall", "label": "east", "to": "carpeted hall"}, {"arrows": "to", "from": "hot room", "label": "northeast", "to": "theatre stage"}, {"arrows": "to", "from": "hot room", "label": "south", "to": "conductor\u0027s car"}, {"arrows": "to", "from": "dining car", "label": "north", "to": "observation car"}, {"arrows": "to", "from": "dining car", "label": "south", "to": "coach car"}, {"arrows": "to", "from": "bear\u0027s den", "label": "north", "to": "cold room"}, {"arrows": "to", "from": "bear\u0027s den", "label": "south", "to": "puzzle room"}, {"arrows": "to", "from": "conductor\u0027s car", "label": "north", "to": "hot room"}, {"arrows": "to", "from": "conductor\u0027s car", "label": "south", "to": "cargo hold"}, {"arrows": "to", "from": "observation car", "label": "north", "to": "cargo hold"}, {"arrows": "to", "from": "observation car", "label": "south", "to": "dining car"}, {"arrows": "to", "from": "cold room", "label": "north", "to": "south of tight pass"}, {"arrows": "to", "from": "cold room", "label": "south", "to": "bear\u0027s den"}, {"arrows": "to", "from": "cargo hold", "label": "north", "to": "conductor\u0027s car"}, {"arrows": "to", "from": "cargo hold", "label": "south", "to": "observation car"}, {"arrows": "to", "from": "south of tight pass", "label": "north", "to": "north of tight pass"}, {"arrows": "to", "from": "south of tight pass", "label": "south", "to": "cold room"}, {"arrows": "to", "from": "north of tight pass", "label": "north", "to": "man cave"}, {"arrows": "to", "from": "north of tight pass", "label": "south", "to": "south of tight pass"}, {"arrows": "to", "from": "man cave", "label": "northwest", "to": "theatre stage"}, {"arrows": "to", "from": "man cave", "label": "south", "to": "north of tight pass"}, {"arrows": "to", "from": "man cave", "label": "east", "to": "display room"}, {"arrows": "to", "from": "display room", "label": "west", "to": "man cave"}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": true,
+        "filter": true
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+                  // if this network requires displaying the configure window,
+                  // put it in its div
+                  options.configure["container"] = document.getElementById("config");
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

@@ -1,0 +1,32 @@
+
+{
+    "name"       : "Barn",
+    "description": "You are in a large empty barn dominated by what seem to be abandoned stables. Cobwebs cover most surfaces. On the west wall, opposite the door, ancient tools are rusted to their racks, with a single holder missing something like a rake or staff.",
+    "paths"      : {
+        "east"  : {
+            "name"        : "Exit 1",
+            "description" : "a large barn door",
+            "end"         : "Beehive Room"
+        }
+    },
+    "details"    : [
+        {
+            "name" : "spear rack",
+            "description" : "on a spear rack",
+            "responses" : {
+                "spear" : "When you place the spear on the rack, a poof of smoke reveals."
+            }
+        },
+        {
+            "name": "pitchfork rack",
+            "description" : "on a pitchfork rack",
+            "responses" : {
+                "pitchfork" : "When you place the pitchfork in its rack, a poof of smoke reveals."
+            }
+        }
+    ],
+    "contents"   : {
+        "Rubber Ducky"  : "spear rack",
+        "Warm Boots"    : "pitchfork rack"
+    }
+}

@@ -1,5 +1,5 @@
 {
-    "name"             : "Bundle of Dried Herbs",
+    "name"             : "Dried Herbs",
     "description"      : "a small, tightly packed bundle of herbs bound by a short length of hemp twine.",
     "states"           : "standard_item",
     "weight"           : 1,

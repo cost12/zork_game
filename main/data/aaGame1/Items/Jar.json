@@ -1,7 +1,7 @@
 {
     "name"             : "Mason Jar",
     "description"      : "A smudged and empty mason jar",
-    "states"           : "recepticle",
+    "states"           : "standard_item",
     "weight"           : 1,
     "value"            : 3,
     "size"             : 2,

@@ -255,6 +255,14 @@ class Skill(Named):
     def __repr__(self):
         return f"[Skill {self.name}]"
 
+"""
+TODO could also track other state information: 
+    - repetition of feats
+    - decide whether other characters are friends/enemies (count friendly actions)
+    - track which rooms have been visited/ how many times (useful for displaying/not displaying text)
+    - track character health/energy
+    - temporary room information (if required to make shot each time to leave)
+"""
 class SkillSet(Named):
 
     def __init__(self, name:str, skills:Optional[dict[Skill,int]]=None, default_proficiency:int=0):

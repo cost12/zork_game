@@ -16,6 +16,8 @@ from controls.translate import get_input_translator
 # TODO: is hidden needed in LocationDetail? (replaced by hidden_when)
 # TODO: for many items with same name: have unique id for equality/ dicts, dict[str,Named] -> dict[str,list[Named]] and figure out which one based on context/ asking questions
 
+# TODO: SDG json file is not needed, in Character/Item factories read in list of States/StateGraphs into SDG there
+
 class GameAction:
     """This is an abstract class and should not be instantiated.
     Represents an Action a Character can make during a Game.

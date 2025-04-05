@@ -1,6 +1,0 @@
-{
-    "comment"    : "This is an example of making a room",
-    
-    "name"       : "Theatre Seats",
-    "description": "You stand in the aisle between two large sections of seats. To the East are seats 1-10, to the west are seats 11-20. Each row is labeled with a letter, from A at the South to row J at the North."
-}

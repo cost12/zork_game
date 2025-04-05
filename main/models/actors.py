@@ -304,6 +304,9 @@ class Path(Named):
     def __repr__(self):
         return f"[Path {self.name}]"
     
+    def _list_ends(self) -> list['Location']:
+        pass
+    
     def contains_item(self, item:Target) -> bool:
         return item in self.path_items
 
@@ -337,10 +340,16 @@ class Path(Named):
         return True, self.exit_response
 
 class MultiEndPath(Path):
-    def __init__(self, name:str, description:str, end:'Location', multi_end:dict[Target,'Location'], hidden:bool=False, exit_response:Optional[str]=None, *, path_items:list[Target]=None, passing_requirements:list[PathRequirement]=None, aliases:Optional[list[str]]=None):
-        super().__init__(name, description, hidden=hidden, exit_response=exit_response, path_items=path_items, passing_requirements=passing_requirements, aliases=aliases)
+    def __init__(self, name:str, description:str, end:'Location', multi_end:dict[Target,'Location'], hidden:bool=False, exit_response:Optional[str]=None, *, hidden_when_locked=False, path_items:list[Target]=None, passing_requirements:list[PathRequirement]=None, aliases:Optional[list[str]]=None):
+        super().__init__(name, description, hidden=hidden, hidden_when_locked=hidden_when_locked, exit_response=exit_response, path_items=path_items, passing_requirements=passing_requirements, aliases=aliases)
         self.multi_end = multi_end
         self.default_end = end
+
+    def _list_ends(self) -> list['Location']:
+        ends = list(self.multi_end.values())
+        if self.default_end is not None:
+            ends.append(self.default_end)
+        return ends
 
     def _set_end(self, location_factory, location_detail_factory):
         super()._set_end(location_factory, location_detail_factory)
@@ -366,16 +375,23 @@ class MultiEndPath(Path):
 
 class SingleEndPath(Path):
 
-    def __init__(self, name:str, description:str, end:'Location', hidden:bool=False, exit_response:Optional[str]=None, *, passing_requirements:list[PathRequirement]=None, path_items:list[Target]=None, aliases:Optional[list[str]]=None):
-        super().__init__(name, description, hidden=hidden, exit_response=exit_response, path_items=path_items, passing_requirements=passing_requirements, aliases=aliases)
+    def __init__(self, name:str, description:str, end:'Location', hidden:bool=False, exit_response:Optional[str]=None, *, hidden_when_locked=False, passing_requirements:list[PathRequirement]=None, path_items:list[Target]=None, aliases:Optional[list[str]]=None):
+        super().__init__(name, description, hidden=hidden, hidden_when_locked=hidden_when_locked, exit_response=exit_response, path_items=path_items, passing_requirements=passing_requirements, aliases=aliases)
         self.end = end
+
+    def _list_ends(self) -> list['Location']:
+        return [self.end]
     
     def get_end(self, character:Actor) -> 'Location':
         return self.end
     
     def _set_end(self, location_factory, location_detail_factory) -> None:
         super()._set_end(location_factory, location_detail_factory)
+        end = self.end
         self.end = location_factory.get_location(self.end)
+        if self.end is None:
+            print(f"{end} room not found")
+            return False
 
 class LocationDetail(Named):
 
@@ -487,6 +503,19 @@ class Location(Named):
         response = None
         if direction in self.direction_responses:
             response = self.direction_responses[direction]
-        if path is None or path.is_hidden():
+        if path is None or path.is_hidden(character):
             return None, response
+        return path, response
+
+    def _get_path(self, direction:Direction) -> tuple[Path,str]:
+        path = None
+        if direction in self.paths:
+            path = self.paths[direction]
+        if path is None:
+            for direction, path2 in self.paths.items():
+                if direction.get_name() == 'any':
+                    path = path2
+        response = None
+        if direction in self.direction_responses:
+            response = self.direction_responses[direction]
         return path, response

@@ -1,0 +1,26 @@
+{
+    "name"       : "Gym",
+    "description": "You are standing in a vintage-feeling gymnasium that feels strangely familiar. On one end is a basketball hoop and a weight rack at the opposite end. Behind the weight rack is a poster of Arnold Schwarzeneger holding up three fingers.",
+    "paths"      : {
+        "north"  : {
+            "name"        : "Exit 1",
+            "description" : "a metal doorway",
+            "end"         : "Pool",
+            "multi_end"   : {
+                "Bongo"   : "Theatre Stage"
+            },
+            "character_feat_requirements" : {
+                "shot" : [true, null]
+            }
+        }
+    },
+    "details"    : [
+        {
+            "name" : "rack",
+            "description" : "sitting on a rack"
+        }
+    ],
+    "contents"   : {
+        "Weights" : "rack"
+    }
+}

@@ -1,6 +1,6 @@
 
 {
-    "name"             : "Bathroom Sink",
+    "name"             : "Sink",
     "description"      : "A stained ceramic sink",
     "states"           : "standard_item",
     "weight"           : 50,

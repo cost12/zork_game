@@ -528,7 +528,7 @@ class LocationFactory:
         if 'multi_end' in path_dict:
             path_type = 'multi'
             multi_end = dict[Target, str]()
-            for item_name, room_name in path_dict['multi_end']:
+            for item_name, room_name in path_dict['multi_end'].items():
                 item = item_factory.get_item(item_name)
                 multi_end[item] = room_name
         if path_type is None:
@@ -613,9 +613,9 @@ class LocationFactory:
         if 'aliases' in path_dict:
             aliases = path_dict['aliases']
         if path_type == 'restricted':
-            return SingleEndPath(name, description, end, hidden, exit_response, path_items=path_items, passing_requirements=passing_requirements, aliases=aliases)
+            return SingleEndPath(name, description, end, hidden, exit_response, hidden_when_locked=hidden_when_locked, path_items=path_items, passing_requirements=passing_requirements, aliases=aliases)
         elif path_type == 'multi':
-            return MultiEndPath(name, description, end, multi_end, hidden, exit_response, path_items=path_items, passing_requirements=passing_requirements, aliases=aliases)
+            return MultiEndPath(name, description, end, multi_end, hidden, exit_response, hidden_when_locked=hidden_when_locked, path_items=path_items, passing_requirements=passing_requirements, aliases=aliases)
 
     def many_from_dict(self, location_dicts:list[dict[str,Any]], character_factory:CharacterFactory, item_factory:ItemFactory, direction_factory:NamedFactory[Direction], state_factory:StateFactory, feat_factory:NamedFactory[Feat]) -> list[Location]:
         locations = list[Location]()
@@ -626,7 +626,10 @@ class LocationFactory:
             if 'paths' in location_dict:
                 for direction_name, path_dict in location_dict['paths'].items():
                     direction = direction_factory.get_named(direction_name)
-                    path = self.__path_from_dict(path_dict, item_factory, character_factory, state_factory, feat_factory)
+                    try:
+                        path = self.__path_from_dict(path_dict, item_factory, character_factory, state_factory, feat_factory)
+                    except TypeError:
+                        print(f"Path error in {name}")
                     paths[direction] = path
             direction_responses = dict[Direction,str]()
             if 'direction_responses' in location_dict:
@@ -642,6 +645,8 @@ class LocationFactory:
                     target = character_factory.get_character(target_name)
                     if target is None:
                         target = item_factory.get_item(target_name)
+                    if target is None:
+                        print(f"In {name} can't find {target_name}")
                     if detail_name == "default":
                         detail = detail_factory.create_detail()
                     else:
@@ -659,7 +664,8 @@ class LocationFactory:
             if 'paths' in location_dict:
                 for direction_name,path_dict in location_dict['paths'].items():
                     direction = direction_factory.get_named(direction_name)
-                    location.get_path(direction)[0]._set_end(self, detail_factory)
+                    if location._get_path(direction)[0]._set_end(self, detail_factory) is not None:
+                        print(f"bad end in {location.name}")
         return locations
 
 class CharacterControlFactory:

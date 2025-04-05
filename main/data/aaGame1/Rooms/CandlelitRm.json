@@ -1,0 +1,28 @@
+{
+    "name"       : "Candlelit Room",
+    "description": "You stand in an elegant room constructed of short terraced marble steps, all of which are covered with lit candles. Their glow illuminates the arched room elegantly.",
+    "paths"      : {
+        "east"  : {
+            "name"        : "Exit 1",
+            "description" : "a thin passage",
+            "end"         : "Giant Cave"
+        },
+        "south"  : {
+            "name"        : "Exit 2",
+            "description" : "a grand, ornate door",
+            "end"         : "Riches Room"
+        }
+    },
+    "details"    : [
+        {
+            "name" : "floor",
+            "description" : "amidst the inumerable candles, sitting on the floor"
+        }
+    ],
+    "contents"   : {
+        "a candle"       : "floor",
+        "another candle" : "floor",
+        "a third candle" : "floor",
+        "a fourth candle": "floor"
+    }
+}

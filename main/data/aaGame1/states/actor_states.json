@@ -1,0 +1,32 @@
+[
+    {
+        "name"             : "normal_character",
+        "actions_as_actor" : [
+            "look",
+            "take",
+            "drop",
+            "hang",
+            "inventory",
+            "wait",
+            "walk",
+            "break",
+            "turn on",
+            "turn off",
+            "attack",
+            "play",
+            "eat",
+            "drink",
+            "dig",
+            "put on",
+            "take off",
+            "shoot",
+            "bounce",
+            "give",
+            "open",
+            "close",
+            "say",
+            "arm wrestle"
+        ],
+        "actions_as_target": ["look", "attack", "arm wrestle"]
+    }
+]

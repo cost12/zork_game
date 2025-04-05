@@ -1,6 +1,7 @@
 import glob
 import json
 from typing import Any
+import os.path
 
 from models.actors              import Direction
 from models.action              import Action
@@ -14,8 +15,20 @@ def __read_in_json(file:str) -> dict:
     return data
 
 def __read_in_folder(folder:str) -> list[dict[str,Any]]:
-    files = glob.glob(f"main/{folder}/*")
-    return [__read_in_json(file) for file in files]
+    files = glob.glob(f"main/{folder}/*.json")
+    if len(files) == 0:
+        print(f"Folder {folder} doesn't exist")
+    output = []
+    for file in files:
+        try:
+            output.append(__read_in_json(file))
+        except json.JSONDecodeError as e:
+            print(e)
+            print(f"ERROR reading {file}")
+        except UnicodeDecodeError as e:
+            print(e)
+            print(f"ERROR reading {file}")
+    return output
 
 def read_in_directions(game:str) -> NamedFactory[Direction]:
     factory = NamedFactory[Direction](Direction)
@@ -61,7 +74,8 @@ def read_in_state_disconnected_graphs(game:str, state_graphs:StateGraphFactory) 
     factory = StateDisconnectedGraphFactory()
     folder = f"data/{game}/state_disconnected_graphs"
     data = __read_in_folder(folder)
-    factory.many_from_dict(data[0], state_graphs)
+    data = [data_dict for data_list in data for data_dict in data_list]
+    factory.many_from_dict(data, state_graphs)
     return factory
 
 def read_in_items(game:str, state_graphs:StateDisconnectedGraphFactory, actions:NamedFactory[Action], states:StateFactory) -> ItemFactory:
@@ -112,16 +126,30 @@ def read_in_game_details(game:str) -> Any:
 
 def read_in_game(game:str) -> tuple[LocationFactory, CharacterFactory, CharacterControlFactory, ItemFactory, NamedFactory[Action], NamedFactory[Direction], dict[str,Any]]:
     directions   = read_in_directions(game)
+    print(f"Loaded {len(set(directions.aliases.values()))} directions")
     actions      = read_in_actions(game)
+    print(f"Loaded {len(set(actions.aliases.values()))} actions")
     feats        = read_in_feats(game)
+    print(f"Loaded {len(set(feats.aliases.values()))} feats")
     states       = read_in_states(game, actions)
+    print(f"Loaded {len(set(states.states.values()))} states")
     graphs       = read_in_state_graphs(game, states, actions)
+    print(f"Loaded {len(set(graphs.aliases.values()))} graphs")
     full_graphs  = read_in_state_disconnected_graphs(game, graphs)
+    print(f"Loaded {len(set(full_graphs.aliases.values()))} sdgs")
     items        = read_in_items(game, full_graphs, actions, states)
+    print(f"Loaded {len(set(items.aliases.values()))} items")
     skills       = read_in_skills(game)
+    print(f"Loaded {len(set(skills.aliases.values()))} skills")
     skill_sets   = read_in_skill_sets(game, skills)
+    print(f"Loaded {len(set(skill_sets.aliases.values()))} skill sets")
     characters   = read_in_characters(game, full_graphs, skill_sets, items, actions, states, feats)
+    print(f"Loaded {len(set(characters.aliases.values()))} characters")
     rooms        = read_in_rooms(game, characters, items, directions, states, feats)
+    print(f"Loaded {len(set(rooms.aliases.values()))} rooms")
+    #sorted_rooms = [room.name for room in set(rooms.aliases.values())]
+    #sorted_rooms.sort()
+    #print(f"Created Rooms with names:\n{"\n".join(sorted_rooms)}")
     controllers  = read_in_character_control(game, characters)
     game_details = read_in_game_details(game)
     game_details['playable_characters'] = controllers.playable_characters()

@@ -1,0 +1,15 @@
+{
+    "name"             : "Brown Book",
+    "description"      : "a plain brown book",
+    "states"           : "standard_item",
+    "weight"           : 1,
+    "value"            : 1,
+    "size"             : 1,
+    "target_responses" : {
+        "take": "You take the Brown Book",
+        "read": "You try to read the book, but its script is one which you can neither recognize nor decipher"
+    },
+    "state_responses"  : {
+        "broken_item" : "You rip the book in two, destroying its readability. Nice going..."
+    }
+}

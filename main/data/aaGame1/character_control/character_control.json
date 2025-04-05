@@ -1,0 +1,22 @@
+[
+    {
+        "character"  : "bully",
+        "controller" : "npc"
+    },
+    {
+        "character"  : "orge",
+        "controller" : "npc"
+    },
+    {
+        "character"  : "bear",
+        "controller" : "npc"
+    },
+    {
+        "character"  : "child",
+        "controller" : "npc"
+    },
+    {
+        "character"  : "player1",
+        "controller" : "user"
+    }
+]
