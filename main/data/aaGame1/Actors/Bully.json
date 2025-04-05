@@ -1,0 +1,19 @@
+{
+    "name"         : "Bully",
+    "type"         : "standard",
+    "description"  : "a larger fellow with a pink face. He looks strong, but perhaps not of mind.",
+    "states"       : "standard_character",
+    "skills"       : "standard",
+    "inventory"    : {
+        "size_limit" : 200,
+        "weight_limit" : 100
+    },
+    "target_responses" : {
+        "look" : "You feel somewhat offput looking at the bully, for he leers at you languidly, breathing through his mouth.",
+        "take" : "You couldn't if you tried.",
+        "kill" : "With what?",
+        "hug"  : "The bully calls you the f-slur!",
+        "kiss" : "The bully calls you the f-slur!",
+        "compliment" : "The bully dismisses you, but he blushes a little..."
+    }
+}

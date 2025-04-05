@@ -1,0 +1,16 @@
+{
+    "name"         : "player",
+    "type"         : "player",
+    "description"  : "well, it's you",
+    "states"       : "standard_character",
+    "skills"       : "standard",
+    "inventory"    : {
+        "size_limit" : 40,
+        "weight_limit" : 100
+    },
+    "target_responses" : {
+        "look" : "you look at your hands, grappling with the deeds they have done",
+        "take" : "Trust us, you are already quite taken with yourself.",
+        "kill" : "with what? Trust us, it gets better."
+    }
+}
