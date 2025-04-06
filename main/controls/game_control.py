@@ -20,8 +20,7 @@ from controls.translate import get_input_translator
 # TODO: contents of wallet at the end are determined by actions during the game
 # TODO: pepper, honey, and water own items?
 # TODO: do theatre passages need instruments to be unbroken
-# TODO: rename feats to achievements, delete achievements
-# TODO: feats(achievements) should have action/(state?target?tool?result?) requirements/activations
+# TODO: achievements should have action/(state?target?tool?result?) requirements/activations
 # TODO: allow for different starting states in state graphs
 # TODO: lantern rooms, what happens if lantern is not on?
 

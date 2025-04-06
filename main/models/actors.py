@@ -1,6 +1,6 @@
 from typing import Optional
 
-from models.state  import State, Skill, FullState, SkillSet, Feat
+from models.state  import State, Skill, FullState, SkillSet, Achievement
 from models.action import Named, Action
 
 class ActionRequirement():
@@ -18,14 +18,14 @@ class CharacterStateRequirement(ActionRequirement):
                 return False, response
         return True, None
     
-class CharacterFeatRequirement(ActionRequirement):
-    def __init__(self, feats_needed:dict[Feat,tuple[bool,str]]):
-        self.feats_needed = feats_needed
+class CharacterAchievementRequirement(ActionRequirement):
+    def __init__(self, achievements_needed:dict[Achievement,tuple[bool,str]]):
+        self.achievements_needed = achievements_needed
 
     def meets_requirement(self, character:'Actor') -> tuple[bool,Optional[str]]:
-        for feat, tup in self.feats_needed.items():
+        for achievement, tup in self.achievements_needed.items():
             needed, response = tup
-            if not character.has_completed_feat(feat) == needed:
+            if not character.has_completed_achievement(achievement) == needed:
                 return False, response
         return True, None
     
@@ -196,14 +196,14 @@ class Actor(Target):
     DEFAULT_SIZE   = 100
     DEFAULT_VALUE  = 0
 
-    def __init__(self, name:str, description:str, type:str, states:FullState, skills:SkillSet, inventory:Inventory, *, feats:set[Feat]=None, weight:float=DEFAULT_WEIGHT, size:float=DEFAULT_SIZE, value:float=DEFAULT_VALUE, actor_responses:Optional[dict['Action',str]]=None, target_responses:Optional[dict['Action',str]]=None, tool_responses:Optional[dict['Action',str]]=None, state_responses:Optional[dict[State,str]]=None, aliases:Optional[list[str]]=None):
+    def __init__(self, name:str, description:str, type:str, states:FullState, skills:SkillSet, inventory:Inventory, *, achievements:set[Achievement]=None, weight:float=DEFAULT_WEIGHT, size:float=DEFAULT_SIZE, value:float=DEFAULT_VALUE, actor_responses:Optional[dict['Action',str]]=None, target_responses:Optional[dict['Action',str]]=None, tool_responses:Optional[dict['Action',str]]=None, state_responses:Optional[dict[State,str]]=None, aliases:Optional[list[str]]=None):
         super().__init__(name, description, states, weight=weight, size=size, value=value, target_responses=target_responses, tool_responses=tool_responses, state_responses=state_responses, aliases=aliases)
         self.actor_responses = dict[Action,str]() if actor_responses is None else actor_responses
         self.inventory = inventory
         self.inventory_location = LocationDetail(f"{self.name}'s inventory", True, hidden=True)
         self.type = type
         self.skills = skills
-        self.feats = set[Feat]() if feats is None else feats
+        self.achievements = set[Achievement]() if achievements is None else achievements
 
     def __repr__(self):
         return f"[Actor {self.name}]\n\tOrigin: {self.origin.name}\n\tLoc: {self.location.name}\n\tDet: {self.location_detail}\n\tStates: {self.states}\n\tSkills: {self.skills}"
@@ -273,11 +273,11 @@ class Actor(Target):
     def is_holding(self, item:Target) -> bool:
         return self.inventory.contains(item)
     
-    def has_completed_feat(self, feat:Feat) -> bool:
-        return feat in self.feats
+    def has_completed_achievement(self, achievement:Achievement) -> bool:
+        return achievement in self.achievements
     
-    def complete_feat(self, feat:Feat) -> None:
-        self.feats.add(feat)
+    def complete_achievement(self, achievement:Achievement) -> None:
+        self.achievements.add(achievement)
 
 class Direction(Named):
     """The Directions a Character can move to get from Room to Room.

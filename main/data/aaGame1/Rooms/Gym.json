@@ -9,7 +9,7 @@
             "multi_end"   : {
                 "Bongo"   : "Theatre Stage"
             },
-            "character_feat_requirements" : {
+            "character_achievement_requirements" : {
                 "score" : [true, null]
             }
         }

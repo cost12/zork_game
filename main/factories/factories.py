@@ -1,7 +1,7 @@
 from typing import Optional, Any, Callable
 
 from models.action    import Named, Action
-from models.actors    import Location, Direction, Path, Target, Actor, Inventory, LocationDetail, SingleEndPath, MultiEndPath, Feat, ActionRequirement, CharacterFeatRequirement, CharacterStateRequirement, ItemsHeldRequirement, ItemStateRequirement, ItemPlacementRequirement
+from models.actors    import Location, Direction, Path, Target, Actor, Inventory, LocationDetail, SingleEndPath, MultiEndPath, Achievement, ActionRequirement, CharacterAchievementRequirement, CharacterStateRequirement, ItemsHeldRequirement, ItemStateRequirement, ItemPlacementRequirement
 from models.state     import State, StateGroup, StateGraph, StateDisconnectedGraph, Skill, SkillSet
 from controls.character_control import CharacterController, CommandLineController, NPCController
 
@@ -17,17 +17,17 @@ def character_state_requirements_from_dict(name:str, requirement_dict:dict[str,A
             states_needed[state] = (needed[0], needed[1])
     return CharacterStateRequirement(states_needed)
 
-def character_feat_requirements_from_dict(name:str, requirement_dict:dict[str,Any], feat_factory:'NamedFactory[Feat]') -> CharacterFeatRequirement:
-    feats_needed = dict[Feat,tuple[bool,str]]()
-    for feat_name, needed in requirement_dict.items():
-        feat = feat_factory.get_named(feat_name)
-        if feat is None:
-            print(f"Can't find feat {feat_name} in {name}")
+def character_achievement_requirements_from_dict(name:str, requirement_dict:dict[str,Any], achievement_factory:'NamedFactory[Achievement]') -> CharacterAchievementRequirement:
+    achievements_needed = dict[Achievement,tuple[bool,str]]()
+    for achievement_name, needed in requirement_dict.items():
+        achievement = achievement_factory.get_named(achievement_name)
+        if achievement is None:
+            print(f"Can't find achievement {achievement_name} in {name}")
         if isinstance(needed, bool):
-            feats_needed[feat] = (needed,None)
+            achievements_needed[achievement] = (needed,None)
         else:
-            feats_needed[feat] = (needed[0], needed[1])
-    return CharacterFeatRequirement(feats_needed)
+            achievements_needed[achievement] = (needed[0], needed[1])
+    return CharacterAchievementRequirement(achievements_needed)
 
 def item_state_requirements_from_dict(name:str, requirement_dict:dict[str,Any], item_factory:'ItemFactory', character_factory:'CharacterFactory', state_factory:'StateFactory') -> ItemStateRequirement:
     item_states = dict[Target,dict[State,tuple[bool,str]]]()
@@ -83,14 +83,14 @@ def items_held_requirement_from_dict(name:str, requirement_dict:dict[str,Any], i
             items_needed[item] = (needed[0], needed[1])
     return ItemsHeldRequirement(items_needed)
 
-def requirements_from_dict(name:str, requirements_dict:dict[str,Any], item_factory:'ItemFactory', character_factory:'CharacterFactory', state_factory:'StateFactory', feat_factory:'NamedFactory[Feat]') -> list[ActionRequirement]:
+def requirements_from_dict(name:str, requirements_dict:dict[str,Any], item_factory:'ItemFactory', character_factory:'CharacterFactory', state_factory:'StateFactory', achievement_factory:'NamedFactory[Achievement]') -> list[ActionRequirement]:
     requirements = list[ActionRequirement]()
     if 'character_state_requirements' in requirements_dict:
         states_needed_raw = requirements_dict['character_state_requirements']
         requirements.append(character_state_requirements_from_dict(name, states_needed_raw, state_factory))
-    if 'character_feat_requirements' in requirements_dict:
-        feats_needed_raw = requirements_dict['character_feat_requirements']
-        requirements.append(character_feat_requirements_from_dict(name, feats_needed_raw, feat_factory))
+    if 'character_achievement_requirements' in requirements_dict:
+        achievements_needed_raw = requirements_dict['character_achievement_requirements']
+        requirements.append(character_achievement_requirements_from_dict(name, achievements_needed_raw, achievement_factory))
     if 'item_state_requirements' in requirements_dict:
         item_states_raw = requirements_dict['item_state_requirements']
         requirements.append(item_state_requirements_from_dict(name, item_states_raw, item_factory, character_factory, state_factory))
@@ -102,7 +102,7 @@ def requirements_from_dict(name:str, requirements_dict:dict[str,Any], item_facto
         requirements.append(item_placement_requirements_from_dict(name, item_placements_raw, item_factory, character_factory))
     return requirements     
 
-def path_from_dict(path_dict:dict[str,Any], item_factory:'ItemFactory', character_factory:'CharacterFactory', state_factory:'StateFactory', feat_factory:'NamedFactory[Feat]') -> Path:
+def path_from_dict(path_dict:dict[str,Any], item_factory:'ItemFactory', character_factory:'CharacterFactory', state_factory:'StateFactory', achievement_factory:'NamedFactory[Achievement]') -> Path:
         name = path_dict['name']
         description = path_dict['description']
         path_type = None
@@ -137,7 +137,7 @@ def path_from_dict(path_dict:dict[str,Any], item_factory:'ItemFactory', characte
                 if item is None:
                     print(f"Can't find target {item_name} in {name}")
                 path_items.append(item)
-        passing_requirements = requirements_from_dict(name, path_dict, item_factory=item_factory, character_factory=character_factory, state_factory=state_factory, feat_factory=feat_factory)
+        passing_requirements = requirements_from_dict(name, path_dict, item_factory=item_factory, character_factory=character_factory, state_factory=state_factory, achievement_factory=achievement_factory)
         aliases = None
         if 'aliases' in path_dict:
             aliases = path_dict['aliases']
@@ -586,9 +586,9 @@ class CharacterFactory:
                          target_responses:dict[Action,str], 
                          tool_responses:dict[Action,str],
                          state_responses:dict[State,str],
-                         feats:list[Feat],
+                         achievements:list[Achievement],
                          aliases:list[str]) -> Actor:
-        new_character = Actor(name, description, type, states, skills, inventory, weight=weight, size=size, value=value, actor_responses=actor_responses, target_responses=target_responses, tool_responses=tool_responses, state_responses=state_responses, feats=feats, aliases=aliases)
+        new_character = Actor(name, description, type, states, skills, inventory, weight=weight, size=size, value=value, actor_responses=actor_responses, target_responses=target_responses, tool_responses=tool_responses, state_responses=state_responses, achievements=achievements, aliases=aliases)
         if new_character in self.characters:
             return self.characters[new_character]
         for alias in new_character.get_aliases():
@@ -609,7 +609,7 @@ class CharacterFactory:
                        item_factory:ItemFactory,
                        action_factory:NamedFactory[Action],
                        state_factory:StateFactory,
-                       feat_factory:NamedFactory[Feat],
+                       achievement_factory:NamedFactory[Achievement],
                        state_graph_factory:StateGraphFactory) -> Actor:
         characters = list[Actor]()
         for character_dict in character_dicts:
@@ -632,13 +632,13 @@ class CharacterFactory:
             value = Actor.DEFAULT_VALUE
             if 'value' in character_dict:
                 value = character_dict['value']
-            feats = list[Feat]()
-            if 'feats' in character_dict:
-                for feat_name in character_dict['feats']:
-                    feat = feat_factory.get_named(feat_name)
-                    if feat is None:
-                        print(f"Can't find feat {feat_name} in {name}")
-                    feats.append(feat)
+            achievements = list[Achievement]()
+            if 'achievements' in character_dict:
+                for achievement_name in character_dict['achievements']:
+                    achievement = achievement_factory.get_named(achievement_name)
+                    if achievement is None:
+                        print(f"Can't find achievement {achievement_name} in {name}")
+                    achievements.append(achievement)
             actor_responses = dict[Action,str]()
             if 'actor_responses' in character_dict:
                 for action_name in character_dict['actor_responses']:
@@ -670,7 +670,7 @@ class CharacterFactory:
             aliases = None
             if 'aliases' in character_dict:
                 aliases = character_dict['aliases']
-            characters.append(self.create_character(name, description, type, states, skills, inventory, weight, size, value, actor_responses, target_responses, tool_responses, state_responses, feats, aliases))
+            characters.append(self.create_character(name, description, type, states, skills, inventory, weight, size, value, actor_responses, target_responses, tool_responses, state_responses, achievements, aliases))
         return characters
 
 class LocationDetailFactory:
@@ -768,7 +768,7 @@ class LocationFactory:
     def get_location(self, alias:str) -> Optional[Location]:
         return self.aliases.get(alias.lower(), None)
 
-    def many_from_dict(self, location_dicts:list[dict[str,Any]], character_factory:CharacterFactory, item_factory:ItemFactory, direction_factory:NamedFactory[Direction], state_factory:StateFactory, feat_factory:NamedFactory[Feat]) -> list[Location]:
+    def many_from_dict(self, location_dicts:list[dict[str,Any]], character_factory:CharacterFactory, item_factory:ItemFactory, direction_factory:NamedFactory[Direction], state_factory:StateFactory, achievement_factory:NamedFactory[Achievement]) -> list[Location]:
         locations = list[Location]()
         for location_dict in location_dicts:
             name = location_dict['name']
@@ -780,7 +780,7 @@ class LocationFactory:
                     if direction is None:
                         print(f"Can't find direction {direction_name} in {name}")
                     try:
-                        path = path_from_dict(path_dict, item_factory, character_factory, state_factory, feat_factory)
+                        path = path_from_dict(path_dict, item_factory, character_factory, state_factory, achievement_factory)
                     except TypeError as e:
                         print(e)
                         print(f"Path error in {name}")

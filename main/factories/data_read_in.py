@@ -5,7 +5,7 @@ import os.path
 
 from models.actors              import Direction
 from models.action              import Action
-from models.state               import Skill, Feat
+from models.state               import Skill, Achievement
 
 from factories.factories import ItemFactory, NamedFactory, StateFactory, StateGraphFactory, StateDisconnectedGraphFactory, SkillSetFactory, CharacterFactory, LocationFactory, CharacterControlFactory
 
@@ -46,9 +46,9 @@ def read_in_actions(game:str) -> NamedFactory[Action]:
     factory.many_from_dict(data)
     return factory
 
-def read_in_feats(game:str) -> NamedFactory[Feat]:
-    factory = NamedFactory[Feat](Feat)
-    folder = f"data/{game}/feats"
+def read_in_achievements(game:str) -> NamedFactory[Achievement]:
+    factory = NamedFactory[Achievement](Achievement)
+    folder = f"data/{game}/achievements"
     data = __read_in_folder(folder)
     data = [data_dict for data_list in data for data_dict in data_list]
     factory.many_from_dict(data)
@@ -100,18 +100,18 @@ def read_in_skill_sets(game:str, skill_factory:NamedFactory[Skill]) -> SkillSetF
     factory.many_from_dict(data[0], skill_factory)
     return factory
 
-def read_in_characters(game:str, skill_sets_factory:SkillSetFactory, item_factory:ItemFactory, action_factory:NamedFactory[Action], state_factory:StateFactory, feat_factory:NamedFactory[Feat], state_graph_factory:StateGraphFactory) -> CharacterFactory:
+def read_in_characters(game:str, skill_sets_factory:SkillSetFactory, item_factory:ItemFactory, action_factory:NamedFactory[Action], state_factory:StateFactory, achievement_factory:NamedFactory[Achievement], state_graph_factory:StateGraphFactory) -> CharacterFactory:
     factory = CharacterFactory()
     folder = f"data/{game}/characters"
     data = __read_in_folder(folder)
-    factory.many_from_dict(data, skill_sets_factory, item_factory, action_factory, state_factory, feat_factory, state_graph_factory)
+    factory.many_from_dict(data, skill_sets_factory, item_factory, action_factory, state_factory, achievement_factory, state_graph_factory)
     return factory
 
-def read_in_rooms(game:str, character_factory:CharacterFactory, item_factory:ItemFactory, direction_factory:NamedFactory[Direction], state_factory:StateFactory, feat_factory:NamedFactory[Feat]) -> LocationFactory:
+def read_in_rooms(game:str, character_factory:CharacterFactory, item_factory:ItemFactory, direction_factory:NamedFactory[Direction], state_factory:StateFactory, achievement_factory:NamedFactory[Achievement]) -> LocationFactory:
     factory = LocationFactory()
     folder = f"data/{game}/rooms"
     data = __read_in_folder(folder)
-    factory.many_from_dict(data, character_factory, item_factory, direction_factory, state_factory, feat_factory)
+    factory.many_from_dict(data, character_factory, item_factory, direction_factory, state_factory, achievement_factory)
     return factory
 
 def read_in_character_control(game:str, character_factory:CharacterFactory) -> CharacterControlFactory:
@@ -130,8 +130,8 @@ def read_in_game(game:str) -> tuple[LocationFactory, CharacterFactory, Character
     print(f"Loaded {len(set(directions.aliases.values()))} directions")
     actions      = read_in_actions(game)
     print(f"Loaded {len(set(actions.aliases.values()))} actions")
-    feats        = read_in_feats(game)
-    print(f"Loaded {len(set(feats.aliases.values()))} feats")
+    achievements        = read_in_achievements(game)
+    print(f"Loaded {len(set(achievements.aliases.values()))} achievements")
     states       = read_in_states(game, actions)
     print(f"Loaded {len(set(states.states.values()))} states")
     graphs       = read_in_state_graphs(game, states, actions)
@@ -142,9 +142,9 @@ def read_in_game(game:str) -> tuple[LocationFactory, CharacterFactory, Character
     print(f"Loaded {len(set(skills.aliases.values()))} skills")
     skill_sets   = read_in_skill_sets(game, skills)
     print(f"Loaded {len(set(skill_sets.aliases.values()))} skill sets")
-    characters   = read_in_characters(game, skill_sets, items, actions, states, feats, graphs)
+    characters   = read_in_characters(game, skill_sets, items, actions, states, achievements, graphs)
     print(f"Loaded {len(set(characters.aliases.values()))} characters")
-    rooms        = read_in_rooms(game, characters, items, directions, states, feats)
+    rooms        = read_in_rooms(game, characters, items, directions, states, achievements)
     print(f"Loaded {len(set(rooms.aliases.values()))} rooms")
     #sorted_rooms = [room.name for room in set(rooms.aliases.values())]
     #sorted_rooms.sort()

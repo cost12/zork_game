@@ -12,7 +12,7 @@
             "description" : "a passage",
             "end"         : "Greenhouse",
             "hidden_when_locked" : true,
-            "character_feat_requirements" : {
+            "character_achievement_requirements" : {
                 "gift skateboard to child" : true
             }
         }

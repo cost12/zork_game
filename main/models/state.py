@@ -14,12 +14,12 @@ class Effect(Named):
     def __repr__(self):
         return f"[Effect {self.name}]"
     
-class Feat(Named):
+class Achievement(Named):
     def __init__(self, name:str, aliases:Optional[list[str]]=None):
         super().__init__(name, aliases)
 
     def __repr__(self):
-        return f"[Feat {self.name}]"
+        return f"[Achievement {self.name}]"
 
 @dataclass(frozen=True)
 class State:
@@ -257,7 +257,7 @@ class Skill(Named):
 
 """
 TODO could also track other state information: 
-    - repetition of feats
+    - repetition of achievements
     - decide whether other characters are friends/enemies (count friendly actions)
     - track which rooms have been visited/ how many times (useful for displaying/not displaying text)
     - track character health/energy
