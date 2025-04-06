@@ -96,7 +96,7 @@
                   
 
                   // parsing and collecting nodes and edges from the python
-                  nodes = new vis.DataSet([{"color": "#97c2fc", "id": "off", "label": "off", "shape": "dot", "title": "Contains:\n\toff\n\tbreakable\nAs actor:\n\t\nAs tool:\n\t\nAs target:\n\ttoggle\n\tturn on\n\tbreak"}, {"color": "#97c2fc", "id": "on", "label": "on", "shape": "dot", "title": "Contains:\n\ton\n\tbreakable\nAs actor:\n\t\nAs tool:\n\t\nAs target:\n\ttoggle\n\tturn off\n\tbreak"}, {"color": "#97c2fc", "id": "broken_off", "label": "broken_off", "shape": "dot", "title": "Contains:\n\toff\n\tbroken\nAs actor:\n\t\nAs tool:\n\t\nAs target:\n\ttoggle\n\tturn on"}]);
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "id": "off", "label": "off", "shape": "dot", "title": "Contains:\n\toff\n\tbreakable\nAs actor:\n\t\nAs tool:\n\t\nAs target:\n\ttoggle\n\tturn on\n\tbreak"}, {"color": "#97c2fc", "id": "on", "label": "on", "shape": "dot", "title": "Contains:\n\ton\n\tbreakable\nAs actor:\n\t\nAs tool:\n\t\nAs target:\n\tturn off\n\ttoggle\n\tbreak"}, {"color": "#97c2fc", "id": "broken_off", "label": "broken_off", "shape": "dot", "title": "Contains:\n\toff\n\tbroken\nAs actor:\n\t\nAs tool:\n\t\nAs target:\n\ttoggle\n\tturn on"}]);
                   edges = new vis.DataSet([{"arrows": "to", "from": "off", "label": "toggle/turn on", "to": "on"}, {"arrows": "to", "from": "off", "label": "break", "to": "broken_off"}, {"arrows": "to", "from": "on", "label": "toggle/turn off", "to": "off"}, {"arrows": "to", "from": "on", "label": "break", "to": "broken_off"}]);
 
                   nodeColors = {};

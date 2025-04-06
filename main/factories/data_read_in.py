@@ -71,6 +71,7 @@ def read_in_state_graphs(game:str, states:StateFactory, actions:NamedFactory[Act
     return factory
 
 def read_in_state_disconnected_graphs(game:str, state_graphs:StateGraphFactory) -> StateDisconnectedGraphFactory:
+    """NO LONGER USED"""
     factory = StateDisconnectedGraphFactory()
     folder = f"data/{game}/state_disconnected_graphs"
     data = __read_in_folder(folder)
@@ -99,11 +100,11 @@ def read_in_skill_sets(game:str, skill_factory:NamedFactory[Skill]) -> SkillSetF
     factory.many_from_dict(data[0], skill_factory)
     return factory
 
-def read_in_characters(game:str, state_graphs:StateDisconnectedGraphFactory, skill_sets_factory:SkillSetFactory, item_factory:ItemFactory, action_factory:NamedFactory[Action], state_factory:StateFactory, feat_factory:NamedFactory[Feat]) -> CharacterFactory:
+def read_in_characters(game:str, skill_sets_factory:SkillSetFactory, item_factory:ItemFactory, action_factory:NamedFactory[Action], state_factory:StateFactory, feat_factory:NamedFactory[Feat], state_graph_factory:StateGraphFactory) -> CharacterFactory:
     factory = CharacterFactory()
     folder = f"data/{game}/characters"
     data = __read_in_folder(folder)
-    factory.many_from_dict(data, state_graphs, skill_sets_factory, item_factory, action_factory, state_factory, feat_factory)
+    factory.many_from_dict(data, skill_sets_factory, item_factory, action_factory, state_factory, feat_factory, state_graph_factory)
     return factory
 
 def read_in_rooms(game:str, character_factory:CharacterFactory, item_factory:ItemFactory, direction_factory:NamedFactory[Direction], state_factory:StateFactory, feat_factory:NamedFactory[Feat]) -> LocationFactory:
@@ -135,15 +136,13 @@ def read_in_game(game:str) -> tuple[LocationFactory, CharacterFactory, Character
     print(f"Loaded {len(set(states.states.values()))} states")
     graphs       = read_in_state_graphs(game, states, actions)
     print(f"Loaded {len(set(graphs.aliases.values()))} graphs")
-    full_graphs  = read_in_state_disconnected_graphs(game, graphs)
-    print(f"Loaded {len(set(full_graphs.aliases.values()))} sdgs")
     items        = read_in_items(game, actions, states, graphs)
     print(f"Loaded {len(set(items.aliases.values()))} items")
     skills       = read_in_skills(game)
     print(f"Loaded {len(set(skills.aliases.values()))} skills")
     skill_sets   = read_in_skill_sets(game, skills)
     print(f"Loaded {len(set(skill_sets.aliases.values()))} skill sets")
-    characters   = read_in_characters(game, full_graphs, skill_sets, items, actions, states, feats)
+    characters   = read_in_characters(game, skill_sets, items, actions, states, feats, graphs)
     print(f"Loaded {len(set(characters.aliases.values()))} characters")
     rooms        = read_in_rooms(game, characters, items, directions, states, feats)
     print(f"Loaded {len(set(rooms.aliases.values()))} rooms")

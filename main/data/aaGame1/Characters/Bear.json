@@ -2,10 +2,12 @@
     "name"         : "Bear",
     "type"         : "bear",
     "description"  : "a bear.",
-    "states"       : "standard_character",
+    "state"        : {
+        "graphs"   : ["standard_character"]
+    },
     "skills"       : "standard",
     "inventory"    : {
-        "size_limit" : 200,
+        "size_limit"   : 200,
         "weight_limit" : 100
     },
     "target_responses" : {

@@ -2,7 +2,9 @@
     "name"         : "Bully",
     "type"         : "standard",
     "description"  : "a larger fellow with a pink face. He looks strong, but perhaps not of mind.",
-    "states"       : "standard_character",
+    "state"        : {
+        "graphs"   : ["standard_character"]
+    },
     "skills"       : "standard",
     "inventory"    : {
         "size_limit" : 200,

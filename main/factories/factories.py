@@ -176,6 +176,18 @@ def sdg_from_dict(name:str, sgd_dict:dict[str,list[str]], state_factory:'StateFa
             state_graphs.append(graph)
     return StateDisconnectedGraph(name, state_graphs)
 
+def inventory_from_dict(name:str, inventory_dict:dict[str,Any], item_factory:'ItemFactory') -> Inventory:
+    size_limit = inventory_dict['size_limit']
+    weight_limit = inventory_dict['weight_limit']
+    items = list[Target]()
+    if 'items' in inventory_dict:
+        for item_name in inventory_dict['items']:
+            item = item_factory.get_item(item_name)
+            if item is None:
+                print(f"Can't find action {item_name} in {name} inventory")
+            items.append(item)
+    return Inventory(size_limit, weight_limit, items)
+
 class NamedFactory[T:Named]:
 
     def __init__(self, constructor:Callable[[Any],T]):
@@ -588,38 +600,26 @@ class CharacterFactory:
     def get_character(self, alias:str) -> Optional[Actor]:
         return self.aliases.get(alias.lower(), None)
     
-    def __inventory_from_dict(self, inventory_dict:dict[str,Any], item_factory:ItemFactory) -> Inventory:
-        size_limit = inventory_dict['size_limit']
-        weight_limit = inventory_dict['weight_limit']
-        items = list[Target]()
-        if 'items' in inventory_dict:
-            for item_name in inventory_dict['items']:
-                item = item_factory.get_item(item_name)
-                if item is None:
-                    print(f"Can't find action {item_name} in inventory")
-                items.append(item)
-        return Inventory(size_limit, weight_limit, items)
-    
     def many_from_dict(self, 
-                       character_dicts:list[dict[str,Any]], 
-                       state_graphs:StateDisconnectedGraphFactory,
+                       character_dicts:list[dict[str,Any]],
                        skills_factory:SkillSetFactory,
                        item_factory:ItemFactory,
                        action_factory:NamedFactory[Action],
                        state_factory:StateFactory,
-                       feat_factory:NamedFactory[Feat]) -> Actor:
+                       feat_factory:NamedFactory[Feat],
+                       state_graph_factory:StateGraphFactory) -> Actor:
         characters = list[Actor]()
         for character_dict in character_dicts:
             name = character_dict['name']
             description = character_dict['description']
             type = character_dict['type']
-            states = state_graphs.get_state_disconnected_graph(character_dict['states'])
+            states = sdg_from_dict(name, character_dict['state'], state_factory, state_graph_factory, action_factory)
             if states is None:
                 print(f"Can't find sdg {character_dict["states"]} in {name}")
             skills = skills_factory.get_skill_set(character_dict['skills'])
             if skills is None:
                 print(f"Can't find SkillSet {character_dict['skills']} in {name}")
-            inventory = self.__inventory_from_dict(character_dict['inventory'], item_factory)
+            inventory = inventory_from_dict(name, character_dict['inventory'], item_factory)
             weight = Actor.DEFAULT_WEIGHT
             if 'weight' in character_dict:
                 weight = character_dict['weight']
