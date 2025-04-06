@@ -91,14 +91,14 @@ class StateGroup(Named):
 
 class StateGraph(Named):
 
-    def __init__(self, name:str, current_state:StateGroup, target_graph:dict[StateGroup,dict[Action,StateGroup]], tool_graph:dict[StateGroup,dict[Action,StateGroup]], actor_graph:dict[StateGroup,dict[Action,StateGroup]], time_graph:dict[StateGroup,tuple[int,StateGroup]]):
+    def __init__(self, name:str, current_state:StateGroup, target_graph:dict[StateGroup,dict[Action,StateGroup]]=None, tool_graph:dict[StateGroup,dict[Action,StateGroup]]=None, actor_graph:dict[StateGroup,dict[Action,StateGroup]]=None, time_graph:dict[StateGroup,tuple[int,StateGroup]]=None):
         super().__init__(name)
         self.current_state = current_state
         self.time_in_state = 0
-        self.target_graph = target_graph
-        self.actor_graph = actor_graph
-        self.tool_graph = tool_graph
-        self.time_graph = time_graph
+        self.target_graph = dict[StateGroup,dict[Action,StateGroup]]() if target_graph is None else target_graph
+        self.actor_graph = dict[StateGroup,dict[Action,StateGroup]]() if actor_graph is None else actor_graph
+        self.tool_graph = dict[StateGroup,dict[Action,StateGroup]]() if tool_graph is None else tool_graph
+        self.time_graph = dict[StateGroup,tuple[int,StateGroup]]() if time_graph is None else time_graph
 
     def __repr__(self):
         return f"[StateGraph {self.name}]\n\tCurrent: {self.current_state}\n\tTG: {self.target_graph}\n\tAG: {self.actor_graph}\n\t2G: {self.tool_graph}"

@@ -1,0 +1,15 @@
+{
+    "name"             : "trapdoor",
+    "description"      : "a small trapdoor",
+    "state"            : {
+        "states"       : ["visible"],
+        "graphs"       : ["open_close"]
+    },
+    "weight"           : 3,
+    "value"            : 3,
+    "size"             : 5,
+    "target_responses" : {
+        "take"         : "???",
+        "break"        : "You can't seem to break it"
+    }
+}

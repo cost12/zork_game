@@ -1,19 +1,21 @@
 {
     "name"             : "Trunk",
     "description"      : "An honest, squat trunk",
-    "states"           : "standard_item",
+    "state"            : {
+        "states"       : ["visible"],
+        "graphs"       : ["locked"]
+    },
     "weight"           : 100,
     "value"            : 3,
     "size"             : 30,
     "target_responses" : {
-        "take": "The trunk's a bit too heavy for you to bear on."
-    
+        "take"         : "The trunk's a bit too heavy for you to bear on.",
+        "break"        : "Why would you want to do a thing like that?"    
     },
     "state_responses"  : {
-        "open" : "The trunk's lid squeaks open, revealing its contents",
-        "close" : "The trunk's lid slams shut dramatically",
-        "unlock" : "The trunk's lock disengages with a satisfying click",
-        "lock" : "You re-engage the trunk's lock",
-        "broken_item" : "Why would you want to do a thing like that?"
+        "opened"       : "The trunk's lid squeaks open, revealing its contents",
+        "closed"       : "The trunk's lid slams shut dramatically",
+        "unlocked"     : "The trunk's lock disengages with a satisfying click",
+        "locked"       : "You re-engage the trunk's lock"
     }
 }

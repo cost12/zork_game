@@ -1,19 +1,19 @@
 {
     "name"             : "Mason Jar",
     "description"      : "A smudged and empty mason jar",
-    "states"           : "standard_item",
+    "state"            : {
+        "states"       : ["visible"],
+        "graphs"       : ["takeable", "container"]
+    },
     "weight"           : 1,
     "value"            : 3,
     "size"             : 2,
     "target_responses" : {
-        "take": "The jar is cool to the touch."
+        "take"         : "The jar is cool to the touch."
     },
     "state_responses"  : {
-        "on"          : "The jar is empty",
-        "off"         : "The jar is full.",
-        "water"       : "The jar is filled with water",
-        "honey"       : "The jar is filled with honey",
-        "other"       : "Why would you put something like that in a nice simple jar?",
-        "broken_item" : "The jar shatters, rendering itself unusable. Nice going"
+        "full"         : "The jar is empty",
+        "empty"        : "The jar is full.",
+        "broken"      : "The jar shatters, rendering itself unusable. Nice going"
     }
 }

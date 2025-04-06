@@ -1,15 +1,19 @@
 {
     "name"             : "Red Book",
     "description"      : "a little book with a red cover",
-    "states"           : "standard_item",
+    "state"            : {
+        "states"       : ["visible"],
+        "graphs"       : ["takeable", "flammable"],
+        "breakable"    : ["readable"]
+    },
     "weight"           : 1,
     "value"            : 1,
     "size"             : 1,
     "target_responses" : {
-        "take": "You take the Red Book",
-        "read": "You try to read the book, but its script is one which you can neither recognize nor decipher"
+        "take"         : "You take the Red Book",
+        "read"         : "You try to read the book, but its script is one which you can neither recognize nor decipher"
     },
     "state_responses"  : {
-        "broken_item" : "You rip the book in two, destroying its readability. Nice going..."
+        "broken"       : "You rip the book in two, destroying its readability. Nice going..."
     }
 }

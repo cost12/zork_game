@@ -1,15 +1,16 @@
 {
     "name"             : "Triangle",
     "description"      : "A small metal triangle",
-    "states"           : "standard_item",
+    "state"            : {
+        "states"       : ["visible", "musical"],
+        "graphs"       : ["takeable"]
+    },
     "weight"           : 2,
     "value"            : 10,
     "size"             : 1,
     "target_responses" : {
-        "take": "The metal is cool to the touch.",
-        "play" : "It doesn't make much to be good at the triangle, and man are you a prodigy. Its high note rings out."
-    },
-    "state_responses"  : {
-        "broken_item" : "The triangle is a slippery little bugger and you fuund yourself unable to destroy it."
+        "take"         : "The metal is cool to the touch.",
+        "play"         : "It doesn't take much to be good at the triangle, and man are you a prodigy. Its high note rings out.",
+        "break"        : "The triangle is a slippery little bugger and you fuund yourself unable to destroy it."
     }
 }

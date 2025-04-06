@@ -1,16 +1,19 @@
 {
     "name"             : "Fuzzy Jacket",
     "description"      : "a poofy and comfortable winter jacket, just your size!",
-    "states"           : "standard_item",
+    "state"            : {
+        "states"       : ["visible"],
+        "graphs"       : ["takeable", "flammable", "wearable"]
+    },
     "weight"           : 3,
     "value"            : 5,
     "size"             : 1,
     "target_responses" : {
-        "take": "You take the puffy jacket"
+        "take"         : "You take the puffy jacket",
+        "break"        : "You tear at the jacket, but it must have been made by valiant manufacturers- you can't seem to do any damage."
     },
     "state_responses"  : {
-        "on"          : "The jacket smells a little musky as you don it, but it should keep you very warm",
-        "off"         : "You take the jacket off, revealing your bare, hairy chest.",
-        "broken_item" : "You tear at the jacket, but it must have been made by valiant manufacturers- you can't seem to do any damage."
+        "on"           : "The jacket smells a little musky as you don it, but it should keep you very warm",
+        "off"          : "You take the jacket off, revealing your bare, hairy chest."
     }
 }

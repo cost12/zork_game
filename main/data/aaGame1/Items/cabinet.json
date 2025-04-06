@@ -1,7 +1,10 @@
 {
     "name"             : "cabinet",
     "description"      : "a cabinet",
-    "states"           : "standard_item",
+    "state"            : {
+        "states"       : ["visible"],
+        "graphs"       : ["open_close"]
+    },
     "weight"           : 5,
     "value"            : 3,
     "size"             : 1

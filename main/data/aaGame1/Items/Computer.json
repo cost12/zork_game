@@ -2,7 +2,11 @@
 {
     "name"             : "Computer",
     "description"      : "an old-school computer hums soflty, the gentle light of its screen illuminating the space.",
-    "states"           : "standard_item",
+    "state"            : {
+        "states"       : ["visible"],
+        "graphs"       : ["takeable", "switch"],
+        "breakable"    : ["typeable", "readable"]
+    },
     "weight"           : 100,
     "value"            : 100,
     "size"             : 25,
@@ -12,6 +16,6 @@
     "state_responses"  : {
         "on"          : "The computer is on.",
         "off"         : "The computer is off.",
-        "broken_item" : "The screen breaks as you destroy a perfectly fine old machine."
+        "broken"      : "The screen breaks as you destroy a perfectly fine old machine."
     }
 }

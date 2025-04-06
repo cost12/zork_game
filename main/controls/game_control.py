@@ -17,6 +17,12 @@ from controls.translate import get_input_translator
 # TODO: for many items with same name: have unique id for equality/ dicts, dict[str,Named] -> dict[str,list[Named]] and figure out which one based on context/ asking questions
 
 # TODO: SDG json file is not needed, in Character/Item factories read in list of States/StateGraphs into SDG there
+# TODO: should burning something be able to call break on the item
+# TODO: store items in other items
+# TODO: action requirements, like path requirements but extended to actions
+# TODO: contents of wallet at the end are determined by actions during the game
+# TODO: pepper and water own items?
+# TODO: do theatre passages need instruments to be unbroken
 
 class GameAction:
     """This is an abstract class and should not be instantiated.

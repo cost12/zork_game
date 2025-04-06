@@ -16,7 +16,7 @@
                 "trunk",
                 {
                     "closed" : true,
-                    "open": false
+                    "opened" : false
                 }
             ]
         },
@@ -30,10 +30,10 @@
         }
     ],
     "contents"   : {
-        "Trunk" : "default",
+        "Trunk"          : "default",
         "Jar of Peppers" : "ontrunk",
-        "Lantern" : "ontrunk",
-        "Basketball" : "trunk",
-        "Skateboard" : "trunk"
+        "Lantern"        : "ontrunk",
+        "Basketball"     : "trunk",
+        "Skateboard"     : "trunk"
     }
 }

@@ -1,18 +1,18 @@
-
 {
     "name"             : "Jar of Peppers",
     "description"      : "A jar of hot peppers pickling in brine",
-    "states"           : "standard_item",
+    "state"            : {
+        "states"       : ["visible", "edible"],
+        "graphs"       : ["takeable", "container"]
+    },
     "weight"           : 3,
     "value"            : 3,
     "size"             : 2,
     "target_responses" : {
-        "take": "Taken.",
-        "eat" : "Yum! That was quite filling!",
-        "give to orge" : "The Orge loves peppers! He quickly slurps them up and sits back contentedly",
-        "give to child" : "The Child tentativly samples the peppers and hates them. They start crying hard. Nice going."
+        "take"         : "Taken.",
+        "eat"          : "Yum! That was quite filling!"
     },
     "state_responses"  : {
-        "broken_item" : "Now that's just gratuitous! The peppers and their brine spill everywhere"
+        "broken"       : "Now that's just gratuitous! The peppers and their brine spill everywhere"
     }
 }

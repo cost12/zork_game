@@ -1,15 +1,18 @@
 {
     "name"             : "Meal",
     "description"      : "a decadent, steaming meal",
-    "states"           : "standard_item",
+    "state"            : {
+        "states"       : ["visible", "edible"],
+        "graphs"       : ["breakable"]
+    },
     "weight"           : 3,
     "value"            : 3,
     "size"             : 2,
     "target_responses" : {
-        "take": "It's a bit messy to be taking with you...",
-        "eat" : "Yum! That was quite filling!"
+        "take"         : "It's a bit messy to be taking with you...",
+        "eat"          : "Yum! That was quite filling!"
     },
     "state_responses"  : {
-        "broken_item" : "Now that's just gratuitous!"
+        "broken"       : "Now that's just gratuitous!"
     }
 }

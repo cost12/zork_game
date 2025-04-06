@@ -1,7 +1,10 @@
 {
     "name"             : "A fourth candle",
     "description"      : "a small candle.",
-    "states"           : "standard_item",
+    "state"            : {
+        "states"       : ["visible"],
+        "graphs"       : ["takeable", "lightable", "breakable"]
+    },
     "weight"           : 1,
     "value"            : 1,
     "size"             : 1

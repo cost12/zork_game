@@ -1,7 +1,11 @@
 {
     "name"             : "bongo",
     "description"      : "a bongo",
-    "states"           : "standard_item",
+    "state"            : {
+        "states"       : ["visible"],
+        "graphs"       : ["takeable"],
+        "breakable"    : ["musical"]
+    },
     "weight"           : 5,
     "value"            : 3,
     "size"             : 1

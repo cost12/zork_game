@@ -5,6 +5,176 @@ from models.actors    import Location, Direction, Path, Target, Actor, Inventory
 from models.state     import State, StateGroup, StateGraph, StateDisconnectedGraph, Skill, SkillSet
 from controls.character_control import CharacterController, CommandLineController, NPCController
 
+def character_state_requirements_from_dict(name:str, requirement_dict:dict[str,Any], state_factory:'StateFactory') -> CharacterStateRequirement:
+    states_needed = dict[State,tuple[bool,str]]()
+    for state_name, needed in requirement_dict.items():
+        state = state_factory.get_state(state_name)
+        if state is None:
+            print(f"Can't find state {state_name} in {name}")
+        if isinstance(needed, bool):
+            states_needed[state] = (needed,None)
+        else:
+            states_needed[state] = (needed[0], needed[1])
+    return CharacterStateRequirement(states_needed)
+
+def character_feat_requirements_from_dict(name:str, requirement_dict:dict[str,Any], feat_factory:'NamedFactory[Feat]') -> CharacterFeatRequirement:
+    feats_needed = dict[Feat,tuple[bool,str]]()
+    for feat_name, needed in requirement_dict.items():
+        feat = feat_factory.get_named(feat_name)
+        if feat is None:
+            print(f"Can't find feat {feat_name} in {name}")
+        if isinstance(needed, bool):
+            feats_needed[feat] = (needed,None)
+        else:
+            feats_needed[feat] = (needed[0], needed[1])
+    return CharacterFeatRequirement(feats_needed)
+
+def item_state_requirements_from_dict(name:str, requirement_dict:dict[str,Any], item_factory:'ItemFactory', character_factory:'CharacterFactory', state_factory:'StateFactory') -> ItemStateRequirement:
+    item_states = dict[Target,dict[State,tuple[bool,str]]]()
+    for item_name, states_needed_raw in requirement_dict.items():
+        item = item_factory.get_item(item_name)
+        if item is None:
+            item = character_factory.get_character(item_name)
+        if item is None:
+            print(f"Can't find target {item_name} in {name}")
+        states_needed = dict[State,tuple[bool,str]]()
+        for state_name, needed in states_needed_raw.items():
+            state = state_factory.get_state(state_name)
+            if state is None:
+                print(f"Can't find state {state_name} in {name}")
+            if isinstance(needed, bool):
+                states_needed[state] = (needed,None)
+            else:
+                states_needed[state] = (needed[0], needed[1])
+        item_states[item] = states_needed
+    return ItemStateRequirement(item_states)
+
+def item_placement_requirements_from_dict(name:str, requirement_dict:dict[str,Any], item_factory:'ItemFactory', character_factory:'CharacterFactory') -> ItemPlacementRequirement:
+    item_placements = dict[Target,tuple['Location',Optional['LocationDetail'],bool,str]]()
+    for item_name, location_info in requirement_dict.items():
+        item = item_factory.get_item(item_name)
+        if item is None:
+            item = character_factory.get_character(item_name)
+        if item is None:
+            print(f"Can't find target {item_name} in {name}")
+        location_name = location_info[0]
+        detail_name = None
+        needed = location_info[1]
+        response = None
+        if isinstance(location_info[1], str):
+            detail_name = location_info[1]
+            needed = location_info[2]
+        if isinstance(location_info[-1], str):
+            response = location_info[-1]
+        item_placements[item] = (location_name, detail_name, needed, response)
+    return ItemPlacementRequirement(item_placements)
+
+def items_held_requirement_from_dict(name:str, requirement_dict:dict[str,Any], item_factory:'ItemFactory', character_factory:'CharacterFactory') -> ItemsHeldRequirement:
+    items_needed = dict[Target,tuple[bool,str]]()
+    for item_name, needed in requirement_dict.items():
+        item = item_factory.get_item(item_name)
+        if item is None:
+            item = character_factory.get_character(item_name)
+        if item is None:
+            print(f"Can't find target {item_name} in {name}")
+        if isinstance(needed, bool):
+            items_needed[item] = (needed,None)
+        else:
+            items_needed[item] = (needed[0], needed[1])
+    return ItemsHeldRequirement(items_needed)
+
+def path_from_dict(path_dict:dict[str,Any], item_factory:'ItemFactory', character_factory:'CharacterFactory', state_factory:'StateFactory', feat_factory:'NamedFactory[Feat]') -> Path:
+        name = path_dict['name']
+        description = path_dict['description']
+        path_type = None
+        if 'end' in path_dict:
+            path_type = 'restricted'
+            end = path_dict['end']
+        if 'multi_end' in path_dict:
+            path_type = 'multi'
+            multi_end = dict[Target, str]()
+            for item_name, room_name in path_dict['multi_end'].items():
+                item = item_factory.get_item(item_name)
+                if item is None:
+                    print(f"Can't find item {item_name} in {name}")
+                multi_end[item] = room_name
+        if path_type is None:
+            print(f"ERROR: path {name} has no type")
+        hidden = False
+        if 'hidden' in path_dict:
+            hidden = path_dict['hidden']
+        hidden_when_locked = False
+        if 'hidden_when_locked' in path_dict:
+            hidden_when_locked = path_dict['hidden_when_locked']
+        exit_response = None
+        if 'exit_response' in path_dict:
+            exit_response = path_dict['exit_response']
+        path_items = list[Target]()
+        if 'path_items' in path_dict:
+            for item_name in path_dict['path_items']:
+                item = item_factory.get_item(item_name)
+                if item is None:
+                    item = character_factory.get_character(item_name)
+                if item is None:
+                    print(f"Can't find target {item_name} in {name}")
+                path_items.append(item)
+        
+        passing_requirements = list[PathRequirement]()
+        if 'character_state_requirements' in path_dict:
+            states_needed_raw = path_dict['character_state_requirements']
+            passing_requirements.append(character_state_requirements_from_dict(name, states_needed_raw, state_factory))
+        if 'character_feat_requirements' in path_dict:
+            feats_needed_raw = path_dict['character_feat_requirements']
+            passing_requirements.append(character_feat_requirements_from_dict(name, feats_needed_raw, feat_factory))
+        if 'item_state_requirements' in path_dict:
+            item_states_raw = path_dict['item_state_requirements']
+            passing_requirements.append(item_state_requirements_from_dict(name, item_states_raw, item_factory, character_factory, state_factory))
+        if 'items_held_requirements' in path_dict:
+            items_needed_raw = path_dict['items_held_requirements']
+            passing_requirements.append(items_held_requirement_from_dict(name, items_needed_raw, item_factory, character_factory))
+        if 'item_placement_requirements' in path_dict:
+            item_placements_raw = path_dict['item_placement_requirements']
+            passing_requirements.append(item_placement_requirements_from_dict(name, item_placements_raw, item_factory, character_factory))
+        aliases = None
+        if 'aliases' in path_dict:
+            aliases = path_dict['aliases']
+        if path_type == 'restricted':
+            return SingleEndPath(name, description, end, hidden, exit_response, hidden_when_locked=hidden_when_locked, path_items=path_items, passing_requirements=passing_requirements, aliases=aliases)
+        elif path_type == 'multi':
+            return MultiEndPath(name, description, end, multi_end, hidden, exit_response, hidden_when_locked=hidden_when_locked, path_items=path_items, passing_requirements=passing_requirements, aliases=aliases)
+
+def sdg_from_dict(name:str, sgd_dict:dict[str,list[str]], state_factory:'StateFactory', graph_factory:'StateGraphFactory', action_factory:'NamedFactory[Action]') -> StateDisconnectedGraph:
+    state_graphs = list[StateGraph]()
+    if "states" in sgd_dict:
+        for state_name in sgd_dict["states"]:
+            state = state_factory.get_state(state_name)
+            if state is None:
+                print(f"Can't find state {state_name} in SDG for {name}")
+            state_group = StateGroup(state.get_name(), [state])
+            state_graphs.append(StateGraph(state_group.get_name(), state_group))
+    if "breakable" in sgd_dict:
+        breakable_states = list[State]()
+        for state_name in sgd_dict["breakable"]:
+            state = state_factory.get_state(state_name)
+            if state is None:
+                print(f"Can't find state {state_name} in SDG for {name}")
+        state_group = StateGroup(f"{name}_breakable", breakable_states)
+        break_action = action_factory.get_named("break")
+        if break_action is None:
+            print(f"Can't find action break in SDG for {name}")
+        broken_state = state_factory.get_state("broken")
+        if broken_state is None:
+            print(f"Can't find state broken in SDG for {name}")
+        broken_group = StateGroup("broken", [broken_state])
+        target_graph = {state_group: {break_action: broken_group}}
+        state_graphs.append(StateGraph(f"{name}_breakable", state_group, target_graph=target_graph))
+    if "graphs" in sgd_dict:
+        for graph_name in sgd_dict["graphs"]:
+            graph = graph_factory.get_state_graph(graph_name)
+            if graph is None:
+                print(f"Can't find state graph {graph_name} in SDG for {name}")
+            state_graphs.append(graph)
+    return StateDisconnectedGraph(name, state_graphs)
 
 class NamedFactory[T:Named]:
 
@@ -75,13 +245,25 @@ class StateFactory:
             name = state['name']
             actions_as_target = []
             if 'actions_as_target' in state:
-                actions_as_target = [action_factory.get_named(action) for action in state['actions_as_target']]
+                for action_name in state['actions_as_target']:
+                    action = action_factory.get_named(action_name)
+                    if action is None:
+                        print(f"Can't find action {action_name} in {name}")
+                    actions_as_target.append(action)
             actions_as_tool = []
             if 'actions_as_tool' in state:
-                actions_as_tool = [action_factory.get_named(action) for action in state['actions_as_tool']]
+                for action_name in state['actions_as_tool']:
+                    action = action_factory.get_named(action_name)
+                    if action is None:
+                        print(f"Can't find action {action_name} in {name}")
+                    actions_as_tool.append(action)
             actions_as_actor = []
             if 'actions_as_actor' in state:
-                actions_as_actor  = [action_factory.get_named(action) for action in state['actions_as_actor']]
+                for action_name in state['actions_as_actor']:
+                    action = action_factory.get_named(action_name)
+                    if action is None:
+                        print(f"Can't find action {action_name} in {name}")
+                    actions_as_actor.append(action)
             states.append(self.create_state(name, actions_as_target, actions_as_actor, actions_as_tool))
         return states
     
@@ -111,7 +293,12 @@ class StateGroupFactory:
         groups = []
         for group_dict in group_dicts:
             name = group_dict['name']
-            states = [state_factory.get_state(state) for state in group_dict['states']]
+            states = list[State]()
+            for state_name in group_dict['states']:
+                state = state_factory.get_state(state_name)
+                if state is None:
+                    print(f"Can't find state {state_name} in {name}")
+                states.append(state)
             groups.append(self.create_state_group(name, states))
         return groups
 
@@ -124,7 +311,7 @@ class StateGraphFactory:
     def get_state_graphs(self) -> list[StateGraph]:
         return list(self.graphs.values())
 
-    def create_state_graph(self, name:str, current_state:StateGroup, target_graph:dict[StateGroup,dict[Action,StateGroup]], tool_graph:dict[StateGroup,dict[Action,StateGroup]], actor_graph:dict[StateGroup,dict[Action,StateGroup]], time_graph:dict[StateGroup,tuple[int,StateGroup]]) -> StateGraph:
+    def create_state_graph(self, name:str, current_state:StateGroup, target_graph:dict[StateGroup,dict[Action,StateGroup]]=None, tool_graph:dict[StateGroup,dict[Action,StateGroup]]=None, actor_graph:dict[StateGroup,dict[Action,StateGroup]]=None, time_graph:dict[StateGroup,tuple[int,StateGroup]]=None) -> StateGraph:
         new_graph = StateGraph(name, current_state, target_graph, tool_graph, actor_graph, time_graph)
         if new_graph in self.graphs:
             return self.graphs[new_graph]
@@ -150,39 +337,63 @@ class StateGraphFactory:
                 continue
             name = graph_dict['name']
             current_state = state_group_factory.get_state_group(graph_dict['current_state'])
+            if current_state is None:
+                print(f"Can't find state group {graph_dict['current_state']} in {name}")
             target_graph = dict[StateGroup,dict[Action,StateGroup]]()
             if 'target_graph' in graph_dict:
                 for state_group1_name in graph_dict['target_graph']:
                     state_group1 = state_group_factory.get_state_group(state_group1_name)
+                    if state_group1 is None:
+                        print(f"Can't find state group {state_group1_name} in {name}")
                     target_graph[state_group1] = dict[Action,StateGroup]()
                     for action_name in graph_dict['target_graph'][state_group1_name]:
                         action = action_factory.get_named(action_name)
+                        if action is None:
+                            print(f"Can't find action {action_name} in {name}")
                         state_group2 = state_group_factory.get_state_group(graph_dict['target_graph'][state_group1_name][action_name])
+                        if state_group2 is None:
+                            print(f"Can't find state group {graph_dict['target_graph'][state_group1_name][action_name]} in {name}")
                         target_graph[state_group1][action] = state_group2
             tool_graph = dict[StateGroup,dict[Action,StateGroup]]()
             if 'tool_graph' in graph_dict:
                 for state_group1_name in graph_dict['tool_graph']:
                     state_group1 = state_group_factory.get_state_group(state_group1_name)
+                    if state_group1 is None:
+                        print(f"Can't find state group {state_group1_name} in {name}")
                     tool_graph[state_group1] = dict[Action,StateGroup]()
                     for action_name in graph_dict['tool_graph'][state_group1_name]:
                         action = action_factory.get_named(action_name)
+                        if action is None:
+                            print(f"Can't find action {action_name} in {name}")
                         state_group2 = state_group_factory.get_state_group(graph_dict['tool_graph'][state_group1_name][action_name])
+                        if state_group2 is None:
+                            print(f"Can't find state group {graph_dict['tool_graph'][state_group1_name][action_name]} in {name}")
                         tool_graph[state_group1][action] = state_group2
             actor_graph = dict[StateGroup,dict[Action,StateGroup]]()
             if 'actor_graph' in graph_dict:
                 for state_group1_name in graph_dict['actor_graph']:
                     state_group1 = state_group_factory.get_state_group(state_group1_name)
+                    if state_group1 is None:
+                        print(f"Can't find state group {state_group1_name} in {name}")
                     actor_graph[state_group1] = dict[Action,StateGroup]()
                     for action_name in graph_dict['actor_graph'][state_group1_name]:
                         action = action_factory.get_named(action_name)
+                        if action is None:
+                            print(f"Can't find action {action_name} in {name}")
                         state_group2 = state_group_factory.get_state_group(graph_dict['actor_graph'][state_group1_name][action_name])
+                        if state_group2 is None:
+                            print(f"Can't find state group {graph_dict['actor_graph'][state_group1_name][action_name]} in {name}")
                         actor_graph[state_group1][action] = state_group2
             time_graph = dict[StateGroup,tuple[int,StateGroup]]()
             if 'time_graph' in graph_dict:
                 for state_group1_name in graph_dict['time_graph']:
                     state_group1 = state_group_factory.get_state_group(state_group1_name)
+                    if state_group1 is None:
+                        print(f"Can't find state group {state_group1_name} in {name}")
                     time,state_group2_name = graph_dict['time_graph'][state_group1_name]
                     state_group2 = state_group_factory.get_state_group(state_group2_name)
+                    if state_group2 is None:
+                        print(f"Can't find state group {state_group2_name} in {name}")
                     time_graph[state_group1] = (time, state_group2)
             graphs.append(self.create_state_graph(name, current_state, target_graph, tool_graph, actor_graph, time_graph))
         return graphs
@@ -216,7 +427,12 @@ class StateDisconnectedGraphFactory:
         graphs = list[StateDisconnectedGraph]()
         for graph in graph_dict:
             name = graph['name']
-            state_graphs = [state_graph_factory.get_state_graph(graph) for graph in graph['state_graphs']]
+            state_graphs = list[StateGraph]()
+            for graph_name in graph['state_graphs']:
+                graph = state_graph_factory.get_state_graph(graph_name)
+                if graph is None:
+                    print(f"Can't find state graph {graph_name} in {name}")
+                state_graphs.append(graph)
             graphs.append(self.create_state_disconnected_graph(name, state_graphs))
         return graphs
 
@@ -251,12 +467,12 @@ class ItemFactory:
     def get_item(self, alias:str) -> Optional[Target]:
         return self.aliases.get(alias.lower(), None)
     
-    def many_from_dict(self, item_dicts:list[dict[str,Any]], state_graphs:StateDisconnectedGraphFactory, action_factory:NamedFactory[Action], state_factory:StateFactory) -> list[Target]:
+    def many_from_dict(self, item_dicts:list[dict[str,Any]], action_factory:NamedFactory[Action], state_factory:StateFactory, state_graph_factory:StateGraphFactory) -> list[Target]:
         items = list[Target]()
         for item_dict in item_dicts:
             name = item_dict['name']
             description = item_dict['description']
-            states = state_graphs.get_state_disconnected_graph(item_dict['states'])
+            states = sdg_from_dict(name, item_dict['state'], state_factory, state_graph_factory, action_factory)
             weight = None
             if 'weight' in item_dict:
                 weight = item_dict['weight']
@@ -270,16 +486,22 @@ class ItemFactory:
             if 'target_responses' in item_dict:
                 for action_name in item_dict['target_responses']:
                     action = action_factory.get_named(action_name)
+                    if action is None:
+                        print(f"Can't find action {action_name} in {name}")
                     target_responses[action] = item_dict['target_responses'][action_name]
             tool_responses = dict[Action,str]()
             if 'tool_responses' in item_dict:
                 for action_name in item_dict['tool_responses']:
                     action = action_factory.get_named(action_name)
+                    if action is None:
+                        print(f"Can't find action {action_name} in {name}")
                     tool_responses[action] = item_dict['tool_responses'][action_name]
             state_responses = dict[State,str]()
             if 'state_responses' in item_dict:
                 for state_name in item_dict['state_responses']:
                     state = state_factory.get_state(state_name)
+                    if state is None:
+                        print(f"Can't find state {state_name} in {name}")
                     state_responses[state] = item_dict['state_responses'][state_name]
             items.append(self.create_item(name, description, states, weight, value, size, target_responses, tool_responses, state_responses))
         return items
@@ -317,6 +539,8 @@ class SkillSetFactory:
             if 'skills' in skill_set:
                 for skill_name in skill_set['skills']:
                     skill = skill_factory.get_named(skill_name)
+                    if skill is None:
+                        print(f"Can't find skill {skill_name} in {name}")
                     skills[skill] = skill_set['skills'][skill_name]
             proficiency = None
             if 'default_proficiency' in skill_set:
@@ -371,6 +595,8 @@ class CharacterFactory:
         if 'items' in inventory_dict:
             for item_name in inventory_dict['items']:
                 item = item_factory.get_item(item_name)
+                if item is None:
+                    print(f"Can't find action {item_name} in inventory")
                 items.append(item)
         return Inventory(size_limit, weight_limit, items)
     
@@ -388,7 +614,11 @@ class CharacterFactory:
             description = character_dict['description']
             type = character_dict['type']
             states = state_graphs.get_state_disconnected_graph(character_dict['states'])
+            if states is None:
+                print(f"Can't find sdg {character_dict["states"]} in {name}")
             skills = skills_factory.get_skill_set(character_dict['skills'])
+            if skills is None:
+                print(f"Can't find SkillSet {character_dict['skills']} in {name}")
             inventory = self.__inventory_from_dict(character_dict['inventory'], item_factory)
             weight = Actor.DEFAULT_WEIGHT
             if 'weight' in character_dict:
@@ -402,26 +632,37 @@ class CharacterFactory:
             feats = list[Feat]()
             if 'feats' in character_dict:
                 for feat_name in character_dict['feats']:
-                    feats.append(feat_factory.get_named(feat_name))
+                    feat = feat_factory.get_named(feat_name)
+                    if feat is None:
+                        print(f"Can't find feat {feat_name} in {name}")
+                    feats.append(feat)
             actor_responses = dict[Action,str]()
             if 'actor_responses' in character_dict:
                 for action_name in character_dict['actor_responses']:
                     action = action_factory.get_named(action_name)
+                    if action is None:
+                        print(f"Can't find action {action_name} in {name}")
                     actor_responses[action] = character_dict['actor_responses'][action_name]
             target_responses = dict[Action,str]()
             if 'target_responses' in character_dict:
                 for action_name in character_dict['target_responses']:
                     action = action_factory.get_named(action_name)
+                    if action is None:
+                        print(f"Can't find action {action_name} in {name}")
                     target_responses[action] = character_dict['target_responses'][action_name]
             tool_responses = dict[Action,str]()
             if 'tool_responses' in character_dict:
                 for action_name in character_dict['tool_responses']:
                     action = action_factory.get_named(action_name)
+                    if action is None:
+                        print(f"Can't find action {action_name} in {name}")
                     tool_responses[action] = character_dict['tool_responses'][action_name]
             state_responses = dict[State,str]()
             if 'state_responses' in character_dict:
                 for state_name in character_dict['state_responses']:
                     state = state_factory.get_state(state_name)
+                    if state is None:
+                        print(f"Can't find state {state_name} in {name}")
                     state_responses[state] = character_dict['state_responses'][state_name]
             aliases = None
             if 'aliases' in character_dict:
@@ -465,9 +706,13 @@ class LocationDetailFactory:
         if 'hidden_when' in detail_dict:
             target_name, states_dict = detail_dict['hidden_when']
             target = item_factory.get_item(target_name)
+            if target is None:
+                print(f"Can't find target {target_name} in {name}")
             states = dict[State,bool]()
             for state_name, is_hidden in states_dict.items():
                 state = state_factory.get_state(state_name)
+                if state is None:
+                    print(f"Can't find state {state_name} in {name}")
                 states[state] = is_hidden
             hidden_when = (target, states)
         aliases = None
@@ -475,6 +720,8 @@ class LocationDetailFactory:
         if 'responses' in detail_dict:
             for item_name, response in detail_dict['responses'].items():
                 item = item_factory.get_item(item_name)
+                if item is None:
+                    print(f"Can't find item {item_name} in {name}")
                 responses[item] = response
         if 'aliases' in detail_dict:
             aliases = detail_dict['aliases']
@@ -517,105 +764,6 @@ class LocationFactory:
     
     def get_location(self, alias:str) -> Optional[Location]:
         return self.aliases.get(alias.lower(), None)
-    
-    def __path_from_dict(self, path_dict:dict[str,Any], item_factory:ItemFactory, character_factory:CharacterFactory, state_factory:StateFactory, feat_factory:NamedFactory[Feat]) -> Path:
-        name = path_dict['name']
-        description = path_dict['description']
-        path_type = None
-        if 'end' in path_dict:
-            path_type = 'restricted'
-            end = path_dict['end']
-        if 'multi_end' in path_dict:
-            path_type = 'multi'
-            multi_end = dict[Target, str]()
-            for item_name, room_name in path_dict['multi_end'].items():
-                item = item_factory.get_item(item_name)
-                multi_end[item] = room_name
-        if path_type is None:
-            print(f"ERROR: path {name} has no type")
-        hidden = False
-        if 'hidden' in path_dict:
-            hidden = path_dict['hidden']
-        hidden_when_locked = False
-        if 'hidden_when_locked' in path_dict:
-            hidden_when_locked = path_dict['hidden_when_locked']
-        exit_response = None
-        if 'exit_response' in path_dict:
-            exit_response = path_dict['exit_response']
-        path_items = list[Target]()
-        if 'path_items' in path_dict:
-            for item_name in path_dict['path_items']:
-                path_items.append(item_factory.get_item('path_items'))
-        
-        passing_requirements = list[PathRequirement]()
-        if 'character_state_requirements' in path_dict:
-            states_needed = dict[State,tuple[bool,str]]()
-            states_needed_raw = path_dict['character_state_requirements']
-            for state_name, needed in states_needed_raw.items():
-                state = state_factory.get_state(state_name)
-                if isinstance(needed, bool):
-                    states_needed[state] = (needed,None)
-                else:
-                    states_needed[state] = (needed[0], needed[1])
-            passing_requirements.append(CharacterStateRequirement(states_needed))
-        if 'character_feat_requirements' in path_dict:
-            feats_needed = dict[Feat,tuple[bool,str]]()
-            feats_needed_raw = path_dict['character_feat_requirements']
-            for feat_name, needed in feats_needed_raw.items():
-                feat = feat_factory.get_named(feat_name)
-                if isinstance(needed, bool):
-                    feats_needed[feat] = (needed,None)
-                else:
-                    feats_needed[feat] = (needed[0], needed[1])
-            passing_requirements.append(CharacterFeatRequirement(feats_needed))
-        if 'item_state_requirements' in path_dict:
-            item_states = dict[Target,dict[State,tuple[bool,str]]]()
-            item_states_raw = path_dict['item_state_requirements']
-            for item_name, states_needed_raw in item_states_raw.items():
-                item = item_factory.get_item(item_name)
-                states_needed = dict[State,tuple[bool,str]]()
-                for state_name, needed in states_needed_raw.items():
-                    state = state_factory.get_state(state_name)
-                    if isinstance(needed, bool):
-                        states_needed[state] = (needed,None)
-                    else:
-                        states_needed[state] = (needed[0], needed[1])
-                item_states[item] = states_needed
-            passing_requirements.append(ItemStateRequirement(item_states))
-        if 'items_held_requirements' in path_dict:
-            items_needed = dict[Target,tuple[bool,str]]()
-            items_needed_raw = path_dict['items_held_requirements']
-            for item_name, needed in items_needed_raw.items():
-                item = item_factory.get_item(item_name)
-                if isinstance(needed, bool):
-                    items_needed[item] = (needed,None)
-                else:
-                    items_needed[item] = (needed[0], needed[1])
-            passing_requirements.append(ItemsHeldRequirement(items_needed))
-        if 'item_placement_requirements' in path_dict:
-            item_placements = dict[Target,tuple['Location',Optional['LocationDetail'],bool,str]]()
-            item_placements_raw = path_dict['item_placement_requirements']
-            for item_name, location_info in item_placements_raw.items():
-                item = item_factory.get_item(item_name)
-                location_name = location_info[0]
-                detail_name = None
-                needed = location_info[1]
-                response = None
-                if isinstance(location_info[1], str):
-                    detail_name = location_info[1]
-                    needed = location_info[2]
-                if isinstance(location_info[-1], str):
-                    response = location_info[-1]
-                item_placements[item] = (location_name, detail_name, needed, response)
-            passing_requirements.append(ItemPlacementRequirement(item_placements))
-        
-        aliases = None
-        if 'aliases' in path_dict:
-            aliases = path_dict['aliases']
-        if path_type == 'restricted':
-            return SingleEndPath(name, description, end, hidden, exit_response, hidden_when_locked=hidden_when_locked, path_items=path_items, passing_requirements=passing_requirements, aliases=aliases)
-        elif path_type == 'multi':
-            return MultiEndPath(name, description, end, multi_end, hidden, exit_response, hidden_when_locked=hidden_when_locked, path_items=path_items, passing_requirements=passing_requirements, aliases=aliases)
 
     def many_from_dict(self, location_dicts:list[dict[str,Any]], character_factory:CharacterFactory, item_factory:ItemFactory, direction_factory:NamedFactory[Direction], state_factory:StateFactory, feat_factory:NamedFactory[Feat]) -> list[Location]:
         locations = list[Location]()
@@ -626,15 +774,20 @@ class LocationFactory:
             if 'paths' in location_dict:
                 for direction_name, path_dict in location_dict['paths'].items():
                     direction = direction_factory.get_named(direction_name)
+                    if direction is None:
+                        print(f"Can't find direction {direction_name} in {name}")
                     try:
-                        path = self.__path_from_dict(path_dict, item_factory, character_factory, state_factory, feat_factory)
-                    except TypeError:
+                        path = path_from_dict(path_dict, item_factory, character_factory, state_factory, feat_factory)
+                    except TypeError as e:
+                        print(e)
                         print(f"Path error in {name}")
                     paths[direction] = path
             direction_responses = dict[Direction,str]()
             if 'direction_responses' in location_dict:
                 for direction_name,response in location_dict['direction_responses'].items():
                     direction = direction_factory.get_named(direction)
+                    if direction is None:
+                        print(f"Can't find direction {direction_name} in {name}")
                     direction_responses[direction] = response
             detail_factory = LocationDetailFactory()
             if 'details' in location_dict:
@@ -651,6 +804,8 @@ class LocationFactory:
                         detail = detail_factory.create_detail()
                     else:
                         detail = detail_factory.get_detail(detail_name)
+                        if detail is None:
+                            print(f"Can't find detail {detail_name} in {name}")
                     contents[target] = detail
             start_location = False
             if 'start' in location_dict:
@@ -661,9 +816,13 @@ class LocationFactory:
         # (this can't be done earlier because the end location might not exist yet)
         for location_dict in location_dicts:
             location = self.get_location(location_dict['name'])
+            if location is None:
+                print(f"Can't find location {location_dict['name']} in {name}")
             if 'paths' in location_dict:
                 for direction_name,path_dict in location_dict['paths'].items():
                     direction = direction_factory.get_named(direction_name)
+                    if direction is None:
+                        print(f"Can't find direction {direction_name} in {name}")
                     if location._get_path(direction)[0]._set_end(self, detail_factory) is not None:
                         print(f"bad end in {location.name}")
         return locations
@@ -682,6 +841,8 @@ class CharacterControlFactory:
     def many_from_dict(self, controller_dicts:list[dict[str,Any]], character_factory:CharacterFactory) -> None:
         for controller_dict in controller_dicts:
             character = character_factory.get_character(controller_dict['character'])
+            if character is None:
+                print(f"Can't find character {controller_dict['character']} in controller")
             controller = NPCController()
             if 'controller' in controller_dict:
                 controller_type = controller_dict['controller']

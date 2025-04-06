@@ -50,6 +50,7 @@
         "Triangle" : "stage",
         "Slide Whistle" : "stage",
         "Bongo" : "stage",
-        "Violin" : "stage"
+        "Violin" : "stage",
+        "note" : "stage"
     }
 }

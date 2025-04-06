@@ -28,5 +28,8 @@
             "arm wrestle"
         ],
         "actions_as_target": ["look", "attack", "arm wrestle"]
+    },
+    {
+        "name" : "guarding"
     }
 ]

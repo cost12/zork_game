@@ -1,16 +1,19 @@
 {
     "name"             : "Lantern",
     "description"      : "a small survival lantern",
-    "states"           : "standard_item",
+    "state"            : {
+        "states"       : ["visible"],
+        "graphs"       : ["takeable", "switch"]
+    },
     "weight"           : 1,
     "value"            : 1,
     "size"             : 1,
     "target_responses" : {
-        "take": "The lamp is surprisingly light!"
+        "take"         : "The lamp is surprisingly light!"
     },
     "state_responses"  : {
-        "on"          : "The lamp is on.",
-        "off"         : "The lamp is off.",
-        "broken_item" : "The lamp is broken and can't be turned on. Pity..."
+        "on"           : "The lamp is on.",
+        "off"          : "The lamp is off.",
+        "broken"       : "The lamp is broken and can't be turned on. Pity..."
     }
 }

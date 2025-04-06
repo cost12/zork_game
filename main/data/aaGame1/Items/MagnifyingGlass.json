@@ -1,16 +1,20 @@
 {
     "name"             : "Magnifying Glass",
     "description"      : "a simple, plastic-handled magnifying glass",
-    "states"           : "standard_item",
+    "state"            : {
+        "states"       : ["visible"],
+        "graphs"       : ["takeable", "breakable"]
+    },
     "weight"           : 2,
     "value"            : 5,
     "size"             : 1,
     "target_responses" : {
-        "take": "You take the magnifying glass.",
-        "light candle": "Using the magnifying glass to refract the light, you light the candle"
-        
+        "take"         : "You take the magnifying glass."
+    },
+    "tool_responses"   : {
+        "light"        : "Using the magnifying glass to refract the light, you light the candle"
     },
     "state_responses"  : {
-        "broken_item" : "Now that's just a waste!"
+        "broken"       : "Now that's just a waste!"
     }
 }

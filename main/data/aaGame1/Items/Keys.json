@@ -1,16 +1,16 @@
 {
     "name"             : "Keys",
     "description"      : "a simple keychain with a single car key, an archaic brass key, and a tiny plushie of Nami from One Piece.",
-    "states"           : "standard_item",
+    "state"            : {
+        "states"       : ["visible", "key"],
+        "graphs"       : ["takeable"]
+    },
     "weight"           : 1,
     "value"            : 1,
     "size"             : 1,
     "target_responses" : {
-        "take": "You take the jangling keychain.",
-        "remove key": "You try to remove it from the keychain's ring but your fingernaisl are too short to separate the ring's loops.",
-        "admire" : "Nami so pretty"
-    },
-    "state_responses"  : {
-        "broken_item" : "You rip the book in two, destroying its readability. Nice going..."
+        "take"         : "You take the jangling keychain.",
+        "remove"       : "You try to remove it from the keychain's ring but your fingernails are too short to separate the ring's loops.",
+        "admire"       : "Nami so pretty"
     }
 }

@@ -1,17 +1,18 @@
 {
     "name"             : "Candle",
     "description"      : "a simple pale, beeswax candle",
-    "states"           : "standard_item",
+    "state"            : {
+        "states"       : ["visible"],
+        "graphs"       : ["takeable", "lightable", "breakable"]
+    },
     "weight"           : 1,
     "value"            : 3,
     "size"             : 1,
     "target_responses" : {
-        "take": "You take the the candle. In your hand, the flame extinguishes with a delicate drift of fragrant smoke",
-        "light" : "With what?",
-        "light with magnifying glass if in right place" : "Cleverly, the light refracted by the magnifying glass lights the candle's wick.",
-        "light with magnifying glass" : "Sadly, there is not enough light here to accomplish this. Darn thermodynamics"
+        "take"         : "You take the the candle. In your hand, the flame extinguishes with a delicate drift of fragrant smoke",
+        "light"        : "With what?"
      },
     "state_responses"  : {
-        "broken_item" : "What is the point!"
+        "broken" : "What is the point!"
     }
 }

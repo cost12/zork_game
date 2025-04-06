@@ -10,7 +10,7 @@
                 "Bongo"   : "Theatre Stage"
             },
             "character_feat_requirements" : {
-                "shot" : [true, null]
+                "score" : [true, null]
             }
         }
     },

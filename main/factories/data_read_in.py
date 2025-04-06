@@ -78,11 +78,11 @@ def read_in_state_disconnected_graphs(game:str, state_graphs:StateGraphFactory) 
     factory.many_from_dict(data, state_graphs)
     return factory
 
-def read_in_items(game:str, state_graphs:StateDisconnectedGraphFactory, actions:NamedFactory[Action], states:StateFactory) -> ItemFactory:
+def read_in_items(game:str, actions:NamedFactory[Action], states:StateFactory, state_graphs:StateGraphFactory) -> ItemFactory:
     factory = ItemFactory()
     folder = f"data/{game}/items"
     data = __read_in_folder(folder)
-    factory.many_from_dict(data, state_graphs, actions, states)
+    factory.many_from_dict(data, actions, states, state_graphs)
     return factory
 
 def read_in_skills(game:str) -> NamedFactory[Skill]:
@@ -137,7 +137,7 @@ def read_in_game(game:str) -> tuple[LocationFactory, CharacterFactory, Character
     print(f"Loaded {len(set(graphs.aliases.values()))} graphs")
     full_graphs  = read_in_state_disconnected_graphs(game, graphs)
     print(f"Loaded {len(set(full_graphs.aliases.values()))} sdgs")
-    items        = read_in_items(game, full_graphs, actions, states)
+    items        = read_in_items(game, actions, states, graphs)
     print(f"Loaded {len(set(items.aliases.values()))} items")
     skills       = read_in_skills(game)
     print(f"Loaded {len(set(skills.aliases.values()))} skills")

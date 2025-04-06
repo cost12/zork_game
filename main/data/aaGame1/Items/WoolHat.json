@@ -2,16 +2,19 @@
 {
     "name"             : "Wool Hat",
     "description"      : "a lovely knit hat, as if done by a grandmother",
-    "states"           : "standard_item",
+    "state"            : {
+        "states"       : ["visible"],
+        "graphs"       : ["takeable", "wearable"]
+    },
     "weight"           : 1,
     "value"            : 3,
     "size"             : 1,
     "target_responses" : {
-        "take": "You take the woolen hat, feeling its soft warmth"
+        "take"         : "You take the woolen hat, feeling its soft warmth"
     },
     "state_responses"  : {
-        "on"          : "Though it itches minorly, the hat should keep your head nice and cozy.",
-        "off"         : "You take the hat off.",
-        "broken_item" : "You rip the hat to shreds, defiling the gentle work of a caring, lovely grandma somewhere."
+        "worn"         : "Though it itches minorly, the hat should keep your head nice and cozy.",
+        "wearable"     : "You take the hat off.",
+        "broken"       : "You rip the hat to shreds, defiling the gentle work of a caring, lovely grandma somewhere."
     }
 }

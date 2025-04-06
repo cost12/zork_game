@@ -1,16 +1,14 @@
 {
     "name"             : "Skateboard",
     "description"      : "a classic skateboard with Rob Dyrdek's brand;s designs on the bottom",
-    "states"           : "standard_item",
+    "state"            : {
+        "states"       : ["visible", "rideable"],
+        "graphs"       : ["takeable"]
+    },
     "weight"           : 4,
     "value"            : 1,
     "size"             : 5,
     "target_responses" : {
-        "take": "You take the skateboard and immediately look 20% cooler",
-        "do a kickflip" : "helll yeah",
-        "do a trick" : "like what? You're not that good of a skater. CRINGE BRUH"
-    },
-    "state_responses"  : {
-        "broken_item" : "You rip the book in two, destroying its readability. Nice going..."
+        "take"         : "You take the skateboard and immediately look 20% cooler"
     }
 }

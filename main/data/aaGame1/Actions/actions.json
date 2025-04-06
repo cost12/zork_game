@@ -1,130 +1,48 @@
 [
-    {
-        "name"    : "look",
-        "aliases" : ["look", "inspect", "search"]
-    },
-    {
-        "name"    : "take",
-        "aliases" : ["take", "grab", "pick up"]
-    },
-    {
-        "name"    : "drop",
-        "aliases" : ["drop", "let go", "put", "place"]
-    },
-    {
-        "name"    : "hang",
-        "aliases" : ["hang"]
-    },
-    {
-        "name"    : "inventory",
-        "aliases" : ["inventory", "check inventory"]
-    },
-    {
-        "name"    : "wait",
-        "aliases" : ["wait"]
-    },
-    {
-        "name"    : "walk",
-        "aliases" : ["walk","go","g","head","proceed","run"]
-    },
-    {
-        "name"    : "break",
-        "aliases" : ["break", "shatter", "smash"]
-    },
-    {
-        "name"    : "turn on",
-        "aliases" : ["turn on"]
-    },
-    {
-        "name"    : "turn off",
-        "aliases" : ["turn off"]
-    },
-    {
-        "name"    : "toggle",
-        "aliases" : ["toggle", "switch"]
-    },
-    {
-        "name"    : "attack",
-        "aliases" : ["slay","kill","fight","cut","attack","hit","strike"]
-    },
-    {
-        "name"    : "play",
-        "aliases" : ["play"]
-    },
-    {
-        "name"    : "conduct",
-        "aliases" : ["conduct"]
-    },
-    {
-        "name"    : "eat",
-        "aliases" : ["eat"]
-    },
-    {
-        "name"    : "drink",
-        "aliases" : ["drink"]
-    },
-    {
-        "name"    : "dig",
-        "aliases" : ["dig"]
-    },
-    {
-        "name"    : "put on",
-        "aliases" : ["put on", "wear"]
-    },
-    {
-        "name"    : "take off",
-        "aliases" : ["take off", "remove"]
-    },
-    {
-        "name"    : "shoot",
-        "aliases" : ["shoot", "throw", "toss"]
-    },
-    {
-        "name"    : "bounce",
-        "aliases" : ["bounce", "dribble"]
-    },
-    {
-        "name"    : "give",
-        "aliases" : ["give", "offer", "share"]
-    },
-    {
-        "name"    : "burn",
-        "aliases" : ["burn", "torch", "set on fire", "light", "ignite"]
-    },
-    {
-        "name"    : "extinguish",
-        "aliases" : ["put out", "extinguish"]
-    },
-    {
-        "name"    : "unlock",
-        "aliases" : ["unlock"]
-    },
-    {
-        "name"    : "lock",
-        "aliases" : ["lock"]
-    },
-    {
-        "name"    : "open",
-        "aliases" : ["open"]
-    },
-    {
-        "name"    : "close",
-        "aliases" : ["close", "shut"]
-    },
-    {
-        "name"    : "say",
-        "aliases" : ["say", "speak", "whisper", "yell"]
-    },
-    {
-        "name"    : "arm wrestle",
-        "aliases" : ["arm wrestle"]
-    },
-    {
-        "name"    : "work on",
-        "aliases" : ["work on"]
-    },
-    {
-        "name"    : "read",
-        "aliases" : ["read"]
-    }
+    {"name": "look",        "aliases" : ["look", "inspect", "search"]},
+    {"name": "take",        "aliases" : ["take", "grab", "pick up"]},
+    {"name": "drop",        "aliases" : ["drop", "let go", "put", "place"]},
+    {"name": "hang",        "aliases" : ["hang"]},
+    {"name": "inventory",   "aliases" : ["inventory", "check inventory"]},
+    {"name": "wait",        "aliases" : ["wait"]},
+    {"name": "walk",        "aliases" : ["walk","go","g","head","proceed","run"]},
+    {"name": "break",       "aliases" : ["break", "shatter", "smash"]},
+    {"name": "turn on",     "aliases" : ["turn on"]},
+    {"name": "turn off",    "aliases" : ["turn off"]},
+    {"name": "toggle",      "aliases" : ["toggle", "switch", "flip"]},
+    {"name": "attack",      "aliases" : ["slay","kill","fight","cut","attack","hit","strike"]},
+    {"name": "play",        "aliases" : ["play"]},
+    {"name": "conduct",     "aliases" : ["conduct"]},
+    {"name": "eat",         "aliases" : ["eat"]},
+    {"name": "drink",       "aliases" : ["drink"]},
+    {"name": "dig",         "aliases" : ["dig"]},
+    {"name": "put on",      "aliases" : ["put on", "wear"]},
+    {"name": "take off",    "aliases" : ["take off", "remove"]},
+    {"name": "shoot",       "aliases" : ["shoot", "throw", "toss"]},
+    {"name": "bounce",      "aliases" : ["bounce", "dribble"]},
+    {"name": "give",        "aliases" : ["give", "offer", "share"]},
+    {"name": "burn",        "aliases" : ["burn", "torch", "set on fire", "light", "ignite"]},
+    {"name": "extinguish",  "aliases" : ["put out", "extinguish"]},
+    {"name": "unlock",      "aliases" : ["unlock"]},
+    {"name": "lock",        "aliases" : ["lock"]},
+    {"name": "open",        "aliases" : ["open"]},
+    {"name": "close",       "aliases" : ["close", "shut"]},
+    {"name": "say",         "aliases" : ["say", "speak", "whisper", "yell"]},
+    {"name": "arm wrestle", "aliases" : ["arm wrestle"]},
+    {"name": "work on",     "aliases" : ["work on"]},
+    {"name": "read",        "aliases" : ["read"]},
+    {"name": "type",        "aliases" : ["type"]},
+    {"name": "tie",         "aliases" : ["tie"]},
+    {"name": "untie",       "aliases" : ["untie"]},
+    {"name": "fill",        "aliases" : ["fill"]},
+    {"name": "empty",       "aliases" : ["empty"]},
+    {"name": "admire",      "aliases" : ["admire"]},
+    {"name": "squeeze",     "aliases" : ["squeeze"]},
+    {"name": "ride",        "aliases" : ["ride"]},
+    {"name": "perform trick", "aliases": ["do", "perform"]},
+    {"name": "lift",          "aliases": ["lift"]},
+    {"name": "pour",          "aliases": ["pour"]},
+    {"name": "hug",           "aliases": ["hug"]},
+    {"name": "kiss",          "aliases": ["kiss"]},
+    {"name": "compliment",    "aliases": ["compliment"]}
 ]

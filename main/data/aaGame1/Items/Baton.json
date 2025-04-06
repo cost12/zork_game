@@ -1,7 +1,11 @@
 {
     "name"             : "Baton",
     "description"      : "An elegant conductor's baton, wrought from ivory",
-    "states"           : "standard_item",
+    "state"            : {
+        "states"       : ["visible"],
+        "graphs"       : ["takeable"],
+        "breakable"    : ["conductable"]
+    },
     "weight"           : 1,
     "value"            : 10,
     "size"             : 1,
@@ -10,6 +14,6 @@
         "conduct" : "You hear a stunning Baritone sing operatically: 'One instrument, One Journey'. Or is it an Alto?"
     },
     "state_responses"  : {
-        "broken_item" : "Why oh why? You hear the echo of an audience groan as you snap the baton."
+        "broken" : "Why oh why? You hear the echo of an audience groan as you snap the baton."
     }
 }

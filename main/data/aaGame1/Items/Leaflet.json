@@ -2,15 +2,19 @@
 {
     "name"             : "Leaflet",
     "description"      : "a small handwritten leaflet",
-    "states"           : "standard_item",
+    "state"            : {
+        "states"       : ["visible"],
+        "graphs"       : ["takeable", "flammable"],
+        "breakable"    : ["readable"]
+    },
     "weight"           : 0.5,
     "value"            : 1,
     "size"             : 1,
     "target_responses" : {
-        "take": "The lamp is surprisingly light!",
-        "read": "Welcome to Thief: Level 1, a text-based adventure inspired by the OG, Zork. Explore a mysterious abandoned world as you quest to find your missing wallet and keys. Can you find them, and discover the grave secrets of this forsaken realm?"
+        "take"         : "The lamp is surprisingly light!",
+        "read"         : "Welcome to Thief: Level 1, a text-based adventure inspired by the OG, Zork. Explore a mysterious abandoned world as you quest to find your missing wallet and keys. Can you find them, and discover the grave secrets of this forsaken realm?"
     },
     "state_responses"  : {
-        "broken_item" : "The leaflet is ripped to shreds"
+        "broken"       : "The leaflet is ripped to shreds"
     }
 }

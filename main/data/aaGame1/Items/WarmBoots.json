@@ -1,16 +1,19 @@
 {
     "name"             : "Warm Boots",
     "description"      : "a pair of hefty hiking boots",
-    "states"           : "standard_item",
+    "state"            : {
+        "states"       : ["visible"],
+        "graphs"       : ["takeable", "wearable"]
+    },
     "weight"           : 5,
     "value"            : 3,
     "size"             : 1,
     "target_responses" : {
-        "take": "You take the hefty boots"
+        "take"         : "You take the hefty boots",
+        "break"        : "You tear at the boots, but their construction is such that you do little damage."
     },
     "state_responses"  : {
-        "on"          : "The boots are a little stiff but feel highly protective against all pernicious elements",
-        "off"         : "You take the boots off, revealing your bare, rough, gnarled feet.",
-        "broken_item" : "You tear at the boots, but their construction is such that you do little damage."
+        "worn"         : "The boots are a little stiff but feel highly protective against all pernicious elements",
+        "wearable"     : "You take the boots off, revealing your bare, rough, gnarled feet."
     }
 }

@@ -1,15 +1,19 @@
 
 {
-    "name"             : "Ptchfork",
+    "name"             : "Pitchfork",
     "description"      : "A long-handled pitchfork with three sharp tines",
-    "states"           : "standard_item",
+    "state"            : {
+        "states"       : ["visible"],
+        "graphs"       : ["takeable"],
+        "breakable"    : ["sharp"]
+    },
     "weight"           : 3,
     "value"            : 3,
     "size"             : 5,
     "target_responses" : {
-        "take": "You feel many hours of farm work in the wooden handle's grain"
+        "take"         : "You feel many hours of farm work in the wooden handle's grain"
     },
     "state_responses"  : {
-        "broken_item" : "Seems odd. You break the handle in two."
+        "broken"       : "Seems odd. You break the handle in two."
     }
 }

@@ -1,7 +1,10 @@
 {
     "name"             : "stove",
     "description"      : "a stove",
-    "states"           : "standard_item",
+    "state"            : {
+        "states"       : ["visible"],
+        "graphs"       : ["takeable", "switch"]
+    },
     "weight"           : 5,
     "value"            : 3,
     "size"             : 1

@@ -1,7 +1,24 @@
-Can't be taken: Shower, BR Sink, KitchenSink, Meal, Boots, Fork, jacket, triangle, weights
-Deleted: Cabinet, Worms
-Needed: Magnifying glass and candle: make sure you are in the right room to do the action (bright room or Garden). 
-Trunk and Car: need keys in inventory in order to lock/unlock
-Forgot to add note to Theatre Stage
-Repeated weight lifting has different responses
-
+Can't be taken: 
+    - Boots?, Fork?, jacket?, triangle?, weights?
+Other items needed?: 
+    - honey, water, peppers
+Special: 
+    - Magnifying glass and candle: make sure you are in the right room to do the action (bright room or Garden). 
+        "light with magnifying glass if in right place" : "Cleverly, the light refracted by the magnifying glass lights the candle's wick.",
+        "light with magnifying glass" : "Sadly, there is not enough light here to accomplish this. Darn thermodynamics"
+    - Herbs
+        "burn with candle": "You burn the herbs, releasing a deliciously perfumed and aromatic smoke into the air.  You feel yourself relax, becoming nigh on drowsy."
+    - Jar
+        "water"       : "The jar is filled with water",
+        "honey"       : "The jar is filled with honey",
+        "other"       : "Why would you put something like that in a nice simple jar?",
+    - peppers
+        "give to orge" : "The Orge loves peppers! He quickly slurps them up and sits back contentedly",
+        "give to child": "The Child tentativly samples the peppers and hates them. They start crying hard. Nice going."
+    - Skateboard
+        "do a kickflip": "helll yeah",
+        "do a trick"   : "like what? You're not that good of a skater. CRINGE BRUH"
+Trunk and Car: 
+    - need keys in inventory in order to lock/unlock
+More:   
+    - Repeated actions have different responses

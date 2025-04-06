@@ -1,7 +1,10 @@
 {
     "name"             : "Wallet",
     "description"      : "a wallet",
-    "states"           : "standard_item",
+    "state"            : {
+        "states"       : ["visible"],
+        "graphs"       : ["takeable", "breakable"]
+    },
     "weight"           : 5,
     "value"            : 3,
     "size"             : 1

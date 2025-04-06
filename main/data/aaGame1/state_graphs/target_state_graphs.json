@@ -1,47 +1,140 @@
 [
     {
         "state_groups"    : [
-            {
-                "name"    : "normal",
-                "states"  : ["visible","breakable"]
-            },
-            {
-                "name"    : "broken",
-                "states"  : ["broken"]
-            },
-            {
-                "name"    : "held",
-                "states"  : ["held"]
-            },
-            {
-                "name"    : "takeable",
-                "states"  : ["takeable"]
-            },
-            {
-                "name"    : "off",
-                "states"  : ["off"]
-            },
-            {
-                "name"    : "broken_off",
-                "states"  : ["off"]
-            },
-            {
-                "name"    : "on",
-                "states"  : ["on"]
-            }
+            {"name": "breakable", "states": ["breakable"]},
+            {"name": "broken",    "states": ["broken"]},
+            {"name": "held",      "states": ["held"]},
+            {"name": "takeable",  "states": ["takeable"]},
+            {"name": "off",       "states": ["off", "breakable"]},
+            {"name": "broken_off","states": ["off", "broken"]},
+            {"name": "on",        "states": ["on", "breakable"]},
+            {"name": "flammable", "states": ["flammable"]},
+            {"name": "on fire",   "states": ["on fire"]},
+            {"name": "burned",    "states": ["burned"]},
+            {"name": "opened",    "states": ["opened"]},
+            {"name": "closed",    "states": ["closed"]},
+            {"name": "broken_open",     "states": ["opened", "broken"]},
+            {"name": "locked",          "states": ["locked", "closed"]},
+            {"name": "unlocked_closed", "states": ["unlocked", "closed"]},
+            {"name": "unlocked_open",   "states": ["unlocked", "opened"]},
+            {"name": "wearable",        "states": ["wearable"]},
+            {"name": "worn",            "states": ["worn"]},
+            {"name": "tied",            "states": ["tied"]},
+            {"name": "untied",          "states": ["untied"]},
+            {"name": "full",            "states": ["full"]},
+            {"name": "empty",           "states": ["empty"]},
+            {"name": "broken_empty",    "states": ["empty", "broken"]}
         ]
     },
     {
-        "name"            : "standard_item",
-        "current_state"   : "normal",
+        "name"            : "container",
+        "current_state"   : "empty",
         "target_graph"    : {
-            "normal" : {
+            "empty"       : {
+                "fill"    : "full",
+                "break"   : "broken_empty"
+            },
+            "full"        : {
+                "empty"   : "empty",
+                "break"   : "broken_empty"
+            }
+        }
+    },
+    {
+        "name"            : "fragile_untie",
+        "current_state"   : "tied",
+        "target_graph"    : {
+            "tied"        : {
+                "untie"   : "untied"
+            }
+        }
+    },
+    {
+        "name"            : "wearable",
+        "current_state"   : "wearable",
+        "target_graph"    : {
+            "wearable"    : {
+                "put on"  : "worn",
+                "break"   : "broken"
+            },
+            "worn"        : {
+                "take off": "wearable",
                 "break"   : "broken"
             }
         }
     },
     {
-        "name"            : "held_item",
+        "name"            : "locked",
+        "current_state"   : "locked",
+        "target_graph"    : {
+            "locked"      : {
+                "unlock"  : "unlocked_closed",
+                "break"   : "broken_open"
+            },
+            "unlocked_closed" : {
+                "open"    : "unlocked_open",
+                "lock"    : "locked",
+                "break"   : "broken_open"
+            },
+            "unlocked_open" : {
+                "close"   : "unlocked_closed",
+                "lock"    : "locked",
+                "break"   : "broken_open"
+            }
+        }
+    },
+    {
+        "name"            : "open_close",
+        "current_state"   : "opened",
+        "target_graph"    : {
+            "opened"      : {
+                "close"   : "closed",
+                "break"   : "broken_open"
+            },
+            "closed"      : {
+                "open"    : "opened",
+                "break"   : "broken_open"
+            }
+        }
+    },
+    {
+        "name"            : "lightable",
+        "current_state"   : "flammable",
+        "target_graph"    : {
+            "flammable"   : {
+                "light"   :"on fire"
+            },
+            "on fire"     : {
+                "extinguish": "flammable"
+            }
+        }
+    },
+    {
+        "name"            : "flammable",
+        "current_state"   : "flammable",
+        "target_graph"    : {
+            "flammable"   : {
+                "light"   : "on fire"
+            },
+            "on fire"     : {
+                "extinguish": "burned"
+            }
+        },
+        "time_graph"      : {
+            "on fire"     : [3, "burned"]
+        }
+    },
+    {
+        "name"            : "breakable",
+        "current_state"   : "breakable",
+        "target_graph"    : {
+            "breakable"   : {
+                "break"   : "broken"
+            }
+        }
+    },
+    {
+        "name"            : "takeable",
         "current_state"   : "takeable",
         "target_graph"    : {
             "takeable"    : {

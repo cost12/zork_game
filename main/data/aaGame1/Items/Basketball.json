@@ -1,7 +1,11 @@
 {
     "name"             : "Basketball",
     "description"      : "A well-worn basketball",
-    "states"           : "standard_item",
+    "state"            : {
+        "states"       : ["visible"],
+        "graphs"       : ["takeable"],
+        "breakable"    : ["bouncy", "throwable"]
+    },
     "weight"           : 2,
     "value"            : 3,
     "size"             : 3,
@@ -9,6 +13,6 @@
         "take": "You can feel many hours of play on the ball's surface"
     },
     "state_responses"  : {
-        "broken_item" : "The basketball deflates sadly, making itself unusable"
+        "broken": "The basketball deflates sadly, making itself unusable"
     }
 }

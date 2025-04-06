@@ -2,16 +2,19 @@
 {
     "name"             : "Thick Gloves",
     "description"      : "a pair of thick-hide gloves",
-    "states"           : "standard_item",
+    "state"            : {
+        "states"       : ["visible"],
+        "graphs"       : ["takeable", "wearable"]
+    },
     "weight"           : 2,
     "value"            : 3,
     "size"             : 1,
     "target_responses" : {
-        "take": "The gloves feel tough yet warm."
+        "take"         : "The gloves feel tough yet warm."
     },
     "state_responses"  : {
-        "on"          : "You put the gloves on, feeling their warm protection",
-        "off"         : "You take the gloves off.",
-        "broken_item" : "You tear at the gloves, hampering their ability to keep your fingies warm."
+        "on"           : "You put the gloves on, feeling their warm protection",
+        "off"          : "You take the gloves off.",
+        "broken"       : "You tear at the gloves, hampering their ability to keep your fingies warm."
     }
 }

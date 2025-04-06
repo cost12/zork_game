@@ -2,14 +2,17 @@
 {
     "name"             : "Plate",
     "description"      : "A simple plate",
-    "states"           : "standard_item",
+    "state"            : {
+        "states"       : ["visible"],
+        "graphs"       : ["takeable", "breakable"]
+    },
     "weight"           : 2,
     "value"            : 1,
     "size"             : 1,
     "target_responses" : {
-        "take": "You the plate, only getting a little food on your hand."
+        "take"         : "You the plate, only getting a little food on your hand."
     },
     "state_responses"  : {
-        "broken_item" : "The plate shatters and is useless."
+        "broken"       : "The plate shatters and is useless."
     }
 }

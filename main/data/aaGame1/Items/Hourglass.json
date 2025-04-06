@@ -2,16 +2,19 @@
 {
     "name"             : "Hourglass",
     "description"      : "an ancient, fragile hourglass",
-    "states"           : "standard_item",
+    "state"            : {
+        "states"       : ["visible"],
+        "graphs"       : ["takeable"],
+        "breakable"    : ["flippable"]
+    },
     "weight"           : 0.5,
     "value"            : 5,
     "size"             : 1,
     "target_responses" : {
-        "take": "The hourglass is delicate in your grasp."
+        "take"         : "The hourglass is delicate in your grasp.",
+        "flip"         : "Grains of sand tumble through the hourglass, mezmerising you."
     },
     "state_responses"  : {
-        "on"          : "Grains of sand tumble through the hourglass, mezmerising you.",
-        "off"         : "Grains of sand tumble through the hourglass, mesmerizing you.",
-        "broken_item" : "The hourglass easily snaps, the sang spilling. You hear a whooshing sound, as if some spell or curse has been lifted somewhere."
+        "broken"       : "The hourglass easily snaps, the sang spilling. You hear a whooshing sound, as if some spell or curse has been lifted somewhere."
     }
 }

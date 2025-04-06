@@ -1,7 +1,10 @@
 {
     "name"             : "puzzle",
     "description"      : "a puzzle",
-    "states"           : "standard_item",
+    "state"            : {
+        "states"       : ["visible"],
+        "graphs"       : ["takeable"]
+    },
     "weight"           : 5,
     "value"            : 3,
     "size"             : 1

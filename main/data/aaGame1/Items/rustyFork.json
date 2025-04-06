@@ -1,14 +1,17 @@
 {
     "name"             : "Rusty Fork",
     "description"      : "an old rusty metal fork",
-    "states"           : "standard_item",
+    "state"            : {
+        "states"       : ["visible"],
+        "graphs"       : ["takeable"]
+    },
     "weight"           : 1,
     "value"            : 1,
     "size"             : 1,
     "target_responses" : {
-        "take": "You take the fork. Watch out for tetanus!"
+        "take"         : "You take the fork. Watch out for tetanus!"
     },
     "state_responses"  : {
-        "broken_item" : "You lack the brute strength necessary to break a fork"
+        "broken"       : "You lack the brute strength necessary to break a fork"
     }
 }
