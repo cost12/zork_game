@@ -83,6 +83,25 @@ def items_held_requirement_from_dict(name:str, requirement_dict:dict[str,Any], i
             items_needed[item] = (needed[0], needed[1])
     return ItemsHeldRequirement(items_needed)
 
+def requirements_from_dict(name:str, requirements_dict:dict[str,Any], item_factory:'ItemFactory', character_factory:'CharacterFactory', state_factory:'StateFactory', feat_factory:'NamedFactory[Feat]') -> list[ActionRequirement]:
+    requirements = list[ActionRequirement]()
+    if 'character_state_requirements' in requirements_dict:
+        states_needed_raw = requirements_dict['character_state_requirements']
+        requirements.append(character_state_requirements_from_dict(name, states_needed_raw, state_factory))
+    if 'character_feat_requirements' in requirements_dict:
+        feats_needed_raw = requirements_dict['character_feat_requirements']
+        requirements.append(character_feat_requirements_from_dict(name, feats_needed_raw, feat_factory))
+    if 'item_state_requirements' in requirements_dict:
+        item_states_raw = requirements_dict['item_state_requirements']
+        requirements.append(item_state_requirements_from_dict(name, item_states_raw, item_factory, character_factory, state_factory))
+    if 'items_held_requirements' in requirements_dict:
+        items_needed_raw = requirements_dict['items_held_requirements']
+        requirements.append(items_held_requirement_from_dict(name, items_needed_raw, item_factory, character_factory))
+    if 'item_placement_requirements' in requirements_dict:
+        item_placements_raw = requirements_dict['item_placement_requirements']
+        requirements.append(item_placement_requirements_from_dict(name, item_placements_raw, item_factory, character_factory))
+    return requirements     
+
 def path_from_dict(path_dict:dict[str,Any], item_factory:'ItemFactory', character_factory:'CharacterFactory', state_factory:'StateFactory', feat_factory:'NamedFactory[Feat]') -> Path:
         name = path_dict['name']
         description = path_dict['description']
@@ -118,23 +137,7 @@ def path_from_dict(path_dict:dict[str,Any], item_factory:'ItemFactory', characte
                 if item is None:
                     print(f"Can't find target {item_name} in {name}")
                 path_items.append(item)
-        
-        passing_requirements = list[ActionRequirement]()
-        if 'character_state_requirements' in path_dict:
-            states_needed_raw = path_dict['character_state_requirements']
-            passing_requirements.append(character_state_requirements_from_dict(name, states_needed_raw, state_factory))
-        if 'character_feat_requirements' in path_dict:
-            feats_needed_raw = path_dict['character_feat_requirements']
-            passing_requirements.append(character_feat_requirements_from_dict(name, feats_needed_raw, feat_factory))
-        if 'item_state_requirements' in path_dict:
-            item_states_raw = path_dict['item_state_requirements']
-            passing_requirements.append(item_state_requirements_from_dict(name, item_states_raw, item_factory, character_factory, state_factory))
-        if 'items_held_requirements' in path_dict:
-            items_needed_raw = path_dict['items_held_requirements']
-            passing_requirements.append(items_held_requirement_from_dict(name, items_needed_raw, item_factory, character_factory))
-        if 'item_placement_requirements' in path_dict:
-            item_placements_raw = path_dict['item_placement_requirements']
-            passing_requirements.append(item_placement_requirements_from_dict(name, item_placements_raw, item_factory, character_factory))
+        passing_requirements = requirements_from_dict(name, path_dict, item_factory=item_factory, character_factory=character_factory, state_factory=state_factory, feat_factory=feat_factory)
         aliases = None
         if 'aliases' in path_dict:
             aliases = path_dict['aliases']
@@ -809,7 +812,7 @@ class LocationFactory:
                     contents[target] = detail
             start_location = False
             if 'start' in location_dict:
-                start_location = bool(location_dict['start'])
+                start_location = location_dict['start']
             locations.append(self.create_location(name, description, paths, direction_responses, detail_factory.get_details(), contents, start_location))
         
         # for each path set the end to the correct location
