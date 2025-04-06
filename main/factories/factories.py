@@ -1,7 +1,7 @@
 from typing import Optional, Any, Callable
 
 from models.action    import Named, Action
-from models.actors    import Location, Direction, Path, Target, Actor, Inventory, LocationDetail, SingleEndPath, MultiEndPath, Feat, PathRequirement, CharacterFeatRequirement, CharacterStateRequirement, ItemsHeldRequirement, ItemStateRequirement, ItemPlacementRequirement
+from models.actors    import Location, Direction, Path, Target, Actor, Inventory, LocationDetail, SingleEndPath, MultiEndPath, Feat, ActionRequirement, CharacterFeatRequirement, CharacterStateRequirement, ItemsHeldRequirement, ItemStateRequirement, ItemPlacementRequirement
 from models.state     import State, StateGroup, StateGraph, StateDisconnectedGraph, Skill, SkillSet
 from controls.character_control import CharacterController, CommandLineController, NPCController
 
@@ -119,7 +119,7 @@ def path_from_dict(path_dict:dict[str,Any], item_factory:'ItemFactory', characte
                     print(f"Can't find target {item_name} in {name}")
                 path_items.append(item)
         
-        passing_requirements = list[PathRequirement]()
+        passing_requirements = list[ActionRequirement]()
         if 'character_state_requirements' in path_dict:
             states_needed_raw = path_dict['character_state_requirements']
             passing_requirements.append(character_state_requirements_from_dict(name, states_needed_raw, state_factory))
