@@ -7,8 +7,10 @@
     },
     "skills"       : "standard",
     "inventory"    : {
-        "size_limit" : 200,
-        "weight_limit" : 100
+        "item_limit" : {
+            "size"   : 200,
+            "wieght" : 100
+        }
     },
     "target_responses" : {
         "look" : "You feel somewhat offput looking at the bully, for he leers at you languidly, breathing through his mouth.",

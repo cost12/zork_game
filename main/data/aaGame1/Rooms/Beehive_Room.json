@@ -35,11 +35,9 @@
     },
     "details"    : [
         {
-            "name" : "beehive",
-            "description" : "dripping from the beehive"
+            "name"        : "beehive",
+            "description" : "dripping from the beehive",
+            "contents"    : ["honey jar"]
         }
-    ],
-    "contents"   : {
-        "honey"  : "beehive"
-    }
+    ]
 }

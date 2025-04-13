@@ -10,12 +10,9 @@
     },
     "details"    : [
         {
-            "name" : "desk",
-            "description" : "sitting on the desk"
+            "name"        : "desk",
+            "description" : "sitting on the desk",
+            "contents"    : ["Emerald book", "Magnifying glass"]
         }
-    ],
-    "contents"   : {
-        "Emerald Book" : "desk",
-        "Magnifying Glass" : "desk"
-    }
+    ]
 }

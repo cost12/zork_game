@@ -1,6 +1,6 @@
 {
-    "name"             : "Mason Jar",
-    "description"      : "A smudged and empty mason jar",
+    "name"             : "Honey Jar",
+    "description"      : "A jar for honey",
     "state"            : {
         "states"       : ["visible"],
         "graphs"       : ["takeable", "container"]
@@ -14,20 +14,19 @@
             "item_limit"       : {
                 "size"         : 1,
                 "weight"       : 1
-            }
+            },
+            "contents"         : ["honey"]
         }
     ],
     "target_responses" : {
         "take"         : "The jar is cool to the touch."
     },
     "state_responses"  : {
-        "full"         : "The jar is empty",
-        "empty"        : "The jar is full.",
-        "broken"      : "The jar shatters, rendering itself unusable. Nice going"
+        "empty"        : "The jar is empty.",
+        "broken"       : "The jar shatters, rendering itself unusable. Nice going"
     },
     "item_responses"   : {
         "honey"        : "The jar is full of honey.",
-        "water"        : "The jar is full of water.",
-        "peppers"      : "The jar is full of peppers."
+        "water"        : "The jar is full of water."
     }
 }

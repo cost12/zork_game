@@ -29,7 +29,7 @@ class NodeInfo:
 
     def __room_init(self, room:Location):
         self.name=room.get_name().lower()
-        self.title="Contains:\n"+"\n".join([item.get_name() for item in room.contents])
+        self.title="Contains:\n"+"\n".join([item.get_name() for item in room.children.values()])
         self.x=0
         self.y=0
         self.edges=list[list[str,str,int]]()

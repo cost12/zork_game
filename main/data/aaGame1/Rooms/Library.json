@@ -11,13 +11,34 @@
                 "violin"  : "Theatre Stage"
             },
             "item_placement_requirements" : {
-                "Red book" : ["Library", "shelf 3", true, null],
-                "Gray book" : ["Library", "shelf 4", true, null],
-                "Brown book" : ["Library", "shelf 5", true, null],
-                "Yellow book" : ["Library", "shelf 6", true, null],
-                "Emerald book" : ["Library", "shelf 7", true, null],
-                "Burgundy book" : ["Library", "shelf 8", true, null],
-                "Vermilion book" : ["Library", "shelf 9", true, null]
+                "Red book" : [
+                    ["Library", true, null],
+                    ["shelf 3", true, null]
+                ],
+                "Gray book" : [
+                    ["Library", true, null],
+                    ["shelf 4", true, null]
+                ],
+                "Brown book" : [
+                    ["Library", true, null],
+                    ["shelf 5", true, null]
+                ],
+                "Yellow book" : [
+                    ["Library", true, null],
+                    ["shelf 6", true, null]
+                ],
+                "Emerald book" : [
+                    ["Library", true, null],
+                    ["shelf 7", true, null]
+                ],
+                "Burgundy book" : [
+                    ["Library", true, null],
+                    ["shelf 8", true, null]
+                ],
+                "Vermilion book" : [
+                    ["Library", true, null],
+                    ["shelf 9", true, null]
+                ]
             }
         }
     },

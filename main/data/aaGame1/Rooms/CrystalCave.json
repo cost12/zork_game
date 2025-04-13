@@ -2,7 +2,7 @@
     "name"       : "Crystal Cave",
     "description": "You stand in a natural wonder, the center of a huge spherical geode. Gleaming crystals cover every surface, refracting light from every angle and showing your shattered reflection a thousand times over. Your breath is taken away by the overwhelming beauty.",
     "paths"      : {
-        "west"  : {
+        "west"   : {
             "name"        : "Exit 1",
             "description" : "a passage",
             "end"         : "Greenhouse"

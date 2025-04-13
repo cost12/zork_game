@@ -5,6 +5,23 @@
         "states"       : ["visible"],
         "graphs"       : ["open_close"]
     },
+    "details"          : [
+        {
+            "name"       : "in",
+            "item_limit" : {
+                "size"   : 20,
+                "weight" : 50
+            },
+            "contents"   : ["mason jar", "rusty fork"],
+            "visible_requirements" : {
+                "item_state_requirements" : {
+                    "cabinet"  : {
+                        "opened" : [true, "The cabinet is closed."]
+                    }
+                }
+            }
+        }
+    ],
     "weight"           : 5,
     "value"            : 3,
     "size"             : 1

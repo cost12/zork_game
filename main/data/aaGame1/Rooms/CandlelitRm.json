@@ -15,14 +15,9 @@
     },
     "details"    : [
         {
-            "name" : "floor",
-            "description" : "amidst the inumerable candles, sitting on the floor"
+            "name"        : "floor",
+            "description" : "amidst the inumerable candles, sitting on the floor",
+            "contents"    : ["a candle", "another candle", "a third candle", "a fourth candle"]
         }
-    ],
-    "contents"   : {
-        "a candle"       : "floor",
-        "another candle" : "floor",
-        "a third candle" : "floor",
-        "a fourth candle": "floor"
-    }
+    ]
 }

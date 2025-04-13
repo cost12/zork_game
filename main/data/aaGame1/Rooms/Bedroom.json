@@ -5,36 +5,35 @@
     "paths"      : {
         "east"  : {
             "name"        : "Exit 1",
-            "description" : "a doorway",
+            "description" : "To the east, you see a doorway.",
             "end"         : "Bathroom"
         },
         "Up"  : {
-            "name"        : "Exit 1",
-            "description" : "A trapdoor on the ceiling",
+            "name"        : "Exit 2",
+            "description" : "Above your head is a trapdoor on the ceiling.",
             "end"         : "Attic",
             "path_items"  : ["trapdoor"],
-            "item_state_requirements" : {
-                "trapdoor"   : {
-                    "opened" : [true, null]
+            "passing_requirements" : {
+                "item_state_requirements" : {
+                    "trapdoor"   : {
+                        "opened" : [true, null]
+                    }
                 }
             }
         },
         "south"  : {
-            "name"        : "Exit 2",
-            "description" : "a passage",
+            "name"        : "Exit 3",
+            "description" : "A passage stretches south.",
             "end"         : "Hallway"
         }
     },
     "details"    : [
         {
-            "name" : "bedside",
-            "description" : "on the bedside table"
+            "name"        : "bedside",
+            "description" : "On the bedside table rests",
+            "contents"    : ["Mug", "Brown Book"]
         }
     ],
-    "contents"   : {
-        "Mug of Water" : "bedside",
-        "Brown Book"   : "bedside",
-        "player1"      : "default"
-    },
-    "start" : true
+    "contents"   : ["player1"],
+    "start"      : true
 }

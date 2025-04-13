@@ -18,7 +18,5 @@
             "end"         : "Display Room"
         }
     },
-    "contents"   : {
-        "Bully" : "default"
-    }
+    "contents"   : ["bully"]
 }

@@ -15,11 +15,9 @@
     },
     "details"    : [
         {
-            "name" : "seated",
-            "description" : "sitting in a chair"
+            "name"        : "seated",
+            "description" : "sitting in a chair",
+            "contents"    : ["child"]
         }
-    ],
-    "contents"  : {
-        "child" : "seated"
-    }
+    ]
 }

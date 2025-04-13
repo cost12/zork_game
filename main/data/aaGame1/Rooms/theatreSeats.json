@@ -15,12 +15,10 @@
     },
     "details"    : [
         {
-            "name" : "inseat",
+            "name"        : "inseat",
             "description" : "sewn inside of the seat",
-            "hidden": true
+            "hidden"      : true,
+            "contents"    : ["keys"]
         }
-    ],
-    "contents"   : {
-        "keys" : "inseat"
-    }
+    ]
 }

@@ -15,12 +15,9 @@
     },
     "details"    : [
         {
-            "name" : "ground",
-            "description" : "laying on the ground"
+            "name"        : "ground",
+            "description" : "laying on the ground",
+            "contents"    : ["thick gloves", "trowel"]
         }
-    ],
-    "contents"   : {
-        "Thick Gloves" : "ground",
-        "Trowel"       : "ground"
-    }
+    ]
 }

@@ -2,7 +2,7 @@ from typing import Any, Optional
 
 from models.action import Action, Named
 from models.actors import Direction, Location, Path, Target, Actor
-from factories.factories import ItemFactory, NamedFactory, StateFactory, LocationFactory, SkillSetFactory, CharacterFactory, StateGraphFactory, LocationDetailFactory, CharacterControlFactory, StateDisconnectedGraphFactory
+from factories.factories import ItemFactory, NamedFactory, StateFactory, LocationFactory, SkillSetFactory, CharacterFactory, StateGraphFactory, LocationDetailFactory, CharacterControlFactory
 
 class Word:
     def __init__(self):

@@ -10,8 +10,8 @@ def main(args:list[str]):
         if args[0] in ['visualize','v','vis']:
             visualize_game(args[1])
             return
-    game_name = input("Which game do you want to play? ")
-    #game_name = 'game0'
+    #game_name = input("Which game do you want to play? ")
+    game_name = 'aagame1'
     rooms, characters, controllers, items, actions, directions, details = read_in_game(game_name)
     players = 1
     while 0 and (players < details['min_players'] or players > details['max_players']):

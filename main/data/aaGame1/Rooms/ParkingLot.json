@@ -23,18 +23,16 @@
     },
     "details"    : [
         {
-            "name" : "in trunk",
+            "name"        : "in trunk",
             "description" : "in a corner of the trunk",
-            "hidden_when" : [
-                "trunk",
-                {
-                    "opened" : false,
-                    "closed" : true
+            "contents"    : ["Fuzzy Jacket"],
+            "visible_requirements" : {
+                "item_state_requirements" : {
+                    "trunk door" : {
+                        "opened" : [true, null]
+                    }
                 }
-            ]
+            }
         }
-    ],
-    "contents"   : {
-        "Fuzzy Jacket" : "in trunk"
-    }
+    ]
 }

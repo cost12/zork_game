@@ -85,7 +85,7 @@
     },
     {
         "name"            : "open_close",
-        "current_state"   : "opened",
+        "current_state"   : "closed",
         "target_graph"    : {
             "opened"      : {
                 "close"   : "closed",

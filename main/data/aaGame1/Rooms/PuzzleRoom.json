@@ -15,11 +15,9 @@
     },
     "details"    : [
         {
-            "name" : "table",
-            "description" : "on the table"
+            "name"        : "table",
+            "description" : "on the table",
+            "contents"    : ["puzzle"]
         }
-    ],
-    "contents"   : {
-        "puzzle" : "table"
-    }
+    ]
 }

@@ -9,6 +9,16 @@
     "weight"           : 2,
     "value"            : 1,
     "size"             : 1,
+    "details"          : [
+        {
+            "name"     : "on",
+            "item_limit" : {
+                "size"   : 1,
+                "weight" : 1
+            },
+            "contents"   : ["meal"]
+        }
+    ],
     "target_responses" : {
         "take"         : "You the plate, only getting a little food on your hand."
     },

@@ -18,7 +18,5 @@
             }
         }
     },
-    "contents"   : {
-        "Orge" : "default"
-    }
+    "contents"   : ["orge"]
 }

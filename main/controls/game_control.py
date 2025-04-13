@@ -1,10 +1,11 @@
 from typing import Any, Optional
 
-from models.actors import Direction, Target, Actor, LocationDetail
+from models.actors import Direction, Target, Actor, Location, LocationDetail
 from models.action import Action
 from factories.factories import ItemFactory, NamedFactory, LocationFactory, CharacterFactory, CharacterControlFactory
 from controls.character_control import CommandLineController, Feedback
 from controls.translate import get_input_translator
+from utils.constants import *
 
 # TODO: Target/actor/tool response should depend on Action, State, and success (of Action)
 # Targets/tools might have requirements for being used -> State?
@@ -23,6 +24,11 @@ from controls.translate import get_input_translator
 # TODO: achievements should have action/(state?target?tool?result?) requirements/activations
 # TODO: allow for different starting states in state graphs
 # TODO: lantern rooms, what happens if lantern is not on?
+
+# TODO: should container be a state? should liquid be a state?
+# TODO: many actions cause other actions
+# TODO: detail for wearing for characters
+# TODO: make origin work/ fill in correctly
 
 class GameAction:
     """This is an abstract class and should not be instantiated.
@@ -106,17 +112,15 @@ class GameAction:
         :return: A bool that describes whether target can have the GameAction performed on it and the target's response
         :rtype: tuple[bool,str]
         """
-        room,_ = character.get_location()
-        target_room, detail = target.get_location()
-        if target_room == room:
-            if not detail.is_hidden() or target in character.get_inventory_items():
-                response = target.get_target_response(self.action)
-                if self.action in target.get_actions_as_target():
-                    return True, response
-                if response is None:
-                    response = f"The {target.get_name()} resists the action."
-                return False, response
-            return False, f"You can't seen any {target.get_name()} here."
+        room = character.get_top_parent()
+        assert isinstance(room, Location)
+        if room.can_interact_with(character, target):
+            response = target.get_target_response(self.action)
+            if self.action in target.get_actions_as_target():
+                return True, response
+            if response is None:
+                response = f"The {target.get_name()} resists the action."
+            return False, response
         return False, f"There is no {target.get_name()} in this room."
 
     def __verify_tool__(self, character:Actor, tool:Target) -> tuple[bool,str]:
@@ -129,17 +133,15 @@ class GameAction:
         :return: A bool that describes whether tool can be used by character to perform the GameAction and the tool's response
         :rtype: tuple[bool,str]
         """
-        room,_ = character.get_location()
-        tool_room, detail = tool.get_location()
-        if tool_room == room:
-            if not detail.is_hidden() or tool in character.get_inventory_items():
-                response = tool.get_tool_response(self.action)
-                if self.action in tool.get_actions_as_target():
-                    return True, response
-                if response is None:
-                    response = f"The {tool.get_name()} can't be used in this way."
-                return False, response
-            return False, f"You can't see any {tool.get_name()} here."
+        room = character.get_top_parent()
+        assert isinstance(room, Location)
+        if room.can_interact_with(character, tool):
+            response = tool.get_tool_response(self.action)
+            if self.action in tool.get_actions_as_target():
+                return True, response
+            if response is None:
+                response = f"The {tool.get_name()} can't be used in this way."
+            return False, response
         return False, f"There is no {tool.get_name()} in this room."
     
 class LookAction(GameAction):
@@ -162,7 +164,8 @@ class LookAction(GameAction):
         response.append(r)
         if can_look:
             if target is None:
-                location, _ = character.get_location()
+                location = character.get_top_parent()
+                assert isinstance(location, Location)
                 response.extend(character.perform_action_as_actor(self.action))
                 response.append(location.get_description(character))
                 return Feedback(self.__combine_responses__(response), turns=0)
@@ -195,18 +198,19 @@ class WalkAction(GameAction):
         can_walk, r = self.__verify_character__(character)
         response.append(r)
         if can_walk:
-            room, detail = character.get_location()
+            room = character.get_top_parent()
+            assert isinstance(room, Location)
             exit, r = room.get_path(character, direction)
             if r is None and exit is None:
                 r = f"There is nothing {direction.get_name()}."
             response.append(r)
             if exit is not None:
-                can_pass, reason, r = exit.can_pass(character)
+                can_pass, r = exit.can_pass(character)
                 if r is None and not can_pass:
                     r = "You are unable to exit."
                 response.append(r)
                 if can_pass:
-                    character.change_location(exit.get_end(character))
+                    character.set_location(exit.get_end(character))
                     response.extend(character.perform_action_as_actor(self.action))
                     response.append(LookAction(Action('look')).take_action(character).as_string())
                     return Feedback(self.__combine_responses__(response))
@@ -252,18 +256,22 @@ class TakeAction(GameAction):
         if can_take:
             for target in targets:
                 can_be_taken, target_response = self.__verify_target__(character, target)
+                if DEBUG_TAKE:
+                    print(f"Take {target}? {can_be_taken}")
                 response.append(target_response)
                 if can_be_taken:
-                    if character.add_item_to_inventory(target):
+                    added, r = character.add_to_inventory(target)
+                    response.append(r)
+                    if added:
                         success = True
                         response.extend(target.perform_action_as_target(self.action))
                     else:
                         response.append(f"The {target.get_name()} doesn't fit in your pack.")
-                if success:
-                    response.append("Taken.")
-                    response.extend(character.perform_action_as_actor(self.action))
-                else:
-                    response.append("No items were taken.")
+            if success:
+                response.append("Taken.")
+                response.extend(character.perform_action_as_actor(self.action))
+            else:
+                response.append("No items were taken.")
         return Feedback(self.__combine_responses__(response), success=success, turns=1 if success else 0)
 
 class DropAction(GameAction):
@@ -279,7 +287,7 @@ class DropAction(GameAction):
             return True, (inputs,), None
         return False, None, "Drop what?"
     
-    def take_action(self, character:Actor, targets:list[Target], placement:Optional[LocationDetail]) -> Feedback:
+    def take_action(self, character:Actor, targets:list[Target], placement:Optional[LocationDetail]=None) -> Feedback:
         response = []
         can_drop, r = self.__verify_character__(character)
         response.append(r)
@@ -289,18 +297,18 @@ class DropAction(GameAction):
                 can_be_dropped, target_response = self.__verify_target__(character, target)
                 response.append(target_response)
                 if can_be_dropped:
-                    dropped, r = character.remove_item_from_inventory(target, placement)
-                    response.extend(r)
+                    dropped, r = character.remove_from_inventory(target, placement)
+                    response.append(r)
                     if dropped:
                         success = True
                         response.extend(target.perform_action_as_target(self.action))
                     else:
                         response.append(f"You aren't holding a {target.get_name()}.")
-                if success:
-                    response.append("Dropped.")
-                    response.extend(character.perform_action_as_actor(self.action))
-                else:
-                    response.append("No items were dropped.")
+            if success:
+                response.append("Dropped.")
+                response.extend(character.perform_action_as_actor(self.action))
+            else:
+                response.append("No items were dropped.")
         return Feedback(self.__combine_responses__(response), success=success, turns=1 if success else 0)
 
 class CheckInventoryAction(GameAction):
@@ -318,9 +326,9 @@ class CheckInventoryAction(GameAction):
         can_check, r = self.__verify_character__(character)
         response.append(r)
         if can_check:
-            if len(character.get_inventory_items()) > 0:
+            if len(character.get_inventory()) > 0:
                 r = "Your inventory contains:\n\t"
-                r += "\n\t".join([item.get_name() for item in character.get_inventory_items()])
+                r += "\n\t".join([item.get_name() for item in character.get_inventory()])
             else:
                 r = "Your inventory is empty."
             response.append(r)
@@ -401,8 +409,7 @@ class GameState:
         for character in extra_characters:
             start_room = start_rooms[i%len(start_rooms)]
             controllers.create_character(character, CommandLineController())
-            character.change_location(start_room)
-            character.origin = start_room
+            character.set_location(start_room, origin=True)
             i += 1
         
     ##########################################################################
@@ -447,6 +454,8 @@ class GameState:
             controller = self.controllers.get_controller(character)
             user_input = controller.make_move()
             action, inputs = self.translate(user_input)
+            if DEBUG_INPUT:
+                print(f"{character}: {action} {inputs}")
             feedback = self.action(character, action, inputs)
             controller.feedback(feedback)
 

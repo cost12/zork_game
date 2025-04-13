@@ -16,11 +16,9 @@
     },
     "details"    : [
         {
-            "name" : "rack",
-            "description" : "sitting on a rack"
+            "name"        : "rack",
+            "description" : "sitting on a rack",
+            "contents"    : ["weights"]
         }
-    ],
-    "contents"   : {
-        "Weights" : "rack"
-    }
+    ]
 }

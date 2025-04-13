@@ -12,10 +12,8 @@
     "details" : [
         {
             "name"        : "rack",
-            "description" : "hanging on a wall-mounted rack"
+            "description" : "hanging on a wall-mounted rack",
+            "contents"    : ["spear"]
         }
-    ],
-    "contents"  : {
-        "Spear" : "rack"
-    }
+    ]
 }

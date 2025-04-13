@@ -15,11 +15,9 @@
     },
     "details"    : [
         {
-            "name" : "dashboard",
-            "description" : "on a the dashboard, amidst myriad knobs and buttons rusted beyond use, lies"
+            "name"        : "dashboard",
+            "description" : "on a the dashboard, amidst myriad knobs and buttons rusted beyond use, lies",
+            "contents"    : ["Burgundy Book"]
         }
-    ],
-    "contents"   : {
-        "Burgundy Book" : "dashboard"
-    }
+    ]
 }

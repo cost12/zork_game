@@ -25,12 +25,9 @@
     },
     "details"    : [
         {
-            "name" : "couch",
-            "description" : "sitting on a trodden couch cushion"
+            "name"        : "couch",
+            "description" : "sitting on a trodden couch cushion",
+            "contents"    : ["Red Book", "Wool Hat"]
         }
-    ],
-    "contents"   : {
-        "Red Book" : "couch",
-        "Wool Hat" : "couch"
-    }
+    ]
 }

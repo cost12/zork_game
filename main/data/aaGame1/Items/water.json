@@ -1,8 +1,8 @@
 {
-    "name"             : "Peppers",
-    "description"      : "a bunch of hot peppers.",
+    "name"             : "water",
+    "description"      : "a bit of water.",
     "state"            : {
-        "states"       : ["visible", "edible"],
+        "states"       : ["visible", "drinkable"],
         "graphs"       : ["takeable"]
     },
     "weight"           : 1,

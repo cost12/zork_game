@@ -15,16 +15,9 @@
     },
     "details" : [
         {
-            "name" : "table",
-            "description" : "on a table"
-        },
-        {
-            "name" : "plate",
-            "description" : "on the plate"
+            "name"        : "table",
+            "description" : "on a table",
+            "contents"    : ["Plate"]
         }
-    ],
-    "contents"   : {
-        "Plate" : "table",
-        "Meal" : "plate"
-    }
+    ]
 }

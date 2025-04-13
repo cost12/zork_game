@@ -1,8 +1,8 @@
 {
     "name"       : "Driver's Seat",
-    "description": "You sit in the driver’s seat of the car, feeling the cool leather on your bottom.",
+    "description": "You sit in the driver's seat of the car, feeling the cool leather on your bottom.",
     "paths"      : {
-        "out"  : {
+        "out"    : {
             "name"        : "Exit 1",
             "description" : "the door",
             "end"         : "Parking Lot"
@@ -10,11 +10,9 @@
     },
     "details"    : [
         {
-            "name" : "mirror",
-            "description" : "hanging from the rear view mirrow"
+            "name"        : "mirror",
+            "description" : "hanging from the rear view mirrow",
+            "contents"    : ["Sunglasses"]
         }
-    ],
-    "contents"   : {
-        "Sunglasses" : "mirror"
-    }
+    ]
 }

@@ -17,13 +17,9 @@
     },
     "details" : [
         {
-            "name" : "table",
-            "description" : "on the spindly table"
+            "name"        : "table",
+            "description" : "on the spindly table",
+            "contents"    : ["Leaflet", "hourglass", "yellow book"]
         }
-    ],
-    "contents" : {
-        "Leaflet"      : "table",
-        "Hourglass"    : "table",
-        "Yellow Book"  : "table"
-    }
+    ]
 }

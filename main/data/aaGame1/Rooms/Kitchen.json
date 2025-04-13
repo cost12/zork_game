@@ -13,17 +13,5 @@
             "end"         : "Den"
         }
     },
-    "details"    : [
-        {
-            "name" : "cabinet",
-            "description" : "sitting inside the cabinet"
-        }
-    ],
-    "contents"   : {
-        "Mason Jar" : "cabinet",
-        "Rusty Fork" : "cabinet",
-        "Cabinet" : "default",
-        "Stove" : "default",
-        "Kitchen Sink" : "default"
-    }
+    "contents"   : ["cabinet", "stove", "kitchen sink"]
 }

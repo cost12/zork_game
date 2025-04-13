@@ -1,6 +1,6 @@
 {
-    "name"             : "trapdoor",
-    "description"      : "a small trapdoor",
+    "name"             : "trunk door",
+    "description"      : "a trunk door",
     "state"            : {
         "states"       : ["visible"],
         "graphs"       : ["open_close"]
@@ -11,9 +11,5 @@
     "target_responses" : {
         "take"         : "???",
         "break"        : "You can't seem to break it"
-    },
-    "state_responses" : {
-        "opened"       : "The trapdoor is now open.",
-        "closed"       : "The trapdoor is now closed."
     }
 }

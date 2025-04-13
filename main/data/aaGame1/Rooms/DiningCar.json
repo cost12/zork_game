@@ -15,11 +15,9 @@
     },
     "details"    : [
         {
-            "name" : "counter",
-            "description" : "on the counter"
+            "name"        : "counter",
+            "description" : "on the counter",
+            "contents"    : ["Gray Book"]
         }
-    ],
-    "contents"   : {
-        "Gray Book" : "counter"
-    }
+    ]
 }

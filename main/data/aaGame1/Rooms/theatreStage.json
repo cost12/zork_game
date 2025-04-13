@@ -37,20 +37,13 @@
     "details"    : [
         {
             "name" : "stage",
-            "description" : "laying abandoned on the stage"
+            "description" : "laying abandoned on the stage",
+            "contents"    : ["lyre", "triangle", "slide whistle", "bongo", "violin", "note"]
         },
         {
-            "name" : "stand",
-            "description" : "sitting on the music stand"
+            "name"        : "stand",
+            "description" : "sitting on the music stand",
+            "contents"    : ["baton"]
         }
-    ],
-    "contents"   : {
-        "Baton" : "stand",
-        "Lyre" : "stage",
-        "Triangle" : "stage",
-        "Slide Whistle" : "stage",
-        "Bongo" : "stage",
-        "Violin" : "stage",
-        "note" : "stage"
-    }
+    ]
 }

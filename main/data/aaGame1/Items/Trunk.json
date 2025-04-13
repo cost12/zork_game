@@ -5,9 +5,34 @@
         "states"       : ["visible"],
         "graphs"       : ["locked"]
     },
-    "weight"           : 100,
-    "value"            : 3,
-    "size"             : 30,
+    "weight"             : 100,
+    "value"              : 3,
+    "size"               : 30,
+    "details"            : [
+        {
+            "name"       : "in",
+            "item_limit" : {
+                "size"       : 30,
+                "weight"     : 100
+            },
+            "visible_requirements" : {
+                "item_state_requirements" : {
+                    "trunk" : {
+                        "opened" : [true, "The trunk is closed"]
+                    }
+                }
+            },
+            "contents"   : ["Basketball", "Skateboard"]
+        },
+        {
+            "name"       : "on",
+            "item_limit" : {
+                "size"       : 20,
+                "weight"     : 100
+            },
+            "contents"   : ["jar of peppers", "lantern"]
+        }
+    ],
     "target_responses" : {
         "take"         : "The trunk's a bit too heavy for you to bear on.",
         "break"        : "Why would you want to do a thing like that?"    

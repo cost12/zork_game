@@ -62,6 +62,9 @@ class StateGroup(Named):
         super().__init__(name, aliases)
         self.states = states
 
+    #def copy(self) -> 'StateGroup':
+    #    return StateGroup(self.name, list(self.states), None if self.aliases is None else list(self.aliases))
+
     def __repr__(self):
         return f"[StateGroup {self.name}]\n\t{self.states}"
     
@@ -96,9 +99,12 @@ class StateGraph(Named):
         self.current_state = current_state
         self.time_in_state = 0
         self.target_graph = dict[StateGroup,dict[Action,StateGroup]]() if target_graph is None else target_graph
-        self.actor_graph = dict[StateGroup,dict[Action,StateGroup]]() if actor_graph is None else actor_graph
-        self.tool_graph = dict[StateGroup,dict[Action,StateGroup]]() if tool_graph is None else tool_graph
-        self.time_graph = dict[StateGroup,tuple[int,StateGroup]]() if time_graph is None else time_graph
+        self.actor_graph  = dict[StateGroup,dict[Action,StateGroup]]() if actor_graph is None else actor_graph
+        self.tool_graph   = dict[StateGroup,dict[Action,StateGroup]]() if tool_graph is None else tool_graph
+        self.time_graph   = dict[StateGroup,tuple[int,StateGroup]]()   if time_graph is None else time_graph
+
+    def copy(self) -> 'StateGraph':
+        return StateGraph(self.name, self.current_state, self.target_graph, self.actor_graph, self.tool_graph, self.time_graph)
 
     def __repr__(self):
         return f"[StateGraph {self.name}]\n\tCurrent: {self.current_state}\n\tTG: {self.target_graph}\n\tAG: {self.actor_graph}\n\t2G: {self.tool_graph}"

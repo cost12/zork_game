@@ -1,11 +1,11 @@
 {
-    "name"             : "Mason Jar",
-    "description"      : "A smudged and empty mason jar",
+    "name"             : "Jar of Peppers",
+    "description"      : "A jar of hot peppers pickling in brine",
     "state"            : {
-        "states"       : ["visible"],
+        "states"       : ["visible", "edible"],
         "graphs"       : ["takeable", "container"]
     },
-    "weight"           : 1,
+    "weight"           : 3,
     "value"            : 3,
     "size"             : 2,
     "details"          : [
@@ -14,16 +14,16 @@
             "item_limit"       : {
                 "size"         : 1,
                 "weight"       : 1
-            }
+            },
+            "contents"         : ["peppers"]
         }
     ],
     "target_responses" : {
-        "take"         : "The jar is cool to the touch."
+        "take"         : "Taken.",
+        "eat"          : "Yum! That was quite filling!"
     },
     "state_responses"  : {
-        "full"         : "The jar is empty",
-        "empty"        : "The jar is full.",
-        "broken"      : "The jar shatters, rendering itself unusable. Nice going"
+        "broken"       : "Now that's just gratuitous! The peppers and their brine spill everywhere"
     },
     "item_responses"   : {
         "honey"        : "The jar is full of honey.",

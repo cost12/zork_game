@@ -1,9 +1,11 @@
 from typing import Optional, Any, Callable
 
 from models.action    import Named, Action
-from models.actors    import Location, Direction, Path, Target, Actor, Inventory, LocationDetail, SingleEndPath, MultiEndPath, Achievement, ActionRequirement, CharacterAchievementRequirement, CharacterStateRequirement, ItemsHeldRequirement, ItemStateRequirement, ItemPlacementRequirement
+from models.actors    import ItemLimit, HasLocation, Location, Direction, Path, Target, Actor, LocationDetail, SingleEndPath, MultiEndPath, Achievement, ActionRequirement, CharacterAchievementRequirement, CharacterStateRequirement, ItemsHeldRequirement, ItemStateRequirement, ItemPlacementRequirement
 from models.state     import State, StateGroup, StateGraph, StateDisconnectedGraph, Skill, SkillSet
 from controls.character_control import CharacterController, CommandLineController, NPCController
+
+# REQUIREMENTS
 
 def character_state_requirements_from_dict(name:str, requirement_dict:dict[str,Any], state_factory:'StateFactory') -> CharacterStateRequirement:
     states_needed = dict[State,tuple[bool,str]]()
@@ -49,24 +51,23 @@ def item_state_requirements_from_dict(name:str, requirement_dict:dict[str,Any], 
         item_states[item] = states_needed
     return ItemStateRequirement(item_states)
 
-def item_placement_requirements_from_dict(name:str, requirement_dict:dict[str,Any], item_factory:'ItemFactory', character_factory:'CharacterFactory') -> ItemPlacementRequirement:
-    item_placements = dict[Target,tuple['Location',Optional['LocationDetail'],bool,str]]()
+def item_placement_requirements_from_dict(name:str, requirement_dict:dict[str,Any], item_factory:'ItemFactory', character_factory:'CharacterFactory', location_factory:'LocationFactory', detail_factory:'LocationDetailFactory') -> ItemPlacementRequirement:
+    item_placements = dict[Target,list[tuple[Location,bool,str]]]()
     for item_name, location_info in requirement_dict.items():
         item = item_factory.get_item(item_name)
         if item is None:
             item = character_factory.get_character(item_name)
         if item is None:
             print(f"Can't find target {item_name} in {name}")
-        location_name = location_info[0]
-        detail_name = None
-        needed = location_info[1]
-        response = None
-        if isinstance(location_info[1], str):
-            detail_name = location_info[1]
-            needed = location_info[2]
-        if isinstance(location_info[-1], str):
-            response = location_info[-1]
-        item_placements[item] = (location_name, detail_name, needed, response)
+        placements = list[tuple[Location,bool,str]]()
+        for location_name, needed, response in location_info:
+            location = location_factory.get_location(location_name)
+            if location is None:
+                location = detail_factory.get_detail(location_name)
+            if location is None:
+                print(f"Can't find location {location_name} in {name}")
+            placements.append((location, needed, response))
+        item_placements[item] = placements
     return ItemPlacementRequirement(item_placements)
 
 def items_held_requirement_from_dict(name:str, requirement_dict:dict[str,Any], item_factory:'ItemFactory', character_factory:'CharacterFactory') -> ItemsHeldRequirement:
@@ -83,7 +84,7 @@ def items_held_requirement_from_dict(name:str, requirement_dict:dict[str,Any], i
             items_needed[item] = (needed[0], needed[1])
     return ItemsHeldRequirement(items_needed)
 
-def requirements_from_dict(name:str, requirements_dict:dict[str,Any], item_factory:'ItemFactory', character_factory:'CharacterFactory', state_factory:'StateFactory', achievement_factory:'NamedFactory[Achievement]') -> list[ActionRequirement]:
+def requirements_from_dict(name:str, requirements_dict:dict[str,Any], item_factory:'ItemFactory', character_factory:'CharacterFactory', state_factory:'StateFactory', achievement_factory:'NamedFactory[Achievement]', location_factory:'LocationFactory', detail_factory:'LocationDetailFactory') -> list[ActionRequirement]:
     requirements = list[ActionRequirement]()
     if 'character_state_requirements' in requirements_dict:
         states_needed_raw = requirements_dict['character_state_requirements']
@@ -99,16 +100,77 @@ def requirements_from_dict(name:str, requirements_dict:dict[str,Any], item_facto
         requirements.append(items_held_requirement_from_dict(name, items_needed_raw, item_factory, character_factory))
     if 'item_placement_requirements' in requirements_dict:
         item_placements_raw = requirements_dict['item_placement_requirements']
-        requirements.append(item_placement_requirements_from_dict(name, item_placements_raw, item_factory, character_factory))
+        requirements.append(item_placement_requirements_from_dict(name, item_placements_raw, item_factory, character_factory, location_factory, detail_factory))
     return requirements     
+
+# RESPONSES
+
+def item_responses_from_dict(name:str, response_dict:dict[str,Any], item_factory:'ItemFactory', character_factory:'CharacterFactory') -> dict['HasLocation',str]:
+    responses = dict[HasLocation,str]()
+    for item_name, response in response_dict:
+        item = item_factory.get_item(item_name)
+        if item is None:
+            item = character_factory.get_character(item_name)
+        if item is None:
+            print(f"Can't find target {item_name} in {name}")
+        responses[item] = response
+    return responses
+
+def action_responses_from_dict(name:str, response_dict:dict[str,Any], action_factory:'NamedFactory[Action]') -> dict[Action,str]:
+    responses = dict[Action,str]()
+    for action_name, response in response_dict.items():
+        action = action_factory.get_named(action_name)
+        if action is None:
+            print(f"Can't find action {action_name} in {name}")
+        responses[action] = response
+    return responses
+
+def state_responses_from_dict(name:str, response_dict:dict[str,Any], state_factory:'StateFactory') -> dict[State,str]:
+    responses = dict[State,str]()
+    for state_name, response in response_dict.items():
+        state = state_factory.get_state(state_name)
+        if state is None:
+            print(f"Can't find state {state_name} in {name}")
+        responses[state] = response
+    return responses
+
+def direction_responses_from_dict(name:str, response_dict:dict[str,Any], direction_factory:'NamedFactory[Direction]') -> dict[Direction,str]:
+    responses = dict[Direction,str]()
+    for direction_name, response in response_dict.items():
+        direction = direction_factory.get_named(direction_name)
+        if direction is None:
+            print(f"Can't find direction {direction_name} in {name}")
+        responses[direction] = response
+    return responses
+
+# OTHER HELPERS
+
+def children_from_dict(name, children_dict:dict[str,Any], item_factory:'ItemFactory', character_factory:'CharacterFactory', detail_factory:'LocationDetailFactory'=None) -> dict[str,HasLocation]:
+    children = dict[str,HasLocation]()
+    for item_name in children_dict:
+        item = item_factory.get_item(item_name)
+        if item is None:
+            item = character_factory.get_character(item_name)
+        if item is None and detail_factory is not None:
+            item = detail_factory.get_detail(item_name)
+        if item is None:
+            print(f"Can't find target {item_name} in {name}")
+        children[item.get_name()] = item
+    return children
+
+def item_limit_from_dict(limit_dict:dict[str,Any]) -> ItemLimit:
+    size   = limit_dict.get('size',   None)
+    weight = limit_dict.get('weight', None)
+    value  = limit_dict.get('value',  None)
+    return ItemLimit(size_limit=size, weight_limit=weight, value_limit=value)
 
 def path_from_dict(path_dict:dict[str,Any], item_factory:'ItemFactory', character_factory:'CharacterFactory', state_factory:'StateFactory', achievement_factory:'NamedFactory[Achievement]') -> Path:
         name = path_dict['name']
         description = path_dict['description']
+        end = path_dict.get('end', None)
         path_type = None
         if 'end' in path_dict:
             path_type = 'restricted'
-            end = path_dict['end']
         if 'multi_end' in path_dict:
             path_type = 'multi'
             multi_end = dict[Target, str]()
@@ -119,32 +181,15 @@ def path_from_dict(path_dict:dict[str,Any], item_factory:'ItemFactory', characte
                 multi_end[item] = room_name
         if path_type is None:
             print(f"ERROR: path {name} has no type")
-        hidden = False
-        if 'hidden' in path_dict:
-            hidden = path_dict['hidden']
-        hidden_when_locked = False
-        if 'hidden_when_locked' in path_dict:
-            hidden_when_locked = path_dict['hidden_when_locked']
-        exit_response = None
-        if 'exit_response' in path_dict:
-            exit_response = path_dict['exit_response']
-        path_items = list[Target]()
-        if 'path_items' in path_dict:
-            for item_name in path_dict['path_items']:
-                item = item_factory.get_item(item_name)
-                if item is None:
-                    item = character_factory.get_character(item_name)
-                if item is None:
-                    print(f"Can't find target {item_name} in {name}")
-                path_items.append(item)
-        passing_requirements = requirements_from_dict(name, path_dict, item_factory=item_factory, character_factory=character_factory, state_factory=state_factory, achievement_factory=achievement_factory)
-        aliases = None
-        if 'aliases' in path_dict:
-            aliases = path_dict['aliases']
+        hidden_when_locked = path_dict.get('hidden_when_locked', False)
+        exit_response = path_dict.get('exit_response', None)
+        item_limit = item_limit_from_dict(path_dict['item_limit']) if 'item_limit' in path_dict else None
+        item_responses = item_responses_from_dict(name, path_dict['item_responses'], item_factory, character_factory) if 'item_responses' in path_dict else None
+        aliases = path_dict.get('aliases', None)
         if path_type == 'restricted':
-            return SingleEndPath(name, description, end, hidden, exit_response, hidden_when_locked=hidden_when_locked, path_items=path_items, passing_requirements=passing_requirements, aliases=aliases)
+            return SingleEndPath(name, description, end=end, item_limit=item_limit, item_responses=item_responses, exit_response=exit_response, hidden_when_locked=hidden_when_locked, aliases=aliases)
         elif path_type == 'multi':
-            return MultiEndPath(name, description, end, multi_end, hidden, exit_response, hidden_when_locked=hidden_when_locked, path_items=path_items, passing_requirements=passing_requirements, aliases=aliases)
+            return MultiEndPath(name, description, end=end, multi_end=multi_end, item_limit=item_limit, item_responses=item_responses, exit_response=exit_response, hidden_when_locked=hidden_when_locked, aliases=aliases)
 
 def sdg_from_dict(name:str, sgd_dict:dict[str,list[str]], state_factory:'StateFactory', graph_factory:'StateGraphFactory', action_factory:'NamedFactory[Action]') -> StateDisconnectedGraph:
     state_graphs = list[StateGraph]()
@@ -179,17 +224,17 @@ def sdg_from_dict(name:str, sgd_dict:dict[str,list[str]], state_factory:'StateFa
             state_graphs.append(graph)
     return StateDisconnectedGraph(name, state_graphs)
 
-def inventory_from_dict(name:str, inventory_dict:dict[str,Any], item_factory:'ItemFactory') -> Inventory:
-    size_limit = inventory_dict['size_limit']
-    weight_limit = inventory_dict['weight_limit']
-    items = list[Target]()
+def inventory_from_dict(name:str, inventory_dict:dict[str,Any], item_factory:'ItemFactory', character_factory:'CharacterFactory') -> LocationDetail:
+    item_limit = None
+    if 'item_limit' in inventory_dict:
+        item_limit = item_limit_from_dict(inventory_dict['item_limit'])
+    description = f"{name}'s inventory"
+    if 'description' in inventory_dict:
+        description = inventory_dict['description']
+    items = dict[str,Target]()
     if 'items' in inventory_dict:
-        for item_name in inventory_dict['items']:
-            item = item_factory.get_item(item_name)
-            if item is None:
-                print(f"Can't find action {item_name} in {name} inventory")
-            items.append(item)
-    return Inventory(size_limit, weight_limit, items)
+        items = children_from_dict(name, inventory_dict['items'], item_factory, character_factory)
+    return LocationDetail(name='inventory', description=description, children=items, item_limit=item_limit, hidden=True)
 
 class NamedFactory[T:Named]:
 
@@ -340,7 +385,7 @@ class StateGraphFactory:
         return new_graph
     
     def get_state_graph(self, alias:str) -> Optional[StateGraph]:
-        return self.aliases.get(alias.lower(), None)
+        return self.aliases.get(alias.lower(), None).copy()
     
     def many_from_dict(self, graph_dicts:list[dict[str,Any]], state_factory:StateFactory, action_factory:NamedFactory[Action]) -> list[StateGraph]:
         graphs = list[StateGraph]()
@@ -413,44 +458,6 @@ class StateGraphFactory:
             graphs.append(self.create_state_graph(name, current_state, target_graph, tool_graph, actor_graph, time_graph))
         return graphs
     
-class StateDisconnectedGraphFactory:
-
-    def __init__(self):
-        self.graphs  = dict[StateDisconnectedGraph,StateDisconnectedGraph]()
-        self.aliases = dict[str,StateDisconnectedGraph]()
-
-    def get_state_disconnected_graphs(self) -> list[StateDisconnectedGraph]:
-        return list(self.graphs.values())
-
-    def create_state_disconnected_graph(self, name:str, state_graphs:StateGraph) -> State:
-        new_graph = StateDisconnectedGraph(name, state_graphs)
-        if new_graph in self.graphs:
-            return self.graphs[new_graph]
-        for alias in new_graph.get_aliases():
-            if alias in self.aliases:
-                print(f"Error: two StateDisconnectedGraphs {self.aliases[alias]} and {new_graph} have the same name. Only one will be created.")
-                return self.graphs[alias]
-        self.graphs[new_graph] = new_graph
-        for alias in new_graph.get_aliases():
-            self.aliases[alias] = new_graph
-        return new_graph
-    
-    def get_state_disconnected_graph(self, alias:str) -> Optional[StateGraph]:
-        return self.aliases.get(alias.lower(), None)
-    
-    def many_from_dict(self, graph_dict:list[dict[str,Any]], state_graph_factory:StateGraphFactory) -> list[StateDisconnectedGraph]:
-        graphs = list[StateDisconnectedGraph]()
-        for graph in graph_dict:
-            name = graph['name']
-            state_graphs = list[StateGraph]()
-            for graph_name in graph['state_graphs']:
-                graph = state_graph_factory.get_state_graph(graph_name)
-                if graph is None:
-                    print(f"Can't find state graph {graph_name} in {name}")
-                state_graphs.append(graph)
-            graphs.append(self.create_state_disconnected_graph(name, state_graphs))
-        return graphs
-
 class ItemFactory:
 
     def __init__(self):
@@ -460,14 +467,8 @@ class ItemFactory:
     def get_items(self) -> list[Target]:
         return list(self.items.values())
 
-    def create_item(self, name:str, description:str, states:StateDisconnectedGraph, weight:float, value:float, size:float, target_responses:dict[Action,str], tool_responses:dict[Action,str], state_responses:dict[State,str]) -> Target:
-        if size is None:
-            size = Target.DEFAULT_SIZE
-        if weight is None:
-            weight = Target.DEFAULT_WEIGHT
-        if value is None:
-            value = Target.DEFAULT_VALUE
-        new_item = Target(name, description, states, weight=weight, value=value, size=size, target_responses=target_responses, tool_responses=tool_responses, state_responses=state_responses)
+    def create_item(self, name:str, description:str, states:StateDisconnectedGraph, weight:float, value:float, size:float, target_responses:dict[Action,str], tool_responses:dict[Action,str], state_responses:dict[State,str], aliases:list[str]=None) -> Target:
+        new_item = Target(name, description, states, weight=weight, value=value, size=size, target_responses=target_responses, tool_responses=tool_responses, state_responses=state_responses, aliases=aliases)
         if new_item in self.items:
             return self.items[new_item]
         for alias in new_item.get_aliases():
@@ -486,41 +487,36 @@ class ItemFactory:
         items = list[Target]()
         for item_dict in item_dicts:
             name = item_dict['name']
+            aliases = item_dict.get('aliases', None)
             description = item_dict['description']
             states = sdg_from_dict(name, item_dict['state'], state_factory, state_graph_factory, action_factory)
-            weight = None
-            if 'weight' in item_dict:
-                weight = item_dict['weight']
-            value = None
-            if 'value' in item_dict:
-                value = item_dict['value']
-            size = None
-            if 'size' in item_dict:
-                size = item_dict['size']
-            target_responses = dict[Action,str]()
-            if 'target_responses' in item_dict:
-                for action_name in item_dict['target_responses']:
-                    action = action_factory.get_named(action_name)
-                    if action is None:
-                        print(f"Can't find action {action_name} in {name}")
-                    target_responses[action] = item_dict['target_responses'][action_name]
-            tool_responses = dict[Action,str]()
-            if 'tool_responses' in item_dict:
-                for action_name in item_dict['tool_responses']:
-                    action = action_factory.get_named(action_name)
-                    if action is None:
-                        print(f"Can't find action {action_name} in {name}")
-                    tool_responses[action] = item_dict['tool_responses'][action_name]
-            state_responses = dict[State,str]()
-            if 'state_responses' in item_dict:
-                for state_name in item_dict['state_responses']:
-                    state = state_factory.get_state(state_name)
-                    if state is None:
-                        print(f"Can't find state {state_name} in {name}")
-                    state_responses[state] = item_dict['state_responses'][state_name]
-            items.append(self.create_item(name, description, states, weight, value, size, target_responses, tool_responses, state_responses))
+            weight = item_dict.get('weight', None)
+            value  = item_dict.get('value', None)
+            size   = item_dict.get('size', None)
+            target_responses = action_responses_from_dict(name, item_dict['target_responses'], action_factory) if 'target_responses' in item_dict else None
+            tool_responses   = action_responses_from_dict(name, item_dict['tool_responses'],   action_factory) if 'tool_responses'   in item_dict else None
+            state_responses  = state_responses_from_dict(name,  item_dict['state_responses'],  state_factory)  if 'state_responses'  in item_dict else None
+            items.append(self.create_item(name, description, states, weight, value, size, target_responses, tool_responses, state_responses, aliases))
         return items
     
+    def update(self, item_dicts:list[dict[str,Any]], character_factory:'CharacterFactory', detail_factory:'LocationDetailFactory', location_factory:'LocationFactory', state_factory:StateFactory, action_factory:NamedFactory[Action], achievement_factory:NamedFactory[Achievement]) -> None:
+        for item_dict in item_dicts:
+            name = item_dict['name']
+            item = self.get_item(name)
+            if item is None:
+                print(f"Can't find item {name} in items")
+            if 'item_response' in item_dict:
+                item.item_responses = item_responses_from_dict(name, item_dict['item_response'], self, character_factory)
+            if 'details' in item_dict:
+                new_details = detail_factory.many_from_dict(item_dict['details'])
+                detail_factory.update(item_dict['details'], self, character_factory, state_factory, achievement_factory, location_factory)
+                children = {detail_factory.get_detail(detail.get_name()).get_name():detail_factory.get_detail(detail.get_name()) for detail in new_details}
+                item._set_children(children)
+                for detail in new_details:
+                    detail_factory.remove_detail(detail.get_name())
+            if 'visible_requirements' in item_dict:
+                item.visible_requirements = requirements_from_dict(name, item_dict['visible_requirements'], self, character_factory, state_factory, achievement_factory, location_factory, detail_factory)
+            
 class SkillSetFactory:
 
     def __init__(self):
@@ -578,7 +574,6 @@ class CharacterFactory:
                          type:str, 
                          states:StateDisconnectedGraph, 
                          skills:SkillSet,
-                         inventory:Inventory,
                          weight:float,
                          size:float,
                          value:float,
@@ -588,7 +583,7 @@ class CharacterFactory:
                          state_responses:dict[State,str],
                          achievements:list[Achievement],
                          aliases:list[str]) -> Actor:
-        new_character = Actor(name, description, type, states, skills, inventory, weight=weight, size=size, value=value, actor_responses=actor_responses, target_responses=target_responses, tool_responses=tool_responses, state_responses=state_responses, achievements=achievements, aliases=aliases)
+        new_character = Actor(name, description, type, states, skills, weight=weight, size=size, value=value, actor_responses=actor_responses, target_responses=target_responses, tool_responses=tool_responses, state_responses=state_responses, achievements=achievements, aliases=aliases)
         if new_character in self.characters:
             return self.characters[new_character]
         for alias in new_character.get_aliases():
@@ -606,7 +601,6 @@ class CharacterFactory:
     def many_from_dict(self, 
                        character_dicts:list[dict[str,Any]],
                        skills_factory:SkillSetFactory,
-                       item_factory:ItemFactory,
                        action_factory:NamedFactory[Action],
                        state_factory:StateFactory,
                        achievement_factory:NamedFactory[Achievement],
@@ -622,16 +616,9 @@ class CharacterFactory:
             skills = skills_factory.get_skill_set(character_dict['skills'])
             if skills is None:
                 print(f"Can't find SkillSet {character_dict['skills']} in {name}")
-            inventory = inventory_from_dict(name, character_dict['inventory'], item_factory)
-            weight = Actor.DEFAULT_WEIGHT
-            if 'weight' in character_dict:
-                weight = character_dict['weight']
-            size = Actor.DEFAULT_SIZE
-            if 'size' in character_dict:
-                size = character_dict['size']
-            value = Actor.DEFAULT_VALUE
-            if 'value' in character_dict:
-                value = character_dict['value']
+            weight = character_dict.get('weight', None)
+            size   = character_dict.get('size',   None)
+            value  = character_dict.get('value',  None)
             achievements = list[Achievement]()
             if 'achievements' in character_dict:
                 for achievement_name in character_dict['achievements']:
@@ -639,39 +626,35 @@ class CharacterFactory:
                     if achievement is None:
                         print(f"Can't find achievement {achievement_name} in {name}")
                     achievements.append(achievement)
-            actor_responses = dict[Action,str]()
-            if 'actor_responses' in character_dict:
-                for action_name in character_dict['actor_responses']:
-                    action = action_factory.get_named(action_name)
-                    if action is None:
-                        print(f"Can't find action {action_name} in {name}")
-                    actor_responses[action] = character_dict['actor_responses'][action_name]
-            target_responses = dict[Action,str]()
-            if 'target_responses' in character_dict:
-                for action_name in character_dict['target_responses']:
-                    action = action_factory.get_named(action_name)
-                    if action is None:
-                        print(f"Can't find action {action_name} in {name}")
-                    target_responses[action] = character_dict['target_responses'][action_name]
-            tool_responses = dict[Action,str]()
-            if 'tool_responses' in character_dict:
-                for action_name in character_dict['tool_responses']:
-                    action = action_factory.get_named(action_name)
-                    if action is None:
-                        print(f"Can't find action {action_name} in {name}")
-                    tool_responses[action] = character_dict['tool_responses'][action_name]
-            state_responses = dict[State,str]()
-            if 'state_responses' in character_dict:
-                for state_name in character_dict['state_responses']:
-                    state = state_factory.get_state(state_name)
-                    if state is None:
-                        print(f"Can't find state {state_name} in {name}")
-                    state_responses[state] = character_dict['state_responses'][state_name]
-            aliases = None
-            if 'aliases' in character_dict:
-                aliases = character_dict['aliases']
-            characters.append(self.create_character(name, description, type, states, skills, inventory, weight, size, value, actor_responses, target_responses, tool_responses, state_responses, achievements, aliases))
+            actor_responses  = action_responses_from_dict(name, character_dict['actor_responses'],  action_factory) if 'actor_responses'  in character_dict else None
+            target_responses = action_responses_from_dict(name, character_dict['target_responses'], action_factory) if 'target_responses' in character_dict else None
+            tool_responses   = action_responses_from_dict(name, character_dict['tool_responses'],   action_factory) if 'tool_responses'   in character_dict else None
+            state_responses  = state_responses_from_dict(name,  character_dict['state_responses'],  action_factory) if 'state_responses'  in character_dict else None
+            aliases = character_dict.get('aliases', None)
+            characters.append(self.create_character(name, description, type, states, skills, weight, size, value, actor_responses, target_responses, tool_responses, state_responses, achievements, aliases))
         return characters
+    
+    def update(self, character_dicts:list[dict[str,Any]], item_factory:'ItemFactory', detail_factory:'LocationDetailFactory', location_factory:'LocationFactory', state_factory:StateFactory, action_factory:NamedFactory[Action], achievement_factory:NamedFactory[Achievement]) -> None:
+        for character_dict in character_dicts:
+            name = character_dict['name']
+            character = self.get_character(name)
+            if character is None:
+                print(f"Can't find character {name} in characters")
+            if 'item_response' in character_dict:
+                character.item_responses = item_responses_from_dict(name, character_dict['item_response'], item_factory, self)
+            if 'details' in character_dict:
+                new_details = detail_factory.many_from_dict(character_dict['details'])
+                detail_factory.update(character_dict['details'], item_factory, self, state_factory, achievement_factory, location_factory)
+                children = {detail_factory.get_detail(detail.get_name()).get_name():detail_factory.get_detail(detail.get_name()) for detail in new_details}
+                character._set_children(children)
+                for detail in new_details:
+                    detail_factory.remove_detail(detail.get_name())
+            if 'inventory' in character_dict:
+                inventory = inventory_from_dict(name, character_dict['inventory'], item_factory, self)
+                inventory.parent = character
+                character.children['inventory'] = inventory
+            if 'visible_requirements' in character_dict:
+                character.visible_requirements = requirements_from_dict(name, character_dict['visible_requirements'], item_factory, self, state_factory, achievement_factory, location_factory, detail_factory)
 
 class LocationDetailFactory:
 
@@ -682,8 +665,8 @@ class LocationDetailFactory:
     def get_details(self) -> list[LocationDetail]:
         return list(self.details.values())
 
-    def create_detail(self, name:str="default", description:str="", note_worthy:bool=False, hidden:bool=False, hidden_when:tuple[Target,dict[State,bool]]=None, responses:dict[Target,str]=None, aliases:list[str]=None) -> SkillSet:
-        new_detail = LocationDetail(name=name, description=description, note_worthy=note_worthy, hidden=hidden, hidden_when=hidden_when, responses=responses, aliases=aliases)
+    def create_detail(self, name:str="default", description:str="", *, hidden:bool=False, item_limit:ItemLimit=None, aliases:list[str]=None) -> SkillSet:
+        new_detail = LocationDetail(name=name, description=description, hidden=hidden, item_limit=item_limit, aliases=aliases)
         if new_detail in self.details:
             return self.details[new_detail]
         for alias in new_detail.get_aliases():
@@ -698,43 +681,38 @@ class LocationDetailFactory:
     def get_detail(self, alias:str) -> Optional[LocationDetail]:
         return self.aliases.get(alias.lower(), None)
     
-    def one_from_dict(self, detail_dict:dict[str,Any], item_factory:ItemFactory, state_factory:StateFactory) -> LocationDetail:
-        name = detail_dict['name']
-        description = detail_dict['description']
-        note_worthy = len(description) > 0
-        hidden = False
-        if 'hidden' in detail_dict:
-            hidden = detail_dict['hidden']
-        hidden_when = None
-        if 'hidden_when' in detail_dict:
-            target_name, states_dict = detail_dict['hidden_when']
-            target = item_factory.get_item(target_name)
-            if target is None:
-                print(f"Can't find target {target_name} in {name}")
-            states = dict[State,bool]()
-            for state_name, is_hidden in states_dict.items():
-                state = state_factory.get_state(state_name)
-                if state is None:
-                    print(f"Can't find state {state_name} in {name}")
-                states[state] = is_hidden
-            hidden_when = (target, states)
-        aliases = None
-        responses = dict[Target,str]()
-        if 'responses' in detail_dict:
-            for item_name, response in detail_dict['responses'].items():
-                item = item_factory.get_item(item_name)
-                if item is None:
-                    print(f"Can't find item {item_name} in {name}")
-                responses[item] = response
-        if 'aliases' in detail_dict:
-            aliases = detail_dict['aliases']
-        return self.create_detail(name, description, note_worthy, hidden, hidden_when, responses, aliases=aliases)
+    def remove_detail(self, alias:str) -> None:
+        detail = self.get_detail(alias)
+        del self.details[detail]
+        for alias2 in detail.get_aliases():
+            del self.aliases[alias2]
     
-    def many_from_dict(self, detail_dicts:list[dict[str,Any]], items:ItemFactory, states:StateFactory) -> list[LocationDetail]:
+    def one_from_dict(self, detail_dict:dict[str,Any]) -> LocationDetail:
+        name = detail_dict['name']
+        description = detail_dict.get('description', "")
+        hidden  = detail_dict.get('hidden', False)
+        aliases = detail_dict.get('aliases', None)
+        item_limit = item_limit_from_dict(detail_dict['item_limit']) if 'item_limit' in detail_dict else None
+        return self.create_detail(name, description, hidden=hidden, item_limit=item_limit, aliases=aliases)
+    
+    def many_from_dict(self, detail_dicts:list[dict[str,Any]]) -> list[LocationDetail]:
         details = list[LocationDetail]()
         for detail_dict in detail_dicts:
-            details.append(self.one_from_dict(detail_dict, items, states))
+            details.append(self.one_from_dict(detail_dict))
         return details
+    
+    def update(self, detail_dicts:list[dict[str,Any]], item_factory:ItemFactory, character_factory:CharacterFactory, state_factory:StateFactory, achievement_factory:NamedFactory[Achievement], location_factory:'LocationFactory') -> None:
+        for detail_dict in detail_dicts:
+            name = detail_dict['name']
+            detail = self.get_detail(name)
+            if detail is None:
+                print(f"Can't find detail {detail_dict["name"]} in self")
+            if 'item_response' in detail_dict:
+                detail.item_responses = item_responses_from_dict(name, detail_dict, item_factory, character_factory)
+            if 'contents' in detail_dict:
+                detail._set_children(children_from_dict(name, detail_dict['contents'], item_factory, character_factory, self))
+            if 'visible_requirements' in detail_dict:
+                detail.visible_requirements = requirements_from_dict(name, detail_dict['visible_requirements'], item_factory, character_factory, state_factory, achievement_factory, location_factory, self) 
 
 class LocationFactory:
 
@@ -748,12 +726,15 @@ class LocationFactory:
     def create_location(self,
                         name:str, 
                         description:str, 
-                        paths:dict[Direction,Path], 
-                        direction_responses:dict[Direction,str],
-                        details:list[LocationDetail],
-                        contents:dict[Target,Location],
-                        start_location:bool) -> Location:
-        new_location = Location(name, description, paths, direction_responses, details, contents, start_location)
+                        paths:dict[Direction,Path], *, 
+                        direction_responses:dict[Direction,str]=None,
+                        contents:dict[str,HasLocation]=None,
+                        start_location:bool=False,
+                        item_limit:ItemLimit=None,
+                        visible_requirements:list[ActionRequirement]=None,
+                        item_responses:list[HasLocation,str]=None,
+                        aliases:list[str]=None) -> Location:
+        new_location = Location(name, description, paths, direction_responses=direction_responses, start_location=start_location, children=contents, item_limit=item_limit, visible_requirements=visible_requirements, item_responses=item_responses, aliases=aliases)
         if new_location in self.locations:
             return self.locations[new_location]
         for alias in new_location.get_aliases():
@@ -768,10 +749,12 @@ class LocationFactory:
     def get_location(self, alias:str) -> Optional[Location]:
         return self.aliases.get(alias.lower(), None)
 
-    def many_from_dict(self, location_dicts:list[dict[str,Any]], character_factory:CharacterFactory, item_factory:ItemFactory, direction_factory:NamedFactory[Direction], state_factory:StateFactory, achievement_factory:NamedFactory[Achievement]) -> list[Location]:
+    def many_from_dict(self, location_dicts:list[dict[str,Any]], character_factory:CharacterFactory, item_factory:ItemFactory, direction_factory:NamedFactory[Direction], state_factory:StateFactory, achievement_factory:NamedFactory[Achievement]) -> tuple[list[Location],LocationDetailFactory]:
         locations = list[Location]()
+        detail_factory = LocationDetailFactory()
         for location_dict in location_dicts:
             name = location_dict['name']
+            aliases = location_dict.get('aliases', None)
             description = location_dict['description']
             paths = dict[Direction,Path]()
             if 'paths' in location_dict:
@@ -785,50 +768,56 @@ class LocationFactory:
                         print(e)
                         print(f"Path error in {name}")
                     paths[direction] = path
-            direction_responses = dict[Direction,str]()
-            if 'direction_responses' in location_dict:
-                for direction_name,response in location_dict['direction_responses'].items():
-                    direction = direction_factory.get_named(direction)
-                    if direction is None:
-                        print(f"Can't find direction {direction_name} in {name}")
-                    direction_responses[direction] = response
-            detail_factory = LocationDetailFactory()
+            direction_responses = direction_responses_from_dict(name, location_dict['direction_responses'], direction_factory) if 'direction_responses' in location_dict else None
+            details = []
             if 'details' in location_dict:
-                detail_factory.many_from_dict(location_dict['details'], item_factory, state_factory)
-            contents = dict[Target,LocationDetail]()
+                details = detail_factory.many_from_dict(location_dict['details'])
+            contents = {detail.get_name():detail for detail in details}
             if 'contents' in location_dict:
-                for target_name,detail_name in location_dict['contents'].items():
-                    target = character_factory.get_character(target_name)
-                    if target is None:
-                        target = item_factory.get_item(target_name)
-                    if target is None:
-                        print(f"In {name} can't find {target_name}")
-                    if detail_name == "default":
-                        detail = detail_factory.create_detail()
-                    else:
-                        detail = detail_factory.get_detail(detail_name)
-                        if detail is None:
-                            print(f"Can't find detail {detail_name} in {name}")
-                    contents[target] = detail
+                for child_name in location_dict['contents']:
+                    child = character_factory.get_character(child_name)
+                    if child is None:
+                        child = item_factory.get_item(child_name)
+                    if child is None:
+                        child = detail_factory.get_detail(child_name)
+                    if child is None:
+                        print(f"Can't find child {child_name} in {name}")
+                    contents[child.get_name()] = child
             start_location = False
             if 'start' in location_dict:
                 start_location = location_dict['start']
-            locations.append(self.create_location(name, description, paths, direction_responses, detail_factory.get_details(), contents, start_location))
-        
+            
+            item_limit = item_limit_from_dict(location_dict['item_limit']) if 'item_limit' in location_dict else None
+            visible_requirements = requirements_from_dict(name, location_dict['visible_requirements'], item_factory, character_factory, state_factory, achievement_factory) if 'visible_requirements' in location_dict else None
+            item_responses = item_responses_from_dict(name, location_dict['item_responses'], item_factory, character_factory) if 'item_responses' in location_dict else None
+            
+            locations.append(self.create_location(name, description, paths, direction_responses=direction_responses, contents=contents, start_location=start_location, item_limit=item_limit, visible_requirements=visible_requirements, item_responses=item_responses, aliases=aliases))
+            
         # for each path set the end to the correct location
         # (this can't be done earlier because the end location might not exist yet)
         for location_dict in location_dicts:
             location = self.get_location(location_dict['name'])
             if location is None:
-                print(f"Can't find location {location_dict['name']} in {name}")
+                print(f"Can't find location {location_dict['name']} at end")
             if 'paths' in location_dict:
                 for direction_name,path_dict in location_dict['paths'].items():
                     direction = direction_factory.get_named(direction_name)
                     if direction is None:
-                        print(f"Can't find direction {direction_name} in {name}")
+                        print(f"Can't find direction {direction_name} in {location_dict['name']}")
                     if location._get_path(direction)[0]._set_end(self, detail_factory) is not None:
                         print(f"bad end in {location.name}")
-        return locations
+
+                    if 'visible_requirements' in path_dict:
+                        location.paths[direction].visible_requirements = requirements_from_dict(name, path_dict['visible_requirements'], item_factory, character_factory, state_factory, achievement_factory, self, detail_factory)
+                    if 'passing_requirements' in path_dict:
+                        location.paths[direction].passing_requirements = requirements_from_dict(name, path_dict['passing_requirements'], item_factory=item_factory, character_factory=character_factory, state_factory=state_factory, achievement_factory=achievement_factory, location_factory=self, detail_factory=detail_factory)
+                    if 'path_items' in path_dict:
+                        location.paths[direction]._set_children(children_from_dict(name, path_dict['path_items'], item_factory, character_factory, detail_factory))
+        
+            # this can only be done once all details, characters, and items are in
+            if 'details' in location_dict:
+                detail_factory.update(location_dict['details'], item_factory, character_factory, state_factory, achievement_factory, self)
+        return locations, detail_factory
 
 class CharacterControlFactory:
 

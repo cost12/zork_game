@@ -1,18 +1,33 @@
 {
-    "name"             : "Mug of Water",
-    "description"      : "A small ceramic mug full of water",
+    "name"             : "Mug",
+    "description"      : "a small ceramic mug full of water",
     "state"            : {
-        "states"       : ["visible", "drinkable"],
+        "states"       : ["visible"],
         "graphs"       : ["takeable", "container"]
     },
     "weight"           : 1,
     "value"            : 1,
     "size"             : 1,
+    "details"          : [
+        {
+            "name"             : "in",
+            "item_limit"       : {
+                "size"         : 1,
+                "weight"       : 1
+            },
+            "contents"         : ["water"]
+        }
+    ],
     "target_responses" : {
-        "take"         : "You take the mug. Be fareful not to slosh!",
         "pour"         : "You empty the mug's contents, making a bit of a mess..."
     },
     "state_responses"  : {
-        "broken"       : "The mug is broken and can't be put back together again. Pity..."
+        "broken"       : "The mug is broken and can't be put back together again. Pity...",
+        "held"         : "You take the mug. Be fareful not to slosh!"
+    },
+    "item_responses"   : {
+        "honey"        : "The mug is full of honey.",
+        "water"        : "The mug is full of water.",
+        "peppers"      : "The mug is full of peppers. Ew."
     }
 }
