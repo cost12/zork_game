@@ -1,0 +1,46 @@
+[] responses
+    Target/actor/tool response should depend on Action, State, and success (of Action)
+[] Feedback
+    store data in a format that can be passed to either the commandline or CPU controlled character
+    add Feedback about what other Characters in the room experience (or in adjacent rooms hear)
+[] action requirements (use them)
+    Targets/tools might have requirements for being used -> State?
+[] allow items with same name
+    have unique id for equality/ dicts, dict[str,Named] -> dict[str,list[Named]] and figure out which one based on context/ asking questions
+    new data structure like dict?
+[] actions cause other actions on an item
+    burning -> break
+    throw -> drop
+[] ideas/questions
+    contents of wallet at the end are determined by actions during the game
+    do theatre passages need instruments to be unbroken
+    should container be a state? should liquid be a state?
+    detail for wearing for characters
+[] achievements 
+    should have action/(state?target?tool?result?) requirements/activations
+[] allow for different starting states in state graphs
+[] lantern rooms can't see when lamp is not on -> any exit is random
+    see rooms at __NeedLantern (rooms)
+[] bugs
+    make origin work/ fill in correctly
+[] character control
+    return a tuple of an Action and inputs so CPU controlled Characters can make decisions more easily.
+    create a more complex NPCController
+    convert string into and Action and inputs and return Action, inputs
+[] input translator
+    multiple grammars
+    word tree (items/actions with multiple words)
+[] SkillSet
+    could also track other state information
+    repetition of achievements
+    decide whether other characters are friends/enemies (count friendly actions)
+    track which rooms have been visited/ how many times (useful for displaying/not displaying text)
+    track character health/energy
+    temporary room information (if required to make shot each time to leave)
+[] testing
+[] comments
+[] visualization
+[] actions
+    see more at __ItemDetails (items)
+[] special text/ features
+    see more at __SpecialDeets (rooms)

@@ -1,16 +1,8 @@
-State of item should have continuity with actions
-
-x Bedroom: trap door open/closed
-
-x Attic: trap door open/closed
-
-Bathroom: Cupboard open/closed
+? Bathroom: Cupboard open/closed
 
 Garden: Day/Night Day: stark, sunlight shines from a colorless sky, and you squint. Night: A hidden moon lends a soft glow to the clouds that oscure the stars above, for it is night time. 
 
-Cellar: trunk open/closed
-
-x Orge Lair: Orge guarding/happy/dead:  (if not dead :In the middle stands a hulking orge holding a large club, blocking the way to a passage going South. (if given peppers: The Orge recognizes you as his pepper-providing pal and steps aside, allowing you to pass unscathed)) 
+1/2 Orge Lair: Orge guarding/happy/dead:  (if not dead :In the middle stands a hulking orge holding a large club, blocking the way to a passage going South. (if given peppers: The Orge recognizes you as his pepper-providing pal and steps aside, allowing you to pass unscathed)) 
 
 Barn: Day/night: "(If day): Sunlight drips through thin cracks in the lofty slatted roof. (If night): Stars twinkle through gaps in the wooden roof. "
 
@@ -22,10 +14,4 @@ SkatePark: ((if given skateboard to Child): The child from the train skates happ
 
 Bright Room: Two different descriptions based on if sunglasses are worn or not (in static description text)
 
-x Library: Shelves should reflect the books that have been placed on them in description? Make items with states for each shelf?
-
 Man Cave: bully challenges if not yet beaten, sulks on couch if beaten
-
-x Conditional exits: North in Library, Museum, Gym, Parking Lot, Theatre Entrance. SW, N, SE in Theatre Seats
-
-Parking Lot: directions/exits for "get in car" and "get in trunk"?

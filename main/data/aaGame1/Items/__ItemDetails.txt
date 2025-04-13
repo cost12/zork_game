@@ -1,7 +1,5 @@
 Can't be taken: 
     - Boots?, Fork?, jacket?, triangle?, weights?
-Other items needed?: 
-    - honey, water, peppers
 Special: 
     - Magnifying glass and candle: make sure you are in the right room to do the action (bright room or Garden). 
         "light with magnifying glass if in right place" : "Cleverly, the light refracted by the magnifying glass lights the candle's wick.",

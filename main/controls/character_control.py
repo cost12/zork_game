@@ -6,9 +6,6 @@ import views.string_views as views
 class Feedback:
     """This is a dataclass.
     Represents a response from the GameState to the CharacterController after an Action
-
-    TODO: store data in a format that can be passed to either the commandline or CPU controlled character
-    TODO: add Feedback about what other Characters in the room experience (or in adjacent rooms hear)
     
     :param feedback: A string summary of what the Character experiences.
     :type feedback: str
@@ -46,8 +43,6 @@ class CharacterController:
         """Returns a string representation of the Action to be attempted.
         No information is passed in, but information can be stored from Feedback to help make a decision.
 
-        TODO: this should probably return a tuple of an Action and inputs so CPU controlled Characters can make decisions more easily.
-
         :return: A string representing the Action to be attempted.
         :rtype: str
         """
@@ -65,8 +60,6 @@ class CharacterController:
 class NPCController(CharacterController):
     """Inherits from CharacterController.
     Controls an NPC Character and takes the wait Action every turn.
-
-    TODO: create a more complex NPCController
     """
     def __init__(self) -> 'NPCController':
         """Creates an NPCController
@@ -105,8 +98,6 @@ class CommandLineController(CharacterController):
 
     def make_move(self) -> str:
         """Prompts the user to enter their move into the command line and returns the user response
-        
-        TODO: this should probably convert the string into and Action and inputs
 
         :return: The user's command line input
         :rtype: str

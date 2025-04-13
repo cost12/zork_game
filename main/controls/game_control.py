@@ -7,29 +7,6 @@ from controls.character_control import CommandLineController, Feedback
 from controls.translate import get_input_translator
 from utils.constants import *
 
-# TODO: Target/actor/tool response should depend on Action, State, and success (of Action)
-# Targets/tools might have requirements for being used -> State?
-# TODO: responses should be their own class?
-# TODO: handle multiple items with same name
-# TODO: low priority: exit text when passing through an exit
-# TODO: is hidden needed in LocationDetail? (replaced by hidden_when)
-# TODO: for many items with same name: have unique id for equality/ dicts, dict[str,Named] -> dict[str,list[Named]] and figure out which one based on context/ asking questions
-
-# TODO: should burning something be able to call break on the item
-# TODO: store items in other items
-# TODO: action requirements, like path requirements but extended to actions
-# TODO: contents of wallet at the end are determined by actions during the game
-# TODO: pepper, honey, and water own items?
-# TODO: do theatre passages need instruments to be unbroken
-# TODO: achievements should have action/(state?target?tool?result?) requirements/activations
-# TODO: allow for different starting states in state graphs
-# TODO: lantern rooms, what happens if lantern is not on?
-
-# TODO: should container be a state? should liquid be a state?
-# TODO: many actions cause other actions
-# TODO: detail for wearing for characters
-# TODO: make origin work/ fill in correctly
-
 class GameAction:
     """This is an abstract class and should not be instantiated.
     Represents an Action a Character can make during a Game.
