@@ -1,7 +1,7 @@
 from tests.conftest      import states
 from factories.factories import StateFactory
 from models.state        import State
-from models.action       import Action
+from models.named        import Action
 
 def test_read_in(states:StateFactory):
     factory = states

@@ -2,8 +2,7 @@ import glob
 import json
 from typing import Any
 
-from models.actors   import Direction
-from models.action   import Action
+from models.named    import Action, Direction
 from models.state    import Skill, Achievement
 from utils.constants import *
 

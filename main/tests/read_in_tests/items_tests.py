@@ -1,7 +1,7 @@
 from tests.conftest      import items
 from factories.factories import ItemFactory
 from models.actors       import Target
-from models.action       import Action
+from models.named        import Action
 from models.state        import State, FullState
 
 def test_read_in(items:ItemFactory):

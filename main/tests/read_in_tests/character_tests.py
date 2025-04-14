@@ -1,7 +1,7 @@
 from tests.conftest      import characters
 from factories.factories import CharacterFactory
-from models.actors       import Actor, Inventory, LocationDetail
-from models.action       import Action
+from models.actors       import Actor, LocationDetail
+from models.named        import Action
 from models.state        import State, FullState, SkillSet
 
 def test_read_in(characters:CharacterFactory):
@@ -14,9 +14,6 @@ def test_read_in(characters:CharacterFactory):
         assert isinstance(character.weight, float) or isinstance(character.weight, int)
         assert isinstance(character.size, float) or isinstance(character.size, int)
         assert isinstance(character.value, float) or isinstance(character.value, int)
-        assert isinstance(character.inventory, Inventory)
-        assert isinstance(character.inventory_location, LocationDetail)
-        assert character.inventory_location.is_hidden()
         assert isinstance(character.type, str)
         assert isinstance(character.skills, SkillSet)
         for state, response in character.state_responses.items():

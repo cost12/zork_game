@@ -1,8 +1,7 @@
-from typing import Any, Optional
+from typing import Any
 
-from models.action import Action, Named
-from models.actors import Direction, Location, Path, Target, Actor
-from factories.factories import ItemFactory, NamedFactory, StateFactory, LocationFactory, SkillSetFactory, CharacterFactory, StateGraphFactory, LocationDetailFactory, CharacterControlFactory
+from models.named import Action, Named, Direction
+from models.actors import Location, Target, Actor
 
 class Word:
     def __init__(self):

@@ -1,8 +1,9 @@
 from typing import Optional, Any, Callable
 
-from models.action    import Named, Action
-from models.actors    import ItemLimit, HasLocation, Location, Direction, Path, Target, Actor, LocationDetail, SingleEndPath, MultiEndPath, Achievement, ActionRequirement, CharacterAchievementRequirement, CharacterStateRequirement, ItemsHeldRequirement, ItemStateRequirement, ItemPlacementRequirement
-from models.state     import State, StateGroup, StateGraph, StateDisconnectedGraph, Skill, SkillSet
+from models.named       import Named, Action, Direction
+from models.actors      import ItemLimit, HasLocation, Location, Path, Target, Actor, LocationDetail, SingleEndPath, MultiEndPath, Achievement
+from models.requirement import ActionRequirement, CharacterAchievementRequirement, CharacterStateRequirement, ItemsHeldRequirement, ItemStateRequirement, ItemPlacementRequirement
+from models.state       import State, StateGroup, StateGraph, StateDisconnectedGraph, Skill, SkillSet
 from controls.character_control import CharacterController, CommandLineController, NPCController
 
 # REQUIREMENTS

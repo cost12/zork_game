@@ -33,3 +33,12 @@ class Action(Named):
     
     def act(self):
         pass
+
+class Direction(Named):
+    """The Directions a Character can move to get from Room to Room.
+    """
+    def __init__(self, name:str, aliases:Optional[list[str]]=None):
+        super().__init__(name, aliases)
+
+    def __repr__(self):
+        return f"[Direction {self.name}]"

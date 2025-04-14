@@ -1,9 +1,9 @@
 import sys
 
-from utils.visualize_game import visualize_game
-from controls.game_control import GameState
+from utils.visualize_game   import visualize_game
+from controls.game_control  import GameState
 from factories.data_read_in import read_in_game
-from models.actors import Actor
+from models.actors          import Actor
 
 def main(args:list[str]):
     if len(args) > 0:

@@ -1,8 +1,7 @@
 from typing import Any
 
 from factories.factories import LocationFactory, CharacterFactory, CharacterControlFactory, ItemFactory, NamedFactory
-from models.action import Action
-from models.actors import Direction
+from models.named import Action, Direction
 from tests.conftest import game
 
 def test_read_in(game:tuple[LocationFactory, CharacterFactory, CharacterControlFactory, ItemFactory, NamedFactory[Action], NamedFactory[Direction], dict[str,Any]]):

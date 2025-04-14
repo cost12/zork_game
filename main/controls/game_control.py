@@ -1,11 +1,11 @@
 from typing import Any, Optional
 
-from models.actors import Direction, Target, Actor, Location, LocationDetail
-from models.action import Action
-from factories.factories import ItemFactory, NamedFactory, LocationFactory, CharacterFactory, CharacterControlFactory
+from models.actors              import Target, Actor, Location, LocationDetail
+from models.named               import Action, Direction
+from factories.factories        import ItemFactory, NamedFactory, LocationFactory, CharacterFactory, CharacterControlFactory
 from controls.character_control import CommandLineController, Feedback
-from controls.translate import get_input_translator
-from utils.constants import *
+from controls.translate         import get_input_translator
+from utils.constants            import *
 
 class GameAction:
     """This is an abstract class and should not be instantiated.

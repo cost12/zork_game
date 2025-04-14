@@ -1,6 +1,6 @@
 from tests.conftest import test_state_graphs, test_states, test_actions
 from factories.factories import StateGraphFactory, StateFactory, NamedFactory
-from models.action import Action
+from models.named import Action
 
 def test_has_state(test_state_graphs:StateGraphFactory, test_states:StateFactory):
     graph = test_state_graphs.get_state_graph('standard_item')
