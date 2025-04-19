@@ -105,11 +105,11 @@ def update_targets(game:str, items:ItemFactory, characters:CharacterFactory, det
     data = __read_in_folder(folder)
     characters.update(data, items, details, locations, states, actions, achievements)
 
-def read_in_rooms(game:str, character_factory:CharacterFactory, item_factory:ItemFactory, direction_factory:NamedFactory[Direction], state_factory:StateFactory, achievement_factory:NamedFactory[Achievement]) -> tuple[LocationFactory,LocationDetailFactory]:
+def read_in_rooms(game:str, character_factory:CharacterFactory, item_factory:ItemFactory, direction_factory:NamedFactory[Direction], state_factory:StateFactory, achievement_factory:NamedFactory[Achievement], action_factory:NamedFactory[Action]) -> tuple[LocationFactory,LocationDetailFactory]:
     factory = LocationFactory()
     folder = f"data/{game}/rooms"
     data = __read_in_folder(folder)
-    _, detail_factory = factory.many_from_dict(data, character_factory, item_factory, direction_factory, state_factory, achievement_factory)
+    _, detail_factory = factory.many_from_dict(data, character_factory, item_factory, direction_factory, state_factory, achievement_factory, action_factory)
     return factory, detail_factory
 
 def read_in_character_control(game:str, character_factory:CharacterFactory) -> CharacterControlFactory:
@@ -142,7 +142,7 @@ def read_in_game(game:str) -> tuple[LocationFactory, CharacterFactory, Character
     if DEBUG_READIN: print(f"Loaded {len(set(skill_sets.aliases.values()))} skill sets")
     characters   = read_in_characters(game, skill_sets, actions, states, achievements, graphs)
     if DEBUG_READIN: print(f"Loaded {len(set(characters.aliases.values()))} characters")
-    rooms,details = read_in_rooms(game, characters, items, directions, states, achievements)
+    rooms,details = read_in_rooms(game, characters, items, directions, states, achievements, actions)
     if DEBUG_READIN: print(f"Loaded {len(set(rooms.aliases.values()))} rooms")
     if DEBUG_READIN: print(f"Loaded {len(set(details.aliases.values()))} details")
     update_targets(game, items, characters, details, rooms, states, actions, achievements)

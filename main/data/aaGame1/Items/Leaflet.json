@@ -1,4 +1,3 @@
-
 {
     "name"             : "Leaflet",
     "description"      : "a small handwritten leaflet",
@@ -11,7 +10,6 @@
     "value"            : 1,
     "size"             : 1,
     "target_responses" : {
-        "take"         : "The lamp is surprisingly light!",
         "read"         : "Welcome to Thief: Level 1, a text-based adventure inspired by the OG, Zork. Explore a mysterious abandoned world as you quest to find your missing wallet and keys. Can you find them, and discover the grave secrets of this forsaken realm?"
     },
     "state_responses"  : {

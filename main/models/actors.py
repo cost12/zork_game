@@ -3,6 +3,7 @@ from typing import Optional
 from models.state       import State, Skill, FullState, SkillSet, Achievement
 from models.named       import Named, Action, Direction
 from models.requirement import ActionRequirement, ItemPlacementRequirement
+from models.response    import Response, ResponseString, StaticResponse, CombinationResponse
 from utils.constants    import *
 
 # HELPERS
@@ -45,16 +46,27 @@ class HasLocation(Named):
         self.hidden = hidden
         self.item_limit = ItemLimit() if item_limit is None else item_limit
         self.visible_requirements = list[ActionRequirement]() if visible_requirements is None else visible_requirements
-        self.item_responses = dict[HasLocation,str]() if item_responses is None else item_responses
+        self.item_responses = dict[HasLocation,ResponseString]() if item_responses is None else item_responses
 
     # GETTERS
 
-    def get_description_to(self, character:'Actor') -> str:
-        description = ""
-        for child in self.children.values():
-            if child.is_visible_to(character) and not child == character:
-                description += f"\n{child.get_description_to(character)}"
-        return description
+    def _description_helper(self, character:'Actor', special:list[str]) -> tuple[dict[str,list[ResponseString]],dict[str,ResponseString],list[ResponseString]]:
+        special_lists        = dict[str,list[ResponseString]]()
+        special_descriptions = dict[str,ResponseString]()
+        for word in special:
+            if word in self.children:
+                if self.children[word].is_visible_to(character):
+                    special_lists[word] = [grandchild for grandchild in self.children[word].children.values() if grandchild.is_visible_to(character)]
+                    sr = self.children[word].get_description_to(character)
+                    if sr is not None:
+                        special_descriptions[word] = sr
+        other = [child.get_description_to(character) for name,child in self.children.items() if (child.is_visible_to(character) and name not in special)]
+        return special_lists, special_descriptions, other
+        
+    def get_description_to(self, character:'Actor') -> ResponseString:
+        special = []
+        _, _, child_descriptions = self._description_helper(character, special)
+        return CombinationResponse(responses=child_descriptions)
 
     def get_parent(self) -> 'HasLocation':
         return self.parent
@@ -95,7 +107,7 @@ class HasLocation(Named):
         if origin:
             self.origin_parent = parent
 
-    def add_child(self, child:'HasLocation') -> tuple[bool,Optional[str]]:
+    def add_child(self, child:'HasLocation') -> tuple[bool,ResponseString]:
         if self.item_limit.can_add(child, list(self.children.values())):
             if not child.parent == self:
                 if not child.parent is None:
@@ -103,10 +115,10 @@ class HasLocation(Named):
                 self.children[child.get_name()] = child
                 child.parent = self
                 return True, self.item_responses.get(child, None)
-            return False, f"You already have {child.get_name()}"
+            return False, StaticResponse(f"You already have {child.get_name()}")
         return False, None
 
-    def remove_child(self, child:'HasLocation') -> tuple[bool,Optional[str]]:
+    def remove_child(self, child:'HasLocation') -> tuple[bool,ResponseString]:
         if child.get_name() in self.children:
             child.parent = None
             del self.children[child.get_name()]
@@ -140,31 +152,34 @@ class HasLocation(Named):
                 if child.contains_item_visible_to(item, character):
                     return True
         return False
+    
+    def list_contents_visible_to(self, character:'Actor') -> list['HasLocation']:
+        if self.is_visible_to(character):
+            if "inside" in self.children:
+                if self.children["inside"].is_visible_to(character):
+                    return [grandchild for grandchild in self.children["inside"].children.values() if grandchild.is_visible_to(character)]
+            else:
+                return [child for child in self.children.values() if child.is_visible_to(character)]
+        return list[HasLocation]()
 
 class LocationDetail(HasLocation):
 
-    def __init__(self, name:str="default", description:str="", *, hidden:bool=False, parent:'HasLocation'=None, children:dict[str,'HasLocation']=None, origin:bool=False, item_limit:ItemLimit=None, visible_requirements:list[ActionRequirement]=None, item_responses:dict['HasLocation',str]=None, aliases:list[str]=None):
+    def __init__(self, name:str="default", description:ResponseString=None, *, hidden:bool=False, parent:'HasLocation'=None, children:dict[str,'HasLocation']=None, origin:bool=False, item_limit:ItemLimit=None, visible_requirements:list[ActionRequirement]=None, item_responses:dict['HasLocation',ResponseString]=None, aliases:list[str]=None):
         super().__init__(name, hidden=hidden, parent=parent, children=children, origin=origin, item_limit=item_limit, visible_requirements=visible_requirements, item_responses=item_responses, aliases=aliases)
-        self.description = description
+        self.description = StaticResponse("") if description is None else description
 
-    def get_description_to(self, character:'Actor') -> str:
-        description = self.description
-        visible = [child for child in self.children.values() if child.is_visible_to(character) and not child == character]
-        if len(visible) > 0:
-            description += " "
-            description += ", ".join(child.get_description_to(character) for child in visible[:-1])
-            if len(visible) > 1:
-                description += " and"
-            description += f" {visible[-1].get_description_to(character)}."
-        return description
-    
+    def get_description_to(self, character:'Actor') -> ResponseString:
+        if self.is_visible_to(character):
+            return self.description
+        return None
+             
     def is_noteworthy(self) -> bool:
-        return len(self.description) > 0
+        return self.description is None or isinstance(self.description, StaticResponse) and len(self.description.response) == 0
 
 # PATHS/LOCATION DETAILS
 
 class Path(HasLocation):
-    def __init__(self, name:str, description:str, *, parent:'HasLocation'=None, children:dict[str,'HasLocation']=None, origin:bool=False, item_limit:ItemLimit=None, visible_requirements:list[ActionRequirement]=None, item_responses:dict['HasLocation',str]=None, passing_requirements:list[ActionRequirement]=None, hidden_when_locked:bool=False, exit_response:Optional[str]=None, aliases:Optional[list[str]]=None):
+    def __init__(self, name:str, description:ResponseString, *, parent:'HasLocation'=None, children:dict[str,'HasLocation']=None, origin:bool=False, item_limit:ItemLimit=None, visible_requirements:list[ActionRequirement]=None, item_responses:dict['HasLocation',str]=None, passing_requirements:list[ActionRequirement]=None, hidden_when_locked:bool=False, exit_response:ResponseString=None, aliases:Optional[list[str]]=None):
         super().__init__(name, parent=parent, children=children, origin=origin, item_limit=item_limit, visible_requirements=visible_requirements, item_responses=item_responses, aliases=aliases)
         self.description = description
         self.exit_response = exit_response
@@ -174,9 +189,11 @@ class Path(HasLocation):
     def __repr__(self):
         return f"[Path {self.name}]"
     
-    def get_description(self) -> str:
-        return self.description
-    
+    def get_description_to(self, character:'Actor') -> ResponseString:
+        if self.is_visible_to(character):
+            return self.description
+        return None
+        
     def _list_ends(self) -> list['Location']:
         pass
 
@@ -199,7 +216,7 @@ class Path(HasLocation):
                     detail = None if detail_name is None else location_detail_factory.get_detail(detail_name)
                     requirement.item_placements[item] = (location, detail, needed, response)
     
-    def can_pass(self, character:'Actor') -> tuple[bool,Optional[str]]:
+    def can_pass(self, character:'Actor') -> tuple[bool,ResponseString]:
         for requirement in self.passing_requirements:
             can_pass, response = requirement.meets_requirement(character)
             if not can_pass:
@@ -207,7 +224,7 @@ class Path(HasLocation):
         return True, self.exit_response
 
 class MultiEndPath(Path):
-    def __init__(self, name:str, description:str, *, end:'Location', multi_end:dict['Target','Location'], parent:'HasLocation'=None, children:dict[str,'HasLocation']=None, origin:bool=False, item_limit:ItemLimit=None, visible_requirements:list[ActionRequirement]=None, item_responses:dict['HasLocation',str]=None, passing_requirements:list[ActionRequirement]=None, hidden_when_locked:bool=False, exit_response:Optional[str]=None, aliases:Optional[list[str]]=None):
+    def __init__(self, name:str, description:ResponseString, *, end:'Location', multi_end:dict['Target','Location'], parent:'HasLocation'=None, children:dict[str,'HasLocation']=None, origin:bool=False, item_limit:ItemLimit=None, visible_requirements:list[ActionRequirement]=None, item_responses:dict['HasLocation',ResponseString]=None, passing_requirements:list[ActionRequirement]=None, hidden_when_locked:bool=False, exit_response:ResponseString=None, aliases:Optional[list[str]]=None):
         super().__init__(name, description, parent=parent, children=children, origin=origin, item_limit=item_limit, passing_requirements=passing_requirements, visible_requirements=visible_requirements, item_responses=item_responses, hidden_when_locked=hidden_when_locked, exit_response=exit_response, aliases=aliases)
         self.multi_end = multi_end
         self.default_end = end
@@ -225,24 +242,24 @@ class MultiEndPath(Path):
         for target in self.multi_end.keys():
             self.multi_end[target] = location_factory.get_location(self.multi_end[target])
 
-    def can_pass(self, character:'Actor') -> tuple[bool,Optional[str]]:
+    def can_pass(self, character:'Actor') -> tuple[bool,ResponseString]:
         can_pass, response = super().can_pass(character)
         if not can_pass:
             return False, response
-        items_holding = len([1 for item in self.multi_end.keys() if character.contains(item)])
+        items_holding = len([1 for item in self.multi_end.keys() if character.contains_item(item)])
         return items_holding == 1 or items_holding == 0 and self.default_end is not None, self.exit_response
 
     def get_end(self, character:'Actor'):
         if self.can_pass(character):
             for item, location in self.multi_end.items():
-                if character.contains(item):
+                if character.contains_item(item):
                     return location
             return self.default_end
         return None
 
 class SingleEndPath(Path):
 
-    def __init__(self, name:str, description:str, *, end:'Location', parent:'HasLocation'=None, children:dict[str,'HasLocation']=None, origin:bool=False, item_limit:ItemLimit=None, visible_requirements:list[ActionRequirement]=None, item_responses:dict['HasLocation',str]=None, passing_requirements:list[ActionRequirement]=None, hidden_when_locked:bool=False, exit_response:Optional[str]=None, aliases:Optional[list[str]]=None):
+    def __init__(self, name:str, description:ResponseString, *, end:'Location', parent:'HasLocation'=None, children:dict[str,'HasLocation']=None, origin:bool=False, item_limit:ItemLimit=None, visible_requirements:list[ActionRequirement]=None, item_responses:dict['HasLocation',ResponseString]=None, passing_requirements:list[ActionRequirement]=None, hidden_when_locked:bool=False, exit_response:ResponseString=None, aliases:Optional[list[str]]=None):
         super().__init__(name, description, parent=parent, children=children, origin=origin, item_limit=item_limit, passing_requirements=passing_requirements, visible_requirements=visible_requirements, item_responses=item_responses, hidden_when_locked=hidden_when_locked, exit_response=exit_response, aliases=aliases)
         self.end = end
 
@@ -264,36 +281,31 @@ class SingleEndPath(Path):
 
 class Target(HasLocation):
 
-    def __init__(self, name:str, description:str, states:FullState, *, weight:float=None, size:float=None, value:float=None, target_responses:Optional[dict[Action,str]]=None, tool_responses:Optional[dict['Action',str]]=None, state_responses:Optional[dict[State,str]]=None, parent:'HasLocation'=None, children:dict[str,'HasLocation']=None, origin:bool=False, visible_requirements:list[ActionRequirement]=None, item_responses:dict['HasLocation',str]=None, aliases:Optional[str]=None):
+    def __init__(self, name:str, description:ResponseString, states:FullState, *, weight:float=None, size:float=None, value:float=None, target_responses:Optional[dict[Action,ResponseString]]=None, tool_responses:Optional[dict['Action',ResponseString]]=None, state_responses:Optional[dict[State,ResponseString]]=None, parent:'HasLocation'=None, children:dict[str,'HasLocation']=None, origin:bool=False, visible_requirements:list[ActionRequirement]=None, item_responses:dict['HasLocation',ResponseString]=None, aliases:Optional[str]=None):
         super().__init__(name, parent=parent, children=children, origin=origin, visible_requirements=visible_requirements, item_responses=item_responses, aliases=aliases)
         self.description = description
         self.states = states
         self.weight = 1.0 if weight is None else weight
         self.size =   1.0 if size   is None else size
         self.value =  0.0 if value  is None else value
-        self.target_responses = dict[Action,str]() if target_responses is None else target_responses
-        self.tool_responses   = dict[Action,str]() if tool_responses   is None else tool_responses
-        self.state_responses  = dict[State,str]()  if state_responses  is None else state_responses
+        self.target_responses = dict[Action,ResponseString]() if target_responses is None else target_responses
+        self.tool_responses   = dict[Action,ResponseString]() if tool_responses   is None else tool_responses
+        self.state_responses  = dict[State, ResponseString]() if state_responses  is None else state_responses
 
     def __repr__(self):
         return f"[Target {self.name}]"
 
     # HasLocation overrides
 
-    def get_description_to(self, character:'Actor'):
-        description = self.description
-        visible = [child for child in self.children.values() if (child.is_visible_to(character) and not (child == character))]
-        if len(visible) > 0:
-            description += " " + ", ".join(child.get_description_to(character) for child in visible[:-1])
-            if len(visible) > 1:
-                description += " and"
-            description += f" {visible[-1].get_description_to(character)}."
-        return description
+    def get_description_to(self, character:'Actor') -> ResponseString:
+        if self.is_visible_to(character):
+            return self.description
+        return None
 
-    def add_child(self, child:HasLocation) -> tuple[bool,Optional[str]]:
+    def add_child(self, child:HasLocation) -> tuple[bool,ResponseString]:
         return False, None
     
-    def remove_child(self, child:HasLocation) -> tuple[bool,Optional[str]]:
+    def remove_child(self, child:HasLocation) -> tuple[bool,ResponseString]:
         return False, None
 
     def get_weight(self):
@@ -307,20 +319,17 @@ class Target(HasLocation):
     
     # ACCESS LOCATIONS
 
-    def add_item(self, item:HasLocation, child:str) -> tuple[bool,str]:
+    def add_item(self, item:HasLocation, child:str) -> tuple[bool,ResponseString]:
         if child in self.children:
             return self.children[child].add_child(item)
-        return False, f"{child} does not exist"
+        return False, StaticResponse(f"{child} does not exist")
     
-    def remove_item(self, item:HasLocation, child:str) -> bool:
+    def remove_item(self, item:HasLocation, child:str) -> tuple[bool,ResponseString]:
         if child in self.children:
             return self.children[child].remove_child(item)
         return False, None
     
     # OTHER
-
-    def get_description(self) -> str:
-        return self.description
 
     def get_current_state(self) -> list[State]:
         return self.states.get_current_states()
@@ -331,44 +340,44 @@ class Target(HasLocation):
     def get_actions_as_tool(self) -> list[Action]:
         return self.states.get_available_actions_as_tool()
     
-    def get_target_response(self, action:Action) -> Optional[str]:
+    def get_target_response(self, action:Action) -> ResponseString:
         if action in self.target_responses:
             return self.target_responses[action]
         return None
     
-    def get_tool_response(self, action:Action) -> Optional[str]:
+    def get_tool_response(self, action:Action) -> ResponseString:
         if action in self.tool_responses:
             return self.tool_responses[action]
         return None
 
-    def perform_action_as_target(self, action:Action) -> list[str]:
-        response = list[str]()
+    def perform_action_as_target(self, action:Action) -> ResponseString:
+        response = list[ResponseString]()
         new_states = self.states.perform_action_as_target(action)
         for new_state in new_states:
             if DEBUG_RESPONSE: print(f"Target: {self.name} {action} {new_state} {self.state_responses}")
             if new_state in self.state_responses:
                 response.append(self.state_responses[new_state])
-        return response
+        return CombinationResponse(response, joiner="\n")
     
-    def perform_action_as_tool(self, action:Action) -> list[str]:
-        response = list[str]()
+    def perform_action_as_tool(self, action:Action) -> list[ResponseString]:
+        response = list[ResponseString]()
         new_states = self.states.perform_action_as_tool(action)
         for new_state in new_states:
             if new_state in self.state_responses:
                 response.append(self.state_responses[new_state])
-        return response
+        return CombinationResponse(response, joiner="\n")
 
 class Actor(Target):
 
-    def __init__(self, name:str, description:str, type:str, states:FullState, skills:SkillSet, *, achievements:set[Achievement]=None, weight:float=None, size:float=None, value:float=None, actor_responses:Optional[dict['Action',str]]=None, target_responses:Optional[dict['Action',str]]=None, tool_responses:Optional[dict['Action',str]]=None, state_responses:Optional[dict[State,str]]=None, aliases:Optional[list[str]]=None, parent:'HasLocation'=None, children:dict[str,'HasLocation']=None, origin:bool=False, visible_requirements:list[ActionRequirement]=None, item_responses:dict['HasLocation',str]=None):
+    def __init__(self, name:str, description:ResponseString, type:str, states:FullState, skills:SkillSet, *, achievements:set[Achievement]=None, weight:float=None, size:float=None, value:float=None, actor_responses:Optional[dict['Action',ResponseString]]=None, target_responses:Optional[dict['Action',ResponseString]]=None, tool_responses:Optional[dict['Action',ResponseString]]=None, state_responses:Optional[dict[State,ResponseString]]=None, aliases:Optional[list[str]]=None, parent:'HasLocation'=None, children:dict[str,'HasLocation']=None, origin:bool=False, visible_requirements:list[ActionRequirement]=None, item_responses:dict['HasLocation',ResponseString]=None):
         super().__init__(name, description, states, weight=weight, size=size, value=value, target_responses=target_responses, tool_responses=tool_responses, state_responses=state_responses, parent=parent, children=children, origin=origin, visible_requirements=visible_requirements, item_responses=item_responses, aliases=aliases)
-        self.actor_responses = dict[Action,str]() if actor_responses is None else actor_responses
+        self.actor_responses = dict[Action,ResponseString]() if actor_responses is None else actor_responses
         self.type = type
         self.skills = skills
         self.achievements = set[Achievement]() if achievements is None else achievements
 
         if 'inventory' not in self.children:
-            self.children['inventory'] = LocationDetail(name='inventory', description=f"{name}'s inventory", hidden=True)
+            self.children['inventory'] = LocationDetail(name='inventory', description=StaticResponse(f"{name}'s inventory"), hidden=True)
 
     def __repr__(self):
         return f"[Actor {self.name}]"
@@ -394,20 +403,20 @@ class Actor(Target):
     def get_actions_as_actor(self) -> list[Action]:
         return self.states.get_available_actions_as_actor()
 
-    def get_actor_response(self, action:Action) -> Optional[str]:
+    def get_actor_response(self, action:Action) -> ResponseString:
         if action in self.actor_responses:
             return self.actor_responses[action]
         return None
 
-    def perform_action_as_actor(self, action:Action) -> list[str]:
-        response = list[str]()
+    def perform_action_as_actor(self, action:Action) -> ResponseString:
+        response = list[ResponseString]()
         if action in self.actor_responses:
             response.append(self.actor_responses[action])
         new_states = self.states.perform_action_as_actor(action)
         for new_state in new_states:
             if new_state in self.actor_responses:
                 response.append(self.actor_responses[new_state])
-        return response
+        return CombinationResponse(response, joiner="\n")
 
     # ACHIEVEMENTS
 
@@ -419,10 +428,10 @@ class Actor(Target):
 
     # INVENTORY
 
-    def add_to_inventory(self, item:'Target') -> tuple[bool,Optional[str]]:
+    def add_to_inventory(self, item:'Target') -> tuple[bool,ResponseString]:
         return self.children['inventory'].add_child(item)
     
-    def remove_from_inventory(self, item:'Target', placement:Optional[HasLocation]=None) -> tuple[bool,Optional[str]]:
+    def remove_from_inventory(self, item:'Target', placement:Optional[HasLocation]=None) -> tuple[bool,ResponseString]:
         if self.children['inventory'].remove_child(item):
             if placement is None:
                 item.set_location(self.get_top_parent())
@@ -438,27 +447,30 @@ class Actor(Target):
 
 class Location(HasLocation):
 
-    def __init__(self, name:str, description:str, paths:dict[Direction,Path], *, direction_responses:dict[Direction,str], start_location:bool=False, parent:'HasLocation'=None, children:dict[str,'HasLocation']=None, origin:bool=False, item_limit:ItemLimit=None, visible_requirements:list[ActionRequirement]=None, item_responses:dict['HasLocation',str]=None, aliases:Optional[str]=None):
+    def __init__(self, name:str, description:ResponseString, paths:dict[Direction,Path], *, direction_responses:dict[Direction,ResponseString], start_location:bool=False, parent:'HasLocation'=None, children:dict[str,'HasLocation']=None, origin:bool=False, item_limit:ItemLimit=None, visible_requirements:list[ActionRequirement]=None, item_responses:dict['HasLocation',ResponseString]=None, aliases:Optional[str]=None):
         super().__init__(name, parent=parent, children=children, origin=origin, item_limit=item_limit, visible_requirements=visible_requirements, item_responses=item_responses, aliases=aliases)
         self.description = description
         self.paths = paths
-        self.direction_responses = dict[Direction,str]() if direction_responses is None else direction_responses
+        self.direction_responses = dict[Direction,ResponseString]() if direction_responses is None else direction_responses
         self.start_location = start_location
 
     def __repr__(self):
         return f"[Location {self.name}]"
 
-    def get_description(self, actor:Actor) -> str:
-        full_description = f"[{self.name}]\n{self.description}"
+    def get_description_to(self, actor:Actor) -> ResponseString:
+        responses = [StaticResponse(f"[{self.name}]"), self.description]
 
         for direction,path in self.paths.items():
             if path.is_visible_to(actor):
-                full_description += f"\n{path.get_description()}"
+                responses.append(path.get_description_to(actor))
 
         for child in self.children.values():
             if child.is_visible_to(actor) and not child == actor:
-                full_description += f"\n{child.get_description_to(actor)}"
-        return full_description
+                if isinstance(child, Target):
+                    responses.append(CombinationResponse([StaticResponse("There is "), child.get_description_to(actor)]))
+                else:
+                    responses.append(child.get_description_to(actor))
+        return CombinationResponse(responses, joiner="\n")
     
     def can_interact_with(self, character:Actor, item:Target) -> bool:
         if character.contains_item(item):
@@ -480,7 +492,7 @@ class Location(HasLocation):
     def is_start_location(self) -> bool:
         return self.start_location
 
-    def get_path(self, character:Actor, direction:Direction) -> tuple[Path,str]:
+    def get_path(self, character:Actor, direction:Direction) -> tuple[Path,ResponseString]:
         path = None
         if direction in self.paths:
             path = self.paths[direction]
@@ -493,7 +505,7 @@ class Location(HasLocation):
             return None, response
         return path, response
 
-    def _get_path(self, direction:Direction) -> tuple[Path,str]:
+    def _get_path(self, direction:Direction) -> tuple[Path,ResponseString]:
         path = None
         if direction in self.paths:
             path = self.paths[direction]
@@ -501,5 +513,4 @@ class Location(HasLocation):
             for direction, path2 in self.paths.items():
                 if direction.get_name() == 'any':
                     path = path2
-        response = self.direction_responses.get(direction, None)
-        return path, response
+        return path, self.direction_responses.get(direction, None)

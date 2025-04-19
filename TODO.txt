@@ -1,5 +1,6 @@
 [] responses
     Target/actor/tool response should depend on Action, State, and success (of Action)
+    decide what response/responsestrings should be like with multiple targets/tools
 [] Feedback
     store data in a format that can be passed to either the commandline or CPU controlled character
     add Feedback about what other Characters in the room experience (or in adjacent rooms hear)
@@ -44,3 +45,6 @@
     see more at __ItemDetails (items)
 [] special text/ features
     see more at __SpecialDeets (rooms)
+[] multiplayer
+[] character selection/creation?
+[] inputs for actions should use **kwargs format

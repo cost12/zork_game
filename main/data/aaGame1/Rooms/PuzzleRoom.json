@@ -15,7 +15,7 @@
     },
     "details"    : [
         {
-            "name"        : "table",
+            "name"        : "table3",
             "description" : "on the table",
             "contents"    : ["puzzle"]
         }

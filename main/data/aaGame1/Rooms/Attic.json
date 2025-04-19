@@ -1,16 +1,27 @@
-
 {
     "name"       : "Attic",
     "description": "You are in a musty, small attic. It is mostly empty, except for a table.",
     "paths"      : {
-        "down"  : {
+        "down"   : {
             "name"        : "Exit 1",
-            "description" : "a trapdoor flush with the floor",
-            "end"         : "Bedroom",
-            "path_items"  : ["trapdoor"],
-            "item_state_requirements" : {
-                "trapdoor"   : {
-                    "opened" : [true, null]
+            "description" : [
+                "At your feet ",
+                {
+                    "type"      : "item_state",
+                    "target"    : "trapdoor",
+                    "responses" : {
+                        "opened": "the trapdoor is still open.",
+                        "closed": "lies a trapdoor flush with the floor."
+                    }
+                }
+            ],
+            "end"            : "Bedroom",
+            "path_items"     : ["trapdoor"],
+            "passing_requirements": {
+                "item_state_requirements" : {
+                    "trapdoor"   : {
+                        "opened" : [true, null]
+                    }
                 }
             }
         }
@@ -18,7 +29,11 @@
     "details" : [
         {
             "name"        : "table",
-            "description" : "on the spindly table",
+            "description" : {
+                "type"    : "contents",
+                "full"    : "On a spindly table you find",
+                "empty"   : null
+            },
             "contents"    : ["Leaflet", "hourglass", "yellow book"]
         }
     ]

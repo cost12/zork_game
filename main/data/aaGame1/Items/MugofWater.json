@@ -1,6 +1,12 @@
 {
     "name"             : "Mug",
-    "description"      : "a small ceramic mug full of water",
+    "description"      : [
+        {
+            "type"     : "contents",
+            "full"     : "a small ceramic mug full of",
+            "empty"    : "an empty ceramic mug"
+        }
+    ],
     "state"            : {
         "states"       : ["visible"],
         "graphs"       : ["takeable", "container"]
@@ -10,7 +16,7 @@
     "size"             : 1,
     "details"          : [
         {
-            "name"             : "in",
+            "name"             : "inside",
             "item_limit"       : {
                 "size"         : 1,
                 "weight"       : 1
@@ -18,12 +24,24 @@
             "contents"         : ["water"]
         }
     ],
-    "target_responses" : {
-        "pour"         : "You empty the mug's contents, making a bit of a mess..."
+    "target_responses"  : {
+        "pour"          : {
+            "type"      : "contents_with_state",
+            "responses" : {
+                "liquid": "You empty the mug's contents, making a bit of a mess..."
+            },
+            "default"   : "You turn the mug upside down, but nothing comes out."
+        }
     },
     "state_responses"  : {
         "broken"       : "The mug is broken and can't be put back together again. Pity...",
-        "held"         : "You take the mug. Be fareful not to slosh!"
+        "held"         : {
+            "type"     : "contents_with_state",
+            "responses" : {
+                "liquid": "You take the mug. Be fareful not to slosh!"
+            },
+            "default"   : "You take the mug."
+        }
     },
     "item_responses"   : {
         "honey"        : "The mug is full of honey.",

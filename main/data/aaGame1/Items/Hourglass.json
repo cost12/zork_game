@@ -1,7 +1,7 @@
 
 {
     "name"             : "Hourglass",
-    "description"      : "an ancient, fragile hourglass",
+    "description"      : "an ancient fragile hourglass",
     "state"            : {
         "states"       : ["visible"],
         "graphs"       : ["takeable"],

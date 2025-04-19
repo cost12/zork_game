@@ -3,14 +3,25 @@
     "name"       : "Bedroom",
     "description": "You are in a humble bedroom. A small bed lines one wall. It looks cozy. Feeble light seeps through a small overhead light.",
     "paths"      : {
-        "east"  : {
+        "east"   : {
             "name"        : "Exit 1",
             "description" : "To the east, you see a doorway.",
             "end"         : "Bathroom"
         },
         "Up"  : {
             "name"        : "Exit 2",
-            "description" : "Above your head is a trapdoor on the ceiling.",
+            "description" : [
+                "Above your head is ", 
+                {
+                    "type"       : "item_state",
+                    "target"     : "trapdoor",
+                    "responses"  : {
+                        "opened" : "an opened",
+                        "closed" : "a closed"
+                    }
+                },
+                " trapdoor in the ceiling."
+            ],
             "end"         : "Attic",
             "path_items"  : ["trapdoor"],
             "passing_requirements" : {
@@ -30,7 +41,11 @@
     "details"    : [
         {
             "name"        : "bedside",
-            "description" : "On the bedside table rests",
+            "description" : {
+                "type"    : "contents",
+                "full"    : "On the bedside table rests",
+                "empty"   : "Next to the bed sits an empty table"
+            },
             "contents"    : ["Mug", "Brown Book"]
         }
     ],

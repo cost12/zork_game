@@ -1,6 +1,16 @@
 {
     "name"             : "trapdoor",
-    "description"      : "a small trapdoor",
+    "description"      : [
+        "a small, ",
+        {
+            "type"      : "item_state",
+            "responses" : {
+                "opened": "open",
+                "closed": "closed"
+            }
+        },
+        " trapdoor"
+    ],
     "state"            : {
         "states"       : ["visible"],
         "graphs"       : ["open_close"]

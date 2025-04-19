@@ -2,3 +2,4 @@ DEBUG_INPUT    = False
 DEBUG_TAKE     = False
 DEBUG_READIN   = True
 DEBUG_RESPONSE = False
+DEBUG_RESPONSES= True

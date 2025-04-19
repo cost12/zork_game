@@ -15,7 +15,7 @@
     },
     "details" : [
         {
-            "name"        : "table",
+            "name"        : "table2",
             "description" : "on a table",
             "contents"    : ["Plate"]
         }

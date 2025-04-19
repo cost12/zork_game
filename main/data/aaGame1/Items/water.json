@@ -1,11 +1,13 @@
 {
     "name"             : "water",
-    "description"      : "a bit of water.",
+    "description"      : "water",
     "state"            : {
-        "states"       : ["visible", "drinkable"],
-        "graphs"       : ["takeable"]
+        "states"       : ["visible", "liquid"]
     },
     "weight"           : 1,
     "value"            : 1,
-    "size"             : 1
+    "size"             : 1,
+    "target_responses" : {
+        "take"         : "You reach a hand into the water and attempt to grab it. Unsurprisingly this method is innefective and only leaves your hand slightly wet. I hope you weren't planning to drink this water."
+    }
 }

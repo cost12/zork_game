@@ -1,28 +1,22 @@
 from dataclasses import dataclass
 
+from models.response import ResponseString, Response
 import views.string_views as views
 
-@dataclass(frozen=True)
+#@dataclass(frozen=True)
 class Feedback:
     """This is a dataclass.
     Represents a response from the GameState to the CharacterController after an Action
-    
-    :param feedback: A string summary of what the Character experiences.
-    :type feedback: str
-    :param success: True if the Character's attempted Action was successful. Defaults to True.
-    :type success: bool
-    :param moves: The number of moves taken up by the Action, typically 1. Defaults to 1.
-    :type moves: int
-    :param turns: The number of turns taken up by the Action, typically 0 or 1. Defaults to 1.
-    :type turns: int
-    :param score: The number of points gained by completing the Action, typically 0. Defaults to 0.
-    :type score: int
     """
-    feedback:str
-    success:bool=True
-    moves:int=1
-    turns:int=1
-    score:int=0
+    def __init__(self, response_string:ResponseString, response:Response, moves:int=1, turns:int=1, score:int=0):
+        self.response_string = response_string
+        self.response = response
+        self.moves = moves
+        self.turns = turns
+        self.score = score
+
+    def get_success(self) -> bool:
+        return self.response.success
 
     def as_string(self) -> str:
         """A string representation of the Feedback to be output to the command line.
@@ -30,7 +24,7 @@ class Feedback:
         :return: A string representation of the Feedback
         :rtype: str
         """
-        return self.feedback
+        return self.response_string.as_string(self.response)
 
 class CharacterController:
     """This is an abstract class and should not be initialized.
