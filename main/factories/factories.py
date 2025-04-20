@@ -596,7 +596,6 @@ class ItemFactory:
             if 'state_responses' in item_dict:
                 item.state_responses  = state_responses_from_dict(name,  item_dict['state_responses'],  self, character_factory, detail_factory, location_factory, state_factory, action_factory, achievement_factory)
             
-
 class SkillSetFactory:
 
     def __init__(self):
@@ -734,7 +733,6 @@ class CharacterFactory:
                 character.tool_responses   = action_responses_from_dict(name, character_dict['tool_responses'],   item_factory, self, detail_factory, location_factory, state_factory, action_factory, achievement_factory)
             if 'state_responses' in character_dict:
                 character.state_responses  = state_responses_from_dict(name,  character_dict['state_responses'],  item_factory, self, detail_factory, location_factory, state_factory, action_factory, achievement_factory)
-
 
 class LocationDetailFactory:
 
