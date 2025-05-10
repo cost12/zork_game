@@ -6,7 +6,7 @@ from models.named           import Action
 from models.actors          import Location
 from models.state           import StateGroup, StateGraph, StateDisconnectedGraph
 from factories.data_read_in import read_in_game
-from factories.factories    import LocationFactory, ItemFactory
+from utils.relator          import NameFinder
 
 class NodeInfo:
     def __init__(self, *, room:Location=None, state_group:StateGroup=None):
@@ -183,15 +183,15 @@ def visualize_graph(nodes:list[NodeInfo], save_name:str) -> None:
     nt.show_buttons(filter_=True)
     nt.write_html(f'{save_name}.html', notebook=False)
 
-def visualize_items(game:str, items:ItemFactory):
-    for item in items.get_items():
+def visualize_items(game:str, items:NameFinder):
+    for item in items.get_from_name(category='target'):
         if item.states is None:
             print(item.get_name())
         nodes = get_sdg_nodes(item.states)
         visualize_graph(nodes, f'main/game_info/{game}/items/{item.get_name()}')
 
-def visualize_rooms(game:str, rooms:LocationFactory):
-    for room in rooms.get_locations():
+def visualize_rooms(game:str, rooms:NameFinder):
+    for room in rooms.get_from_name(category='location'):
         if room.is_start_location():
             nodes = get_room_nodes(room)
             break
