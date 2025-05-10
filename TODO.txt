@@ -1,17 +1,21 @@
-Big:
-[] allow items with same name
-    have unique id for equality/ dicts, dict[str,Named] -> dict[str,list[Named]] and figure out which one based on context/ asking questions
-    new data structure like dict?
-[] input translator
-    multiple grammars
-    word tree (items/actions with multiple words)
+x - complete
+o - in progress
+
+User Input:
+[] use questions/reasoning to resolve ambiguity in user input
+[] use multiple grammars to decipher input
+[] add more interactions to start - choose which mode to use (play/visualize/debug) choose which game to play
+
+Output:
+[] make sure all print/output are handled by one class/package to be more flexible/easy to change
 
 Not fully applied/ used:
 [] responses
-    Target/actor/tool response should depend on Action, State, and success (of Action)
-    decide what response/responsestrings should be like with multiple targets/tools
-[] action requirements (use them)
-    Targets/tools have requirements for being used -> State?
+    keep adding new types as needed
+    apply to more rooms
+[] action requirements
+    keep adding new types as needed
+    apply to more characters/items
     Rooms have requirements for actions in them (light for vision)
         lantern rooms can't see when lamp is not on -> any exit is random: see rooms at __NeedLantern (rooms)
 [] states
@@ -41,12 +45,15 @@ Low Priority:
     return a tuple of an Action and inputs so CPU controlled Characters can make decisions more easily.
     create a more complex NPCController
     convert string into and Action and inputs and return Action, inputs
-[] actions
+[] implement all actions
     see more at __ItemDetails (items)
+    [] actions could have default responses for success/failure (take: Taken./No items were taken., drop: Dropped./No items were dropped.)
+    [] actions have default boolean (if true they get only get the default action implementation but without the warning that it is not implemented)
 [] special text/ features
     see more at __SpecialDeets (rooms)
 [] multiplayer
 [] character selection/creation?
+[] detail wearing for characters
 
 Formatting/style:
 [] inputs for actions should use **kwargs format
@@ -57,9 +64,9 @@ Other:
 [] testing
 [] comments
 [] visualization
+[] how will this be shared
 
 Needs input:
 [] ideas/questions
     contents of wallet at the end are determined by actions during the game
     do theatre passages need instruments to be unbroken
-    detail for wearing for characters
