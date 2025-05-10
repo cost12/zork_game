@@ -13,8 +13,8 @@
         }
     },
     "target_responses" : {
-        "look" : "you look at your hands, grappling with the deeds they have done",
-        "take" : "Trust us, you are already quite taken with yourself.",
-        "kill" : "with what? Trust us, it gets better."
+        "look"   : "you look at your hands, grappling with the deeds they have done",
+        "take"   : "Trust us, you are already quite taken with yourself.",
+        "attack" : "with what? Trust us, it gets better."
     }
 }

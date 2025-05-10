@@ -10,7 +10,7 @@
     "size"             : 1,
     "target_responses" : {
         "take"         : "You take the the candle. In your hand, the flame extinguishes with a delicate drift of fragrant smoke",
-        "light"        : "With what?"
+        "burn"        : "With what?"
      },
     "state_responses"  : {
         "broken" : "What is the point!"

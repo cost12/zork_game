@@ -1,29 +1,29 @@
 [
     {
         "state_groups"    : [
-            {"name": "breakable", "states": ["breakable"]},
+            {"name": "breakable", "states": ["breakable"], "id":"breakable (group)"},
             {"name": "broken",    "states": ["broken"]},
             {"name": "held",      "states": ["held"]},
-            {"name": "takeable",  "states": ["takeable"]},
+            {"name": "takeable",  "states": ["takeable"], "id": "takeable (group)"},
             {"name": "off",       "states": ["off", "breakable"]},
             {"name": "broken_off","states": ["off", "broken"]},
             {"name": "on",        "states": ["on", "breakable"]},
-            {"name": "flammable", "states": ["flammable"]},
+            {"name": "flammable", "states": ["flammable"], "id": "flammable (group)"},
             {"name": "on fire",   "states": ["on fire"]},
             {"name": "burned",    "states": ["burned"]},
             {"name": "opened",    "states": ["opened"]},
             {"name": "closed",    "states": ["closed"]},
             {"name": "broken_open",     "states": ["opened", "broken"]},
-            {"name": "locked",          "states": ["locked", "closed"]},
+            {"name": "locked",          "states": ["locked", "closed"], "id": "locked (group)"},
             {"name": "unlocked_closed", "states": ["unlocked", "closed"]},
             {"name": "unlocked_open",   "states": ["unlocked", "opened"]},
-            {"name": "wearable",        "states": ["wearable"]},
+            {"name": "wearable",        "states": ["wearable"], "id": "wearable (group)"},
             {"name": "worn",            "states": ["worn"]},
             {"name": "tied",            "states": ["tied"]},
             {"name": "untied",          "states": ["untied"]},
             {"name": "full",            "states": ["full"]},
-            {"name": "empty",           "states": ["empty"]},
-            {"name": "broken_empty",    "states": ["empty", "broken"]}
+            {"name": "empty",           "states": ["empty (state)"]},
+            {"name": "broken_empty",    "states": ["empty (state)", "broken"]}
         ]
     },
     {
@@ -51,34 +51,34 @@
     },
     {
         "name"            : "wearable",
-        "current_state"   : "wearable",
+        "current_state"   : "wearable (group)",
         "target_graph"    : {
-            "wearable"    : {
-                "put on"  : "worn",
+            "wearable (group)"    : {
+                "wear"    : "worn",
                 "break"   : "broken"
             },
             "worn"        : {
-                "take off": "wearable",
+                "take off": "wearable (group)",
                 "break"   : "broken"
             }
         }
     },
     {
         "name"            : "locked",
-        "current_state"   : "locked",
+        "current_state"   : "locked (group)",
         "target_graph"    : {
-            "locked"      : {
+            "locked (group)"      : {
                 "unlock"  : "unlocked_closed",
                 "break"   : "broken_open"
             },
             "unlocked_closed" : {
                 "open"    : "unlocked_open",
-                "lock"    : "locked",
+                "lock"    : "locked (group)",
                 "break"   : "broken_open"
             },
             "unlocked_open" : {
                 "close"   : "unlocked_closed",
-                "lock"    : "locked",
+                "lock"    : "locked (group)",
                 "break"   : "broken_open"
             }
         }
@@ -99,22 +99,22 @@
     },
     {
         "name"            : "lightable",
-        "current_state"   : "flammable",
+        "current_state"   : "flammable (group)",
         "target_graph"    : {
-            "flammable"   : {
-                "light"   :"on fire"
+            "flammable (group)"   : {
+                "burn"   :"on fire"
             },
             "on fire"     : {
-                "extinguish": "flammable"
+                "extinguish": "flammable (group)"
             }
         }
     },
     {
         "name"            : "flammable",
-        "current_state"   : "flammable",
+        "current_state"   : "flammable (group)",
         "target_graph"    : {
-            "flammable"   : {
-                "light"   : "on fire"
+            "flammable (group)"   : {
+                "burn"   : "on fire"
             },
             "on fire"     : {
                 "extinguish": "burned"
@@ -126,22 +126,22 @@
     },
     {
         "name"            : "breakable",
-        "current_state"   : "breakable",
+        "current_state"   : "breakable (group)",
         "target_graph"    : {
-            "breakable"   : {
+            "breakable (group)"   : {
                 "break"   : "broken"
             }
         }
     },
     {
         "name"            : "takeable",
-        "current_state"   : "takeable",
+        "current_state"   : "takeable (group)",
         "target_graph"    : {
-            "takeable"    : {
+            "takeable (group)"    : {
                 "take"    : "held"
             },
             "held"        : {
-                "drop"    : "takeable"
+                "drop"    : "takeable (group)"
             }
         }
     },

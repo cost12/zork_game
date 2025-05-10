@@ -16,7 +16,7 @@
     {"name": "eat",         "aliases" : ["eat"]},
     {"name": "drink",       "aliases" : ["drink"]},
     {"name": "dig",         "aliases" : ["dig"]},
-    {"name": "put on",      "aliases" : ["put on", "wear"]},
+    {"name": "wear",        "aliases" : ["put on", "wear"]},
     {"name": "take off",    "aliases" : ["take off", "remove"]},
     {"name": "shoot",       "aliases" : ["shoot", "throw", "toss"]},
     {"name": "bounce",      "aliases" : ["bounce", "dribble"]},
@@ -39,10 +39,10 @@
     {"name": "admire",      "aliases" : ["admire"]},
     {"name": "squeeze",     "aliases" : ["squeeze"]},
     {"name": "ride",        "aliases" : ["ride"]},
-    {"name": "perform trick", "aliases": ["do", "perform"]},
-    {"name": "lift",          "aliases": ["lift"]},
-    {"name": "pour",          "aliases": ["pour"]},
-    {"name": "hug",           "aliases": ["hug"]},
-    {"name": "kiss",          "aliases": ["kiss"]},
-    {"name": "compliment",    "aliases": ["compliment"]}
+    {"name": "perform",     "aliases": ["do", "perform"]},
+    {"name": "lift",        "aliases": ["lift"]},
+    {"name": "pour",        "aliases": ["pour"]},
+    {"name": "hug",         "aliases": ["hug"]},
+    {"name": "kiss",        "aliases": ["kiss"]},
+    {"name": "compliment",  "aliases": ["compliment"]}
 ]

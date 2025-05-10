@@ -13,11 +13,11 @@
         }
     },
     "target_responses" : {
-        "look" : "You feel somewhat offput looking at the bully, for he leers at you languidly, breathing through his mouth.",
-        "take" : "You couldn't if you tried.",
-        "kill" : "With what?",
-        "hug"  : "The bully calls you the f-slur!",
-        "kiss" : "The bully calls you the f-slur!",
+        "look"   : "You feel somewhat offput looking at the bully, for he leers at you languidly, breathing through his mouth.",
+        "take"   : "You couldn't if you tried.",
+        "attack" : "With what?",
+        "hug"    : "The bully calls you the f-slur!",
+        "kiss"   : "The bully calls you the f-slur!",
         "compliment" : "The bully dismisses you, but he blushes a little..."
     }
 }

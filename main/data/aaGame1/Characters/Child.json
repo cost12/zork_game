@@ -13,10 +13,10 @@
         }
     },
     "target_responses" : {
-        "look" : "You feel sorry for the lonesome child. They do not meet your gaze",
-        "take" : "Amber alert!",
-        "kill" : "A child???",
-        "hug"  : "This briefly comforts the sorry child.",
-        "kiss" : "Okay Drake"
+        "look"   : "You feel sorry for the lonesome child. They do not meet your gaze",
+        "take"   : "Amber alert!",
+        "attack" : "A child???",
+        "hug"    : "This briefly comforts the sorry child.",
+        "kiss"   : "Okay Drake"
     }
 }

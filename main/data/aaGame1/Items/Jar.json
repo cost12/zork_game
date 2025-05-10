@@ -22,8 +22,8 @@
     },
     "state_responses"  : {
         "full"         : "The jar is empty",
-        "empty"        : "The jar is full.",
-        "broken"      : "The jar shatters, rendering itself unusable. Nice going"
+        "empty (state)": "The jar is full.",
+        "broken"       : "The jar shatters, rendering itself unusable. Nice going"
     },
     "item_responses"   : {
         "honey"        : "The jar is full of honey.",

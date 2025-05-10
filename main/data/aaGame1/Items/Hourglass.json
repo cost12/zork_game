@@ -12,7 +12,7 @@
     "size"             : 1,
     "target_responses" : {
         "take"         : "The hourglass is delicate in your grasp.",
-        "flip"         : "Grains of sand tumble through the hourglass, mezmerising you."
+        "toggle"       : "Grains of sand tumble through the hourglass, mezmerising you."
     },
     "state_responses"  : {
         "broken"       : "The hourglass easily snaps, the sang spilling. You hear a whooshing sound, as if some spell or curse has been lifted somewhere."

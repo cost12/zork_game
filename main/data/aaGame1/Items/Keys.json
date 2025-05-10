@@ -10,7 +10,7 @@
     "size"             : 1,
     "target_responses" : {
         "take"         : "You take the jangling keychain.",
-        "remove"       : "You try to remove it from the keychain's ring but your fingernails are too short to separate the ring's loops.",
+        "take off"     : "You try to remove it from the keychain's ring but your fingernails are too short to separate the ring's loops.",
         "admire"       : "Nami so pretty"
     }
 }

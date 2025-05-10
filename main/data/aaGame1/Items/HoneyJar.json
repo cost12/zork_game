@@ -22,7 +22,7 @@
         "take"         : "The jar is cool to the touch."
     },
     "state_responses"  : {
-        "empty"        : "The jar is empty.",
+        "empty (state)": "The jar is empty.",
         "broken"       : "The jar shatters, rendering itself unusable. Nice going"
     },
     "item_responses"   : {
