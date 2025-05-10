@@ -1,1 +1,1 @@
-GAME_TO_TEST = 'game0'
+GAME_TO_TEST = 'aagame1'

@@ -1,6 +1,6 @@
 from typing import Any
 
-from tests.conftest import game_details
+from tests.conftest import game
 
 def test_read_in(game_details:dict[str,Any]):
     assert isinstance(game_details, dict)

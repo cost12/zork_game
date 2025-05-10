@@ -1,15 +1,13 @@
-from tests.conftest      import state_graphs
-from factories.factories import StateGraphFactory
+from utils.relator       import NameFinder
 from models.actors       import Action
 from models.state        import State, StateGraph, StateGroup
 
-def test_read_in(state_graphs:StateGraphFactory):
-    factory = state_graphs
-    all = factory.get_state_graphs()
+def test_read_in(setup_space:NameFinder):
+    all = setup_space.get_from_name(category='stategraph')
     for state_graph in all:
         assert isinstance(state_graph, StateGraph)
         for alias in state_graph.get_aliases():
-            assert state_graph == factory.get_state_graph(alias)
+            assert state_graph == setup_space.get_from_name(alias, category='stategraph')[0]
         for action in state_graph.get_available_actions_as_actor():
             assert isinstance(action, Action)
         for action in state_graph.get_available_actions_as_target():

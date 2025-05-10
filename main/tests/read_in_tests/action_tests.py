@@ -1,11 +1,9 @@
-from tests.conftest      import actions
-from factories.factories import NamedFactory
+from utils.relator       import NameFinder
 from models.actors       import Action
 
-def test_read_in(actions:NamedFactory[Action]):
-    factory = actions
-    all = factory.get_all_named()
+def test_read_in(name_space:NameFinder):
+    all = name_space.get_from_name(category='action')
     for action in all:
         assert isinstance(action, Action)
         for alias in action.get_aliases():
-            assert action == factory.get_named(alias)
+            assert action == name_space.get_from_name(alias, category='action')[0]
