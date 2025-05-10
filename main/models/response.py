@@ -44,6 +44,13 @@ class CombinationResponse(ResponseString):
     def as_string(self, response:Response) -> Optional[str]:
         if DEBUG_RESPONSES:
             for r in self.responses:
+                if r is None:
+                    for r2 in self.responses:
+                        if r2 is not None:
+                            print(r2.as_string(response))
+                        else:
+                            print(None)
+                    break
                 if isinstance(r.as_string(response), dict):
                     print(type(r))
                     print(r.response)

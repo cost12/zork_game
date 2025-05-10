@@ -8,15 +8,15 @@ from models.named import Action, Named
 
 class Effect(Named):
     
-    def __init__(self, name:str, aliases:Optional[list[str]]=None):
-        super().__init__(name, aliases)
+    def __init__(self, name:str, aliases:Optional[list[str]]=None, id:str=None):
+        super().__init__(name, aliases, id)
 
     def __repr__(self):
         return f"[Effect {self.name}]"
     
 class Achievement(Named):
-    def __init__(self, name:str, aliases:Optional[list[str]]=None):
-        super().__init__(name, aliases)
+    def __init__(self, name:str, aliases:Optional[list[str]]=None, id:str=None):
+        super().__init__(name, aliases, id)
 
     def __repr__(self):
         return f"[Achievement {self.name}]"
@@ -27,16 +27,30 @@ class State:
     actions_as_target:frozenset[Action]
     actions_as_actor:frozenset[Action]
     actions_as_tool:frozenset[Action]
+    aliases:tuple[str,...]=None
+    id:str=None
 
     def __repr__(self):
         return f"[State: {self.name}]\n\tTarget: {self.actions_as_target}\n\tActor: {self.actions_as_actor}"
 
     @staticmethod
-    def create_state(name:str, actions_as_target:list[Action], actions_as_actor:list[Action], actions_as_tool:list[Action]) -> 'State':
-        return State(name, frozenset(actions_as_target), frozenset(actions_as_actor), frozenset(actions_as_tool))
+    def create_state(name:str, actions_as_target:list[Action], actions_as_actor:list[Action], actions_as_tool:list[Action], aliases:list[str]=None, id:str=None) -> 'State':
+        if aliases is None: aliases = []
+        aliases = [alias.lower() for alias in aliases]
+        if name.lower() not in aliases:
+            aliases.append(name.lower())
+        if id is None: id = name.lower()
+        id = id.lower()
+        return State(name, frozenset(actions_as_target), frozenset(actions_as_actor), frozenset(actions_as_tool), tuple(aliases), id)
 
     def get_name(self) -> str:
         return self.name
+    
+    def get_id(self) -> str:
+        return self.id
+    
+    def get_aliases(self) -> list[str]:
+        return list(self.aliases)
     
     def get_actions_as_actor(self) -> list[Action]:
         return list(self.actions_as_actor)
@@ -58,8 +72,8 @@ class State:
 
 class StateGroup(Named):
 
-    def __init__(self, name:str, states:list[State], aliases:Optional[list[str]]=None):
-        super().__init__(name, aliases)
+    def __init__(self, name:str, states:list[State], aliases:Optional[list[str]]=None, id:str=None):
+        super().__init__(name, aliases, id)
         self.states = states
 
     #def copy(self) -> 'StateGroup':
@@ -94,14 +108,14 @@ class StateGroup(Named):
 
 class StateGraph(Named):
 
-    def __init__(self, name:str, current_state:StateGroup, target_graph:dict[StateGroup,dict[Action,StateGroup]]=None, tool_graph:dict[StateGroup,dict[Action,StateGroup]]=None, actor_graph:dict[StateGroup,dict[Action,StateGroup]]=None, time_graph:dict[StateGroup,tuple[int,StateGroup]]=None):
-        super().__init__(name)
+    def __init__(self, name:str, current_state:StateGroup, target_graph:dict[StateGroup,dict[Action,StateGroup]]=None, tool_graph:dict[StateGroup,dict[Action,StateGroup]]=None, actor_graph:dict[StateGroup,dict[Action,StateGroup]]=None, time_graph:dict[StateGroup,tuple[int,StateGroup]]=None, aliases:Optional[list[str]]=None, id:str=None):
+        super().__init__(name, aliases, id)
         self.current_state = current_state
         self.time_in_state = 0
         self.target_graph = dict[StateGroup,dict[Action,StateGroup]]() if target_graph is None else target_graph
-        self.actor_graph  = dict[StateGroup,dict[Action,StateGroup]]() if actor_graph is None else actor_graph
-        self.tool_graph   = dict[StateGroup,dict[Action,StateGroup]]() if tool_graph is None else tool_graph
-        self.time_graph   = dict[StateGroup,tuple[int,StateGroup]]()   if time_graph is None else time_graph
+        self.actor_graph  = dict[StateGroup,dict[Action,StateGroup]]() if actor_graph  is None else actor_graph
+        self.tool_graph   = dict[StateGroup,dict[Action,StateGroup]]() if tool_graph   is None else tool_graph
+        self.time_graph   = dict[StateGroup,tuple[int,StateGroup]]()   if time_graph   is None else time_graph
 
     def copy(self) -> 'StateGraph':
         return StateGraph(self.name, self.current_state, self.target_graph, self.actor_graph, self.tool_graph, self.time_graph)
@@ -207,8 +221,8 @@ class FullState(Named):
 
 class StateDisconnectedGraph(FullState):
 
-    def __init__(self, name:str, state_graphs:list[StateGraph]):
-        super().__init__(name)
+    def __init__(self, name:str, state_graphs:list[StateGraph], aliases:Optional[list[str]]=None, id:str=None):
+        super().__init__(name, aliases, id)
         self.state_graphs = state_graphs
 
     def __repr__(self):
@@ -255,17 +269,16 @@ class StateDisconnectedGraph(FullState):
 
 class Skill(Named):
     
-    def __init__(self, name:str, aliases:Optional[list[str]]=None):
-        super().__init__(name, aliases)
+    def __init__(self, name:str, aliases:Optional[list[str]]=None, id:str=None):
+        super().__init__(name, aliases, id)
 
     def __repr__(self):
         return f"[Skill {self.name}]"
 
-
 class SkillSet(Named):
 
-    def __init__(self, name:str, skills:Optional[dict[Skill,int]]=None, default_proficiency:int=0):
-        super().__init__(name)
+    def __init__(self, name:str, skills:Optional[dict[Skill,int]]=None, default_proficiency:int=0, aliases:Optional[list[str]]=None, id:str=None):
+        super().__init__(name, aliases, id)
         self.skills = dict[Skill,int]() if skills is None else skills
         self.default_proficiency = default_proficiency
 

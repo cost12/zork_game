@@ -2,11 +2,12 @@ from typing import Any, Optional
 
 from models.actors              import Target, Actor, Location, LocationDetail
 from models.named               import Action, Direction
-from factories.factories        import ItemFactory, NamedFactory, LocationFactory, CharacterFactory, CharacterControlFactory
+from factories.factories        import CharacterControlFactory
 from models.response            import ResponseString, Response, CombinationResponse, StaticResponse, ContentsResponse, BackupResponse
 from controls.character_control import CommandLineController, Feedback
 from controls.translate         import get_input_translator
 from utils.constants            import *
+from utils.relator              import NameFinder
 
 class GameAction:
     """This is an abstract class and should not be instantiated.
@@ -323,49 +324,25 @@ class GameState:
     """Represents an instance of a Zork game
     """
 
-    def __init__(self, details:dict[str,Any], rooms:LocationFactory, characters:CharacterFactory, extra_characters:list[Actor], controllers:CharacterControlFactory, actions:NamedFactory[Action], items:ItemFactory, directions:NamedFactory[Direction]):
-        """Creates a GameState
-
-        :param details: Any details not captured in the other inputs. Includes the welcome text
-        :type details: dict[str,Any]
-        :param rooms: All the Rooms in the game
-        :type rooms: LocationFactory
-        :param characters: All the Characters in the game
-        :type characters: CharacterFactory
-        :param extra_characters: If there are more users than default playable Characters (and the game allows it) these are additional user created and controlled Characters.
-        :type extra_characters: list[Actor]
-        :param controllers: A factory that determines how Characters in the game will be controlled (user input vs cpu controlled)
-        :type controllers: CharacterControlFactory
-        :param actions: All the Actions that can be taken in the game
-        :type actions: NamedFactory[Action]
-        :param items: All the Items in the game
-        :type items: ItemFactory
-        :param directions: All the directions in the game
-        :type directions: NamedFactory[Direction]
-        """
+    def __init__(self, details:dict[str,Any], name_space:NameFinder, extra_characters:list[Actor], controllers:CharacterControlFactory):
         self.game_details    = details
-        self.rooms           = rooms
-        self.characters      = characters
-        self.character_order = self.characters.get_characters()
+        self.name_space      = name_space
+        self.character_order = self.name_space.get_from_name(category='actor')
         self.controllers     = controllers
-        self.actions         = actions
-        self.items           = items
-        self.directions      = directions
         self.translator      = get_input_translator()
         self.current_turn    = 0
         self.moves           = 0
         self.action_dict     = dict[Action,GameAction]({
-            self.actions.get_named('look'): LookAction(self.actions.get_named('look')),
-            self.actions.get_named('walk'): WalkAction(self.actions.get_named('walk')),
-            self.actions.get_named('wait'): WaitAction(self.actions.get_named('wait')),
-            self.actions.get_named('take'): TakeAction(self.actions.get_named('take')),
-            self.actions.get_named('drop'): DropAction(self.actions.get_named('drop')),
-            self.actions.get_named('inventory'):CheckInventoryAction(self.actions.get_named('inventory')),
+            self.name_space.get_from_name('look', 'action')[0]: LookAction(self.name_space.get_from_name('look', 'action')[0]),
+            self.name_space.get_from_name('walk', 'action')[0]: WalkAction(self.name_space.get_from_name('walk', 'action')[0]),
+            self.name_space.get_from_name('wait', 'action')[0]: WaitAction(self.name_space.get_from_name('wait', 'action')[0]),
+            self.name_space.get_from_name('take', 'action')[0]: TakeAction(self.name_space.get_from_name('take', 'action')[0]),
+            self.name_space.get_from_name('drop', 'action')[0]: DropAction(self.name_space.get_from_name('drop', 'action')[0]),
+            self.name_space.get_from_name('inventory', 'action')[0]:CheckInventoryAction(self.name_space.get_from_name('inventory', 'action')[0]),
         })
-        self.default_action = DefaultAction(self.actions.get_named('look'))
-        #print(rooms.get_locations()[0])
+        self.default_action = DefaultAction(self.name_space.get_from_name('look', 'action'))
         i = 0
-        start_rooms = [room for room in rooms.get_locations() if room.is_start_location()]
+        start_rooms = [room for room in self.name_space.get_from_name(category='location') if room.is_start_location()]
         for character in extra_characters:
             start_room = start_rooms[i%len(start_rooms)]
             controllers.create_character(character, CommandLineController())
@@ -399,7 +376,7 @@ class GameState:
         :return: A GameAction and its inputs or an error message
         :rtype: tuple[Action,list]
         """
-        return self.translator.interpret(user_input, self.actions.aliases, self.characters.aliases, self.rooms.aliases, self.items.aliases, self.directions.aliases)
+        return self.translator.interpret(user_input, self.name_space)
     
     ###########################################################################
     # Main driver

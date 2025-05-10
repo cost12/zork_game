@@ -12,7 +12,7 @@ def main(args:list[str]):
             return
     #game_name = input("Which game do you want to play? ")
     game_name = 'aagame1'
-    rooms, characters, controllers, items, actions, directions, details = read_in_game(game_name)
+    name_space, _, controllers, details = read_in_game(game_name)
     players = 1
     while 0 and (players < details['min_players'] or players > details['max_players']):
         players = int(input("How many players are playing? "))
@@ -23,7 +23,7 @@ def main(args:list[str]):
     if players < details['playable_characters']:
         pass
     
-    game = GameState(details, rooms, characters, extra_characters, controllers, actions, items, directions)
+    game = GameState(details, name_space, extra_characters, controllers)
     game.play()
 
 if __name__=="__main__":
