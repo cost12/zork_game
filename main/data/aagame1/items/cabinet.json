@@ -1,6 +1,12 @@
 {
     "name"             : "cabinet",
-    "description"      : "a cabinet",
+    "description"      : {
+        "type"         : "item_state",
+        "responses"    : {
+            "opened"   : "an open cabinet",
+            "closed"   : "a closed cabinet"
+        }
+    },
     "state"            : {
         "states"       : ["visible"],
         "graphs"       : ["open_close"]

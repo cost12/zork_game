@@ -1,6 +1,6 @@
 {
     "name"       : "Kitchen",
-    "description": "You are standing in a modest kitchen. There is a beaten stove, linoleum counter, and an oxidized sink. You hear a rush of footsteps in a nearby room. A cabinet hangs on one wall.",
+    "description": "You are standing in a modest kitchen. You hear a rush of footsteps in a nearby room.",
     "paths"      : {
         "north"  : {
             "name"        : "Exit 1",
