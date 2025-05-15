@@ -179,7 +179,7 @@ The default weight is 1, default size is 1, default value is 0, default inventor
             ...
         },
         "tool_responses" : {
-            "action id1" : *see response section for more details* ,
+            "action id1" : *see response section for more details*,
             ...
         },
         "actor_responses" : {

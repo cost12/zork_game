@@ -11,6 +11,9 @@ class Node:
     def interpret(self, tokens:list[str], context:dict[str,list[Named]]) -> list[tuple[str,'Named|TranslateError|None',list[str],list[str],'TranslateNode|None']]:
         pass
 
+    def get_implied(self, context:NameFinder) -> Named:
+        return None
+
 class TranslateError(Node):
     def __init__(self, message:str):
         self.message = message
@@ -19,20 +22,30 @@ class TranslateError(Node):
         return []
 
 class TranslateNode(Node):
-    def __init__(self, state:str, edges:dict[str,'TranslateNode']):
+    def __init__(self, state:str, edges:dict[str,'TranslateNode'], *, implied:tuple[str,str]=None):
         self.state = state
         self.edges = edges
+        self.implied = implied
+
+    def get_implied(self, context:NameFinder) -> Named:
+        if self.implied is None:
+            return None
+        return context.get_from_input(self.implied[1], self.implied[0])[0][0]
 
     def add_edge(self, edge:str, end:'TranslateNode') -> None:
         self.edges[edge] = end
 
-    def interpret(self, tokens:list[str], context:NameFinder) -> list[tuple[str,Named|TranslateError|None,list[str],list[str],'TranslateNode|None']]:
+    def interpret(self, tokens:list[str], context:NameFinder) -> list[tuple[str,list[Named|TranslateError|None],list[str],list[str],'TranslateNode|None']]:
         if len(tokens) == 0:
             return []
         matches = list[tuple[str,Named,list[str]]]()
         for edge in self.edges:
             ms = context.get_from_input(tokens, category=edge)
-            ms = [(edge,match,tokens_used,tokens_left,self.edges[edge]) for match,tokens_used,tokens_left in ms]
+            implied_token = self.edges[edge].get_implied(context)
+            if implied_token is None:
+                ms = [(edge,[match],tokens_used,tokens_left,self.edges[edge]) for match,tokens_used,tokens_left in ms]
+            else:
+                ms = [(edge,[implied_token,match],tokens_used,tokens_left,self.edges[edge]) for match,tokens_used,tokens_left in ms]
             matches.extend(ms)
         matched = len(matches) > 0
         if not matched and tokens[0] in self.edges:
@@ -57,9 +70,9 @@ class Translator:
                 print("Ambiguous meaning, guessing at random...")
                 if DEBUG_INPUT: print(result)
                 pass
-            edge, translated_token, tokens_used, tokens_left, next_node = result[0]
-            if translated_token is not None:
-                translation.append(translated_token)
+            edge, translated_tokens, tokens_used, tokens_left, next_node = result[0]
+            if translated_tokens is not None:
+                translation.extend(translated_tokens)
             if next_node is None:
                 result = []
             else:
@@ -75,15 +88,23 @@ def get_input_translator() -> Translator:
     action_leaf = TranslateNode('action', {})
     action_input_leaf = TranslateNode('action_input', {})
     target = TranslateNode('target', {'\n':action_input_leaf})
-    action = TranslateNode('action', {'target':target,
-                                      'direction':target,
-                                      'location':target,
-                                      'path':target,
-                                      'actor':target,
-                                      '\n':action_leaf})
+    action = TranslateNode('action', {
+        'target'    :target,
+        'direction' :target,
+        'location'  :target,
+        'path'      :target,
+        'actor'     :target,
+        '\n'        :action_leaf
+    })
     action.add_edge('the',action)
     action.add_edge('a',action)
+    direction_leaf = TranslateNode('direction', {})
+    direction = TranslateNode('direction', {'\n':direction_leaf}, implied=('action', 'go'))
     start_error = TranslateError('No command given.')
-    start = TranslateNode('start', {'action':action,'\n':start_error})
-    start.add_edge('i',start)
-    return Translator(start)
+    standard_input = TranslateNode('start', {
+        'action'    :action,
+        'direction' :direction,
+        '\n'        :start_error
+    })
+    standard_input.add_edge('i',standard_input)
+    return Translator(standard_input)
