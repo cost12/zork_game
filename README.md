@@ -38,11 +38,11 @@ Joins a list of responses by a join string. The default join string is the empty
 To use a combination response make a list of responses where a single response would usually go.
 
 Example:
-'
+`
 {
     "description" : ["Response 1", "response 2", ["nested response"], ...]
 }
-'
+`
 
 ### Contents
 
@@ -59,13 +59,13 @@ Example:
 Achievements represent notable actions that a character completes. This could include visiting a certain number of rooms. Achievements can be meaningless but they can also be required to complete certain actions. For example, making a shot to leave a room.
 
 To create an achievement you need to define a name. ex:
-'
+`
 {
     "name"    : "AchievementName",
     "id"      : "AchievementId",
     "aliases" : ["Alias1", ..., "AliasN"]
 }
-'
+`
 Defining an id and aliases are optional.
 
 ## Actions
@@ -73,13 +73,13 @@ Defining an id and aliases are optional.
 Actions represent all the moves a character can take on their turn. This includes moving between rooms and interacting with items/other characters. Actions also require a function to define their interactions with objects. 
 
 To create an action you need to define a name. ex:
-'
+`
 {
     "name"    : "ActionName",
     "id"      : "ActionId",
     "aliases" : ["Alias1", ..., "AliasN"]
 }
-'
+`
 Defining an id and aliases are optional.
 
 ## Characters
