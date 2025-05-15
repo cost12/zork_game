@@ -175,19 +175,19 @@ The default weight is 1, default size is 1, default value is 0, default inventor
         "inventory" : 
         "visible_requirements" : *see requirements section for more details*,
         "target_responses" : {
-            "action id1" : *see response section for more details",
+            "action id1" : *see response section for more details*,
             ...
         },
         "tool_responses" : {
-            "action id1" : *see response section for more details",
+            "action id1" : *see response section for more details* ,
             ...
         },
         "actor_responses" : {
-            "action id1" : *see response section for more details",
+            "action id1" : *see response section for more details*,
             ...
         },
         "state_responses" : {
-            "state id1" : *see response section for more details",
+            "state id1" : *see response section for more details*,
             ...
         }
     }
