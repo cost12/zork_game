@@ -153,4 +153,41 @@ Defining an id and aliases are optional.
 
 Characters represent user controlled or computer controlled agents. 
 
-To create a character you need to define a name, type, description (response), state, skills (a skill set id), and inventory (see their respective sections for more information/examples). Optional additions include id, target_responses, 
+To create a character you need to define a name, description, state, and skills (skill set). 
+
+Optional additions include id, weight, value, size, details, visible_requirements, target_responses, tool_responses, state_responses, actor_responses, achievements, type, inventory.
+
+The default weight is 1, default size is 1, default value is 0, default inventory is infite, default type is "standard".
+
+    {
+        "name" : "Character Name",
+        "aliases" : ["alias 1" , ...],
+        "id" : "character id",
+        "description" : *see response section for more details*,
+        "type" : "human",
+        "state" : *see state section for more details*,
+        "achievements" : ["achievement id1", ...],
+        "skills" : "skill set id",
+        "weight" : 100,
+        "size" : 50,
+        "value" : 10,
+        "details" : *see details section for more details*,
+        "inventory" : 
+        "visible_requirements" : *see requirements section for more details*,
+        "target_responses" : {
+            "action id1" : *see response section for more details",
+            ...
+        },
+        "tool_responses" : {
+            "action id1" : *see response section for more details",
+            ...
+        },
+        "actor_responses" : {
+            "action id1" : *see response section for more details",
+            ...
+        },
+        "state_responses" : {
+            "state id1" : *see response section for more details",
+            ...
+        }
+    }
