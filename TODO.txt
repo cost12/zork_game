@@ -1,9 +1,10 @@
 x - complete
 o - in progress
+* - do next
 
 User Input:
-[] use questions/reasoning to resolve ambiguity in user input
-[] use multiple grammars to decipher input
+[*] use questions/reasoning to resolve ambiguity in user input
+[*] use multiple grammars to decipher input
 [] add more interactions to start - choose which mode to use (play/visualize/debug) choose which game to play
 
 Output:
@@ -45,7 +46,7 @@ Low Priority:
     return a tuple of an Action and inputs so CPU controlled Characters can make decisions more easily.
     create a more complex NPCController
     convert string into and Action and inputs and return Action, inputs
-[] implement all actions
+[*] implement all actions
     see more at __ItemDetails (items)
     [] actions could have default responses for success/failure (take: Taken./No items were taken., drop: Dropped./No items were dropped.)
     [] actions have default boolean (if true they get only get the default action implementation but without the warning that it is not implemented)
