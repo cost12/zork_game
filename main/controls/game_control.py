@@ -291,7 +291,7 @@ class CheckInventoryAction(GameAction):
         can_check, r = self.__verify_character__(character)
         response.append(r)
         if can_check:
-            response.append(ContentsResponse("Your inventory contains:\n\t", "Your inventory is empty.", character, inventory=True))
+            response.append(ContentsResponse(StaticResponse("Your inventory contains:\n\t"), StaticResponse("Your inventory is empty."), character, inventory=True))
             return Feedback(self.__combine_responses__(response), Response(character, self.action, True), turns=0)
         return Feedback(self.__combine_responses__(response), Response(character, self.action, False), turns=0)
 
