@@ -89,9 +89,8 @@ def requirements_from_dict(name:str, requirements_dict:dict[str,Any], name_space
 def contents_response_from_dict(name:str, response_dict:dict[str,str], name_space:NameFinder) -> ContentsResponse:
     target_id = response_dict['target'] if 'target' in response_dict else name
     target = name_space.get_from_id(target_id, ['target', 'actor', 'locationdetail'])
-    full_response  = response_dict.get('full', None)
-    if full_response is None: print(f"Error missing full response in {name}")
-    empty_response = response_dict['empty']
+    full_response  = response_from_input(name, response_dict['full'], name_space)
+    empty_response = response_from_input(name, response_dict['empty'], name_space)
     return ContentsResponse(full_response, empty_response, target)
 
 def contents_with_state_response_from_dict(name:str, response_dict:dict[str,str|dict[str,str]], name_space:NameFinder) -> ItemStateResponse:
@@ -100,7 +99,7 @@ def contents_with_state_response_from_dict(name:str, response_dict:dict[str,str|
     responses = dict[State,str]()
     for state_id, response in response_dict['responses'].items():
         state = name_space.get_from_id(state_id, 'state')
-        responses[state] = response
+        responses[state] = response_from_input(name, response, name_space)
     default = response_dict.get('default', None)
     return ContentsWithStateResponse(target, responses, default=default)
 
@@ -110,8 +109,8 @@ def item_state_response_from_dict(name:str, response_dict:dict[str,str|dict[str,
     responses = dict[State,str]()
     for state_id, response in response_dict['responses'].items():
         state = name_space.get_from_id(state_id)
-        responses[state] = response
-    default = response_dict.get('default', None)
+        responses[state] = response_from_input(name, response, name_space)
+    default = response_from_input(name, response_dict.get('default', None), name_space)
     return ItemStateResponse(target, responses, default=default)
 
 def random_response_from_list(name, response_list:list[str|dict], name_space:NameFinder) -> RandomResponse:

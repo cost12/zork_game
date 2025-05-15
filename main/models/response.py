@@ -78,7 +78,7 @@ class RandomResponse(ResponseString):
         return random.choice(self.responses).as_string(response)
 
 class ContentsResponse(ResponseString):
-    def __init__(self, full_response:str, empty_response:str, target:'Target', *, inventory=False):
+    def __init__(self, full_response:ResponseString, empty_response:ResponseString, target:'Target', *, inventory=False):
         self.full_response = full_response
         self.empty_response = empty_response
         self.target = target
@@ -106,37 +106,40 @@ class ContentsResponse(ResponseString):
         contents = [item.get_description_to(response.character).as_string(response) for item in contents]
         contents = [item for item in contents if item is not None]
         if len(contents) > 0:
-            return f"{self.full_response}{self.__inventory_list(contents) if self.inventory else self.__get_list_string(contents)}"
-        return self.empty_response
+            return f"{self.full_response.as_string(response)}{self.__inventory_list(contents) if self.inventory else self.__get_list_string(contents)}"
+        return self.empty_response.as_string(response)
 
 class ContentsWithStateResponse(ResponseString):
-    def __init__(self, target:'Target', responses:dict['State',str], *, default:str=None):
+    def __init__(self, target:'Target', responses:dict['State',ResponseString], *, default:ResponseString=None):
         self.target    = target
         self.responses = responses
         self.default   = default
 
     def as_string(self, response:Response) -> Optional[str]:
         r = ""
-        for item in self.target.list_contents_visible_to(response.character):
-            if isinstance(item, Target):
-                for state in item.get_current_state():
-                    if state in self.responses:
-                        r += f"{self.responses[state]} "
-        return r[:-1] if len(r) > 0 else self.default
+        for state in self.responses:
+            for item in self.target.list_contents_visible_to(response.character):
+                if isinstance(item, Target):
+                    if state in item.get_current_state():
+                        r += f"{self.responses[state].as_string(response)} "
+                        break # add each response at most once
+        return r[:-1] if len(r) > 0 else self.default.as_string(response)
 
 class ItemStateResponse(ResponseString):
     """A response that depends on the current state of an Item.
     """
-    def __init__(self, target:'Target', responses:dict['State',str], *, default:str=None):
+    def __init__(self, target:'Target', responses:dict['State',ResponseString], *, default:ResponseString=None):
         self.target    = target
         self.responses = responses
         self.default   = default
 
     def as_string(self, response:Response) -> Optional[str]:
+        r = ""
         for state in self.target.get_current_state():
             if state in self.responses:
-                return self.responses[state]
-        return self.default
+                r += f"{self.responses[state].as_string(response)} "
+                break
+        return r[:-1] if len(r) > 0 else self.default.as_string(response)
 
 class BackupResponse(ResponseString):
 
