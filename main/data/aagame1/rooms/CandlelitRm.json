@@ -16,8 +16,11 @@
     "details"    : [
         {
             "name"        : "floor",
-            "description" : "amidst the inumerable candles, sitting on the floor",
-            "contents"    : ["a candle", "another candle", "a third candle", "a fourth candle"]
+            "description" : {
+                "type"    : "contents",
+                "full"    : "While most of the candles are melted past the point of retrieval, more intact are some candles. You see ",
+                "empty"   : "All candles on the floor are too melted or misshapen to take"
+            },"contents"    : ["a candle", "another candle", "a third candle", "a fourth candle"]
         }
     ]
 }

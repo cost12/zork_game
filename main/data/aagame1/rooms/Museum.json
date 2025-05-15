@@ -14,8 +14,11 @@
     "details"    : [
         {
             "name"        : "wall",
-            "description" : "Alone on the desolate walls hangs",
-            "contents"    : ["Hercules"]
+            "description" : {
+                "type"    : "contents",
+                "full"    : "Hanging alone on the desolate walls is ",
+                "empty"   : ""
+            },  "contents"    : ["Hercules"]
         }
     ]
 }

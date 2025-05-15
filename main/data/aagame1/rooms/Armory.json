@@ -12,8 +12,11 @@
     "details" : [
         {
             "name"        : "rack",
-            "description" : "hanging on a wall-mounted rack",
-            "contents"    : ["spear"]
+            "description" : {
+                "type"    : "contents",
+                "full"    : "Hanging on a well-worn wooden rack is",
+                "empty"   : "An empty weapons rack hangs on the wall"
+            },"contents"    : ["spear", "sword"]
         }
     ]
 }

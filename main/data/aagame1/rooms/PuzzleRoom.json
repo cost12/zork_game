@@ -16,8 +16,11 @@
     "details"    : [
         {
             "name"        : "table3",
-            "description" : "On the table is",
-            "contents"    : ["puzzle"]
+            "description" :  {
+                "type"    : "contents",
+                "full"    : "On a spindly table you find",
+                "empty"   : "There is a spindly table in the middle of the room, holding nothing"
+            },"contents"    : ["puzzle"]
         }
     ]
 }

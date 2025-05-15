@@ -13,5 +13,6 @@
             "end"         : "Den"
         }
     },
+    
     "contents"   : ["cabinet", "stove", "kitchen sink"]
 }

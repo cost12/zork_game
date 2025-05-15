@@ -11,8 +11,11 @@
     "details"    : [
         {
             "name"        : "mirror",
-            "description" : "Hanging from the rear view mirrow is",
-            "contents"    : ["Sunglasses"]
+            "description" : {
+                "type"    : "contents",
+                "full"    : "Hanging from the neck of the rearview mirror is",
+                "empty"   : "The rearview mirror is undecorated, and with it you can see into the empty lot"
+            },"contents"    : ["Sunglasses"]
         }
     ]
 }
