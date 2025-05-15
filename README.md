@@ -38,10 +38,12 @@ Joins a list of responses by a join string. The default join string is the empty
 To use a combination response make a list of responses where a single response would usually go.
 
 Example:
-`{
+
+{
+
     "description" : ["Response 1", "response 2", ["nested response", ...], ...]
 
-}`
+}
 
 ### Contents
 
@@ -59,13 +61,15 @@ Achievements represent notable actions that a character completes. This could in
 
 To create an achievement you need to define a name. ex:
 
-`{
+{
+
     "name"    : "AchievementName",
 
     "id"      : "AchievementId",
 
     "aliases" : ["Alias1", ..., "AliasN"]
-}`
+
+}
 
 Defining an id and aliases are optional.
 
