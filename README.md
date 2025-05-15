@@ -39,8 +39,7 @@ To use a combination response make a list of responses where a single response w
 
 Example:
 `{
-
-    "description" : ["Response 1", "response 2", ["nested response"], ...]
+    "description" : ["Response 1", "response 2", ["nested response", ...], ...]
 
 }`
 
@@ -61,13 +60,11 @@ Achievements represent notable actions that a character completes. This could in
 To create an achievement you need to define a name. ex:
 
 `{
-
     "name"    : "AchievementName",
 
     "id"      : "AchievementId",
 
     "aliases" : ["Alias1", ..., "AliasN"]
-
 }`
 
 Defining an id and aliases are optional.
@@ -79,13 +76,11 @@ Actions represent all the moves a character can take on their turn. This include
 To create an action you need to define a name. ex:
 
 `{
-
     "name"    : "ActionName",
 
     "id"      : "ActionId",
 
     "aliases" : ["Alias1", ..., "AliasN"]
-
 }`
 
 Defining an id and aliases are optional.
