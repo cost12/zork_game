@@ -1,5 +1,6 @@
 {
     "name"             : "Yellow Book",
+    "aliases"          : ["paperback", "book with slip", "paperback with a garish yellow slip"],
     "description"      : "a nice paperback with a garish yellow slip",
     "state"            : {
         "states"       : ["visible"],

@@ -16,7 +16,7 @@
                 "type"    : "contents",
                 "full"    : "Hanging on a well-worn wooden rack is",
                 "empty"   : "An empty weapons rack hangs on the wall"
-            },"contents"    : ["spear", "sword"]
+            },"contents"    : ["spear", "pitchfork", "sword"]
         }
     ]
 }

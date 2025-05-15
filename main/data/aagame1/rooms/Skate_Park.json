@@ -9,7 +9,7 @@
         },
         "south"  : {
             "name"        : "Exit 2",
-            "description" : "A hidden passage leads southwest",
+            "description" : "",
             "end"         : "Greenhouse",
             "hidden_when_locked" : true,
             "character_achievement_requirements" : {

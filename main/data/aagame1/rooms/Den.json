@@ -4,7 +4,7 @@
     "paths"      : {
         "north"  : {
             "name"        : "Exit 1",
-            "description" : "To the east is a doorway",
+            "description" : "To the north is a doorway",
             "end"         : "Hallway"
         },
         "south"  : {
