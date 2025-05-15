@@ -4,19 +4,28 @@
     "paths"      : {
         "west"  : {
             "name"        : "Exit 1",
-            "description" : "a stone stiarcase descends",
+            "description" : "A stone stiarcase descends in the west",
             "end"         : "Cellar"
         },
         "south"  : {
             "name"        : "Exit 2",
-            "description" : "a narrow earthen burrow",
+            "description" : "A narrow earthen burrow leads south",
             "end"         : "Earthen Tunnel"
+        },
+        "north"  : {
+            "name"        : "Exit 3",
+            "description" : "The house's tattered front door lies to the north, slightly ajar",
+            "end"         : "Den"
         }
     },
     "details"    : [
         {
             "name"        : "ground",
-            "description" : "laying on the ground",
+            "description" :  {
+                "type"    : "contents",
+                "full"    : "On the ground sits",
+                "empty"   : ""
+            },
             "contents"    : ["thick gloves", "trowel"]
         }
     ]

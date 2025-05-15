@@ -4,14 +4,14 @@
     "paths"      : {
         "south"  : {
             "name"        : "Exit 2",
-            "description" : "a doorway",
+            "description" : "A doorway leads southward",
             "end"         : "Dining Room"
         }
     },
     "details"    : [
         {
             "name"        : "desk",
-            "description" : "sitting on the desk",
+            "description" : "Sitting on the desk is",
             "contents"    : ["Emerald book", "Magnifying glass"]
         }
     ]

@@ -1,6 +1,6 @@
 {
     "name"             : "Honey Jar",
-    "description"      : "A jar for honey",
+    "description"      : "a jar for honey",
     "state"            : {
         "states"       : ["visible"],
         "graphs"       : ["takeable", "container"]

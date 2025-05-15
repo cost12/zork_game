@@ -4,12 +4,12 @@
     "paths"      : {
         "north"  : {
             "name"        : "Exit 1",
-            "description" : "the tight pass",
+            "description" : "The tight pass leads north",
             "end"         : "North of tight Pass"
         },
         "south"  : {
             "name"        : "Exit 2",
-            "description" : "a passage",
+            "description" : "A frigid draft is coming from a passage leading south",
             "end"         : "Cold Room"
         }
     }

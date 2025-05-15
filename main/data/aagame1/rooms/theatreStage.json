@@ -1,15 +1,15 @@
 {
     "name"       : "Theatre Stage",
-    "description": "You stand on a meekly lit Theatre Stage. A music stand sits on the stage.",
+    "description": "You stand on a meekly lit Theatre Stage. A music stand rests proudly on the stage.",
     "paths"      : {
         "north"  : {
             "name"        : "Exit 1",
-            "description" : "the Theatre continues",
+            "description" : "The Theatre continues to the north, full of seats",
             "end"         : "Theatre Seats"
         },
         "southeast"  : {
             "name"        : "Exit 2",
-            "description" : "a passage",
+            "description" : "A passage embellished with arcane runes leads southeast",
             "end"         : null,
             "multi_end"   : {
                 "baton"   : "Carpeted Hall",
@@ -22,7 +22,7 @@
         },
         "southwest"  : {
             "name"        : "Exit 2",
-            "description" : "a passage",
+            "description" : "A passage garnished with ancient symbology leads southwest",
             "end"         : null,
             "multi_end"   : {
                 "baton"   : "Hot Room",
@@ -37,13 +37,19 @@
     "details"    : [
         {
             "name" : "stage",
-            "description" : "laying abandoned on the stage",
-            "contents"    : ["lyre", "triangle", "slide whistle", "bongo", "violin", "note"]
+            "description" :  {
+                "type"    : "contents",
+                "full"    : "Laying abandoned on the stage is",
+                "empty"   : "The stage is empty and barren."
+            },"contents"    : ["lyre", "triangle", "slide whistle", "bongo", "violin", "note"]
         },
         {
             "name"        : "stand",
-            "description" : "sitting on the music stand",
-            "contents"    : ["baton"]
+            "description" :  {
+                "type"    : "contents",
+                "full"    : "Sitting on the music stand is",
+                "empty"   : "An empty music stand stands proudly on the stage"
+            },"contents"    : ["baton"]
         }
     ]
 }

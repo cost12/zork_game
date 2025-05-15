@@ -4,12 +4,12 @@
     "paths"      : {
         "north"  : {
             "name"        : "Exit 1",
-            "description" : "a small passage",
+            "description" : "A small passage leads north",
             "end"         : "South of Tight Pass"
         },
         "south"  : {
             "name"        : "Exit 2",
-            "description" : "an earthen passage",
+            "description" : "An earthen passage leads south",
             "end"         : "Bear's Den"
         }
     }

@@ -1,6 +1,7 @@
 
 {
     "name"             : "Thick Gloves",
+    "aliases"          : ["gloves"],
     "description"      : "a pair of thick-hide gloves",
     "state"            : {
         "states"       : ["visible"],

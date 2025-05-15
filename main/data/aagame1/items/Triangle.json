@@ -1,6 +1,6 @@
 {
     "name"             : "Triangle",
-    "description"      : "A small metal triangle",
+    "description"      : "a small metal triangle",
     "state"            : {
         "states"       : ["visible", "musical"],
         "graphs"       : ["takeable"]

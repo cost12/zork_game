@@ -1,6 +1,6 @@
 {
     "name"             : "Slide Whistle",
-    "description"      : "Although it is a simple toy, the slide whistle posesses an attractive potential for unforseen elevation and unlikely craft.",
+    "description"      : "a slide whistle which, although it is a simple toy, posesses an attractive potential for unforseen elevation and unlikely craft.",
     "state"            : {
         "states"       : ["visible"],
         "graphs"       : ["takeable"],

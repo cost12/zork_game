@@ -1,6 +1,6 @@
 {
     "name"             : "stove",
-    "description"      : "a stove",
+    "description"      : "a battered, greasy stove",
     "state"            : {
         "states"       : ["visible"],
         "graphs"       : ["takeable", "switch"]

@@ -1,7 +1,7 @@
 
 {
     "name"             : "Pitchfork",
-    "description"      : "A long-handled pitchfork with three sharp tines",
+    "description"      : "a long-handled pitchfork with three sharp tines",
     "state"            : {
         "states"       : ["visible"],
         "graphs"       : ["takeable"],

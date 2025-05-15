@@ -4,12 +4,12 @@
     "paths"      : {
         "north"  : {
             "name"        : "Exit 1",
-            "description" : "a passage",
+            "description" : "A cool passage leads north, emitting a cool breeze",
             "end"         : "Crystal Cave"
         },
         "south"  : {
             "name"        : "Exit 2",
-            "description" : "a passage",
+            "description" : "A passage leads south, smelling of body odor",
             "end"         : "Gym"
         }
     }

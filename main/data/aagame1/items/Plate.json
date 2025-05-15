@@ -1,7 +1,7 @@
 
 {
     "name"             : "Plate",
-    "description"      : "A simple plate",
+    "description"      : "a simple clay plate",
     "state"            : {
         "states"       : ["visible"],
         "graphs"       : ["takeable", "breakable"]

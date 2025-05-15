@@ -5,7 +5,7 @@
     "paths"      : {
         "north"  : {
             "name"        : "Exit 1",
-            "description" : "a passage",
+            "description" : "A gilded double door leads north",
             "end"         : null,
             "multi_end"   : {
                 "baton"   : "Bright Room",
@@ -18,7 +18,7 @@
         },
         "south"  : {
             "name"        : "Exit 2",
-            "description" : "the Theatre's seats",
+            "description" : "The Theatre's seating area lies in the south",
             "end"         : "Theatre Seats"
         }
     }

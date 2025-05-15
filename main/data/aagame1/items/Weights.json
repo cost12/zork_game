@@ -1,6 +1,6 @@
 {
     "name"             : "Weights",
-    "description"      : "A lone rusty dumbbell,",
+    "description"      : "a lone rusty dumbbell,",
     "state"            : {
         "states"       : ["visible", "liftable"],
         "graphs"       : ["takeable"]

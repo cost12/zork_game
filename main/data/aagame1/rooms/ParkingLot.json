@@ -4,7 +4,7 @@
     "paths"      : {
         "north"  : {
             "name"        : "Exit 1",
-            "description" : "an exit ramp",
+            "description" : "An exit ramp leads to the north",
             "end"         : "Riches Room",
             "multi_end"   : {
                 "triangle": "Theatre Stage"
@@ -17,7 +17,7 @@
         },
         "in car" :{
             "name"        : "Exit 3",
-            "description" : "the driver's door",
+            "description" : "The driver's door",
             "end"         : "Driver's Seat"
         }   
     },

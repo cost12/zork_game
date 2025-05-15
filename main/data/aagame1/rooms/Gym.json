@@ -4,7 +4,7 @@
     "paths"      : {
         "north"  : {
             "name"        : "Exit 1",
-            "description" : "a metal doorway",
+            "description" : "A metal doorway leads north",
             "end"         : "Pool",
             "multi_end"   : {
                 "Bongo"   : "Theatre Stage"
@@ -17,7 +17,7 @@
     "details"    : [
         {
             "name"        : "rack",
-            "description" : "sitting on a rack",
+            "description" : "Sitting on a rack",
             "contents"    : ["weights"]
         }
     ]

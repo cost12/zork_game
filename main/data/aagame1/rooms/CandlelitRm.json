@@ -4,12 +4,12 @@
     "paths"      : {
         "east"  : {
             "name"        : "Exit 1",
-            "description" : "a thin passage",
+            "description" : "A thin passage slithers eastward",
             "end"         : "Giant Cave"
         },
         "south"  : {
             "name"        : "Exit 2",
-            "description" : "a grand, ornate door",
+            "description" : "A grand, ornate doorway leads south, bejewled and intricately chiseled with themes of old",
             "end"         : "Riches Room"
         }
     },

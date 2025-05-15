@@ -5,7 +5,7 @@
     "paths"      : {
         "east"  : {
             "name"        : "Exit 1",
-            "description" : "a large barn door",
+            "description" : "A large barn door leads east",
             "end"         : "Beehive Room"
         }
     },

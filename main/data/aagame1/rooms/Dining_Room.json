@@ -4,19 +4,19 @@
     "paths"      : {
         "north"  : {
             "name"        : "Exit 1",
-            "description" : "a door",
+            "description" : "A doorway leads north",
             "end"         : "Office"
         },
         "east"  : {
             "name"        : "Exit 2",
-            "description" : "a door",
+            "description" : "A door goes east",
             "end"         : "Den"
         }
     },
     "details" : [
         {
             "name"        : "table2",
-            "description" : "on a table",
+            "description" : "On the table is",
             "contents"    : ["Plate"]
         }
     ]

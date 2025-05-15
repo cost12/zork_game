@@ -5,7 +5,7 @@
     "paths"      : {
         "north"  : {
             "name"        : "Exit 1",
-            "description" : "a regal yet sturdy double door",
+            "description" : "A regal yet sturdy double door leads north",
             "end"         : "Puzzle Room",
             "multi_end"   : {
                 "violin"  : "Theatre Stage"

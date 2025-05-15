@@ -4,19 +4,19 @@
     "paths"      : {
         "north"  : {
             "name"        : "Exit 1",
-            "description" : "a stony passage",
+            "description" : "A stony passage leads north",
             "end"         : "Bear's Den"
         },
         "south"  : {
             "name"        : "Exit 2",
-            "description" : "a nice walkway",
+            "description" : "A nice walkway leads south",
             "end"         : "Library"
         }
     },
     "details"    : [
         {
             "name"        : "table3",
-            "description" : "on the table",
+            "description" : "On the table is",
             "contents"    : ["puzzle"]
         }
     ]

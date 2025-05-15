@@ -4,19 +4,19 @@
     "paths"      : {
         "north"  : {
             "name"        : "Exit 1",
-            "description" : "a passage",
+            "description" : "A passage leads north",
             "end"         : "Beehive Room"
         },
         "east"  : {
             "name"        : "Exit 2",
-            "description" : "a passage",
+            "description" : "A passage leads east",
             "end"         : "Crystal Cave"
         }
     },
     "details"    : [
         {
             "name"        : "wall",
-            "description" : "hanging from a peg in the wall",
+            "description" : "Hanging from a peg in the wall is",
             "contents"    : ["dried herbs"]
         }
     ]

@@ -1,6 +1,6 @@
 {
     "name"             : "Baton",
-    "description"      : "An elegant conductor's baton, wrought from ivory",
+    "description"      : "an elegant conductor's baton, wrought from ivory",
     "state"            : {
         "states"       : ["visible"],
         "graphs"       : ["takeable"],

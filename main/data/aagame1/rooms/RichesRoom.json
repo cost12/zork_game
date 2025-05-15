@@ -4,12 +4,12 @@
     "paths"      : {
         "north"  : {
             "name"        : "Exit 1",
-            "description" : "a passage",
+            "description" : "A passage leads north",
             "end"         : "Candlelit Room"
         },
         "south"  : {
             "name"        : "Exit 2",
-            "description" : "a cement walkway",
+            "description" : "A cement walkway goes to the south",
             "end"         : "Parking Lot"
         }
     }

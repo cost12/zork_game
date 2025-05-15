@@ -1,6 +1,6 @@
 {
     "name"             : "Trunk",
-    "description"      : "An honest, squat trunk",
+    "description"      : "an honest, squat trunk",
     "state"            : {
         "states"       : ["visible"],
         "graphs"       : ["locked"]

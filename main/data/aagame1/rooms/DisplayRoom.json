@@ -4,14 +4,14 @@
     "paths"      : {
         "west"  : {
             "name"        : "Exit 1",
-            "description" : "a simple slanted passage",
+            "description" : "A simple slanted passage leads west",
             "end"         : "Man Cave"
         }
     },
     "details"    : [
         {
             "name"        : "cushion",
-            "description" : "resting on a delicate cushion",
+            "description" : "Resting on a delicate cushion is",
             "contents"    : ["wallet"]
         }
     ]

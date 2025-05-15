@@ -4,7 +4,7 @@
     "paths"      : {
         "any"  : {
             "name"        : "Exit 1",
-            "description" : "outside",
+            "description" : "The garage is outside.",
             "end"         : "Parking Lot"
         }
     }

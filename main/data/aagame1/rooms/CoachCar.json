@@ -4,19 +4,19 @@
     "paths"      : {
         "north"  : {
             "name"        : "Exit 1",
-            "description" : "the trian continues",
+            "description" : "The trian continues to the north",
             "end"         : "Dining Car"
         },
         "south"  : {
             "name"        : "Exit 2",
-            "description" : "a sliding door",
+            "description" : "A sliding door leads south",
             "end"         : "Museum Gallery"
         }
     },
     "details"    : [
         {
             "name"        : "seated",
-            "description" : "sitting in a chair",
+            "description" : "Sitting in a chair is",
             "contents"    : ["child"]
         }
     ]

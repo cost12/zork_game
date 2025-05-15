@@ -4,12 +4,12 @@
     "paths"      : {
         "north"  : {
             "name"        : "Exit 1",
-            "description" : "a sloping passage",
+            "description" : "A passage slopes northwards",
             "end"         : "Garden"
         },
         "south"  : {
             "name"        : "Exit 2",
-            "description" : "a passage",
+            "description" : "A passage leads south",
             "end"         : "Small Cavern"
         }
     }

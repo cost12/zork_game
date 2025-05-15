@@ -1,6 +1,6 @@
 {
     "name"             : "Jar of Peppers",
-    "description"      : "A jar of hot peppers pickling in brine",
+    "description"      : "a jar of hot peppers pickling in brine",
     "state"            : {
         "states"       : ["visible", "edible"],
         "graphs"       : ["takeable", "container"]

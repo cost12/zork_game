@@ -4,19 +4,19 @@
     "paths"      : {
         "north"  : {
             "name"        : "Exit 1",
-            "description" : "the train continues",
+            "description" : "The train continues north",
             "end"         : "Observation Car"
         },
         "south"  : {
             "name"        : "Exit 2",
-            "description" : "the train continues",
+            "description" : "The train continues south",
             "end"         : "Coach Car"
         }
     },
     "details"    : [
         {
             "name"        : "counter",
-            "description" : "on the counter",
+            "description" : "On the counter is",
             "contents"    : ["Gray Book"]
         }
     ]

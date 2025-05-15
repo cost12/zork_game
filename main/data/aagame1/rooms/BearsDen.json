@@ -5,12 +5,12 @@
     "paths"      : {
         "north"  : {
             "name"        : "Exit 1",
-            "description" : "a narrow escape",
+            "description" : "A narrow escape leads north",
             "end"         : "Cold Room"
         },
         "south"  : {
             "name"        : "Exit 2",
-            "description" : "a passage",
+            "description" : "A passage leads south",
             "end"         : "Puzzle Room"
         }
     },

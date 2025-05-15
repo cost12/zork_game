@@ -1,6 +1,6 @@
 {
     "name"             : "Mason Jar",
-    "description"      : "A smudged and empty mason jar",
+    "description"      : "a smudged and empty mason jar",
     "state"            : {
         "states"       : ["visible"],
         "graphs"       : ["takeable", "container"]

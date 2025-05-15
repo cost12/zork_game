@@ -1,6 +1,6 @@
 {
     "name"             : "Basketball",
-    "description"      : "A well-worn basketball",
+    "description"      : "a well-worn basketball",
     "state"            : {
         "states"       : ["visible"],
         "graphs"       : ["takeable"],

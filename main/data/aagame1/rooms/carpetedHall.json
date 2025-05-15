@@ -4,7 +4,10 @@
     "paths"      : {
         "west"  : {
             "name"        : "Exit 1",
-            "description" : "a simple wooden door",
+            "description" :{
+                 "type" : "random",
+                "responses" : ["Distantly in the west lies a wooden door", "A wooden door awaits you in the west","To the west, a wooden door lies tantalizingly"]
+            },
             "end"         : "Theatre Stage"
         },
         "east"  : {

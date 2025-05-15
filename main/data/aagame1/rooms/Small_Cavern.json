@@ -4,12 +4,12 @@
     "paths"      : {
         "north"  : {
             "name"        : "Exit 1",
-            "description" : "a narrow tunnel",
+            "description" : "A narrow tunnel leads to the north",
             "end"         : "Earthen Tunnel"
         },
         "south"  : {
             "name"        : "Exit 2",
-            "description" : "amidst stalagmites, a sturdy wooden door is installed",
+            "description" : "Amidst dripping stalagmites, a sturdy wooden door is installed to the south",
             "end"         : "Beehive Room"
         }
     }

@@ -1,6 +1,6 @@
 {
     "name"             : "Trowel",
-    "description"      : "A humble trowel, still clung to by a pernicious clod of soil",
+    "description"      : "a humble trowel, still clung to by a pernicious clod of soil",
     "state"            : {
         "states"       : ["visible"],
         "graphs"       : ["takeable"]

@@ -4,17 +4,17 @@
     "paths"      : {
         "northwest"  : {
             "name"        : "Exit 1",
-            "description" : "a passage",
+            "description" : "A passage leads northwest",
             "end"         : "Theatre Stage"
         },
         "south"  : {
             "name"        : "Exit 2",
-            "description" : "a passage",
+            "description" : "A passage leads south",
             "end"         : "North of Tight Pass"
         },
         "east"  : {
             "name"        : "Exit 2",
-            "description" : "an ornate doorway",
+            "description" : "An ornate doorway leads to the east",
             "end"         : "Display Room"
         }
     },

@@ -4,12 +4,12 @@
     "paths"      : {
         "north"  : {
             "name"        : "Exit 1",
-            "description" : "the Theatre's entryway",
+            "description" : "The Theatre's entryway lies in the north",
             "end"         : "Theatre Entrance"
         },
         "south"  : {
             "name"        : "Exit 2",
-            "description" : "the Theatre's stage",
+            "description" : "The Theatre's stage is southwards",
             "end"         : "Theatre Stage"
         }
     },

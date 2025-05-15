@@ -4,19 +4,19 @@
     "paths"      : {
         "north"  : {
             "name"        : "Exit 1",
-            "description" : "the train's exit",
+            "description" : "The train's exit is to the North",
             "end"         : "Hot Room"
         },
         "south"  : {
             "name"        : "Exit 2",
-            "description" : "the train continues",
+            "description" : "The train continues southwards",
             "end"         : "Cargo Hold"
         }
     },
     "details"    : [
         {
             "name"        : "dashboard",
-            "description" : "on a the dashboard, amidst myriad knobs and buttons rusted beyond use, lies",
+            "description" : "On a the dashboard, amidst myriad knobs and buttons rusted beyond use, lies",
             "contents"    : ["Burgundy Book"]
         }
     ]

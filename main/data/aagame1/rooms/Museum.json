@@ -4,7 +4,7 @@
     "paths"      : {
         "north"  : {
             "name"        : "Exit 1",
-            "description" : "a curtained passage",
+            "description" : "A curtained passage proceeds northwards",
             "end"         : "Coach Car",
             "multi_end"   : {
                 "lyre"    : "Theatre Stage"
@@ -14,7 +14,7 @@
     "details"    : [
         {
             "name"        : "wall",
-            "description" : "alone on the desolate walls hangs",
+            "description" : "Alone on the desolate walls hangs",
             "contents"    : ["Hercules"]
         }
     ]

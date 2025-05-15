@@ -4,14 +4,14 @@
     "paths"      : {
         "out"    : {
             "name"        : "Exit 1",
-            "description" : "the door",
+            "description" : "The door leads out",
             "end"         : "Parking Lot"
         }
     },
     "details"    : [
         {
             "name"        : "mirror",
-            "description" : "hanging from the rear view mirrow",
+            "description" : "Hanging from the rear view mirrow is",
             "contents"    : ["Sunglasses"]
         }
     ]

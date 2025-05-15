@@ -4,12 +4,12 @@
     "paths"      : {
         "north"  : {
             "name"        : "Exit 1",
-            "description" : "a door",
+            "description" : "A door leads north",
             "end"         : "Beehive Room"
         },
         "south"  : {
             "name"        : "Exit 2",
-            "description" : "a passage",
+            "description" : "A passage leads south, glowing slightly",
             "end"         : "Bright Room",
             "item_state_requirements" : {
                 "Orge" : {

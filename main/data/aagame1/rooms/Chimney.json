@@ -4,7 +4,7 @@
     "paths"    : {
         "any"  : {
             "name"        : "Exit 1",
-            "description" : "the fireplace opening",
+            "description" : "The fireplace opening is at your feet",
             "end"         : "Attic",
             "multi_end"   : {
                 "slide whistle" : "Theatre Stage"

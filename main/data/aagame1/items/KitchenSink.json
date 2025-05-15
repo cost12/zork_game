@@ -1,7 +1,7 @@
 
 {
     "name"             : "Kitchen Sink",
-    "description"      : "A stained metal sink",
+    "description"      : "a stained metal sink",
     "state"            : {
         "states"       : ["visible"],
         "graphs"       : ["switch"]

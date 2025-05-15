@@ -4,12 +4,12 @@
     "paths"      : {
         "north"  : {
             "name"        : "Exit 1",
-            "description" : "the train continues",
+            "description" : "The train continues north",
             "end"         : "Cargo Hold"
         },
         "south"  : {
             "name"        : "Exit 2",
-            "description" : "the train continues",
+            "description" : "The train continues south",
             "end"         : "Dining Car"
         }
     }

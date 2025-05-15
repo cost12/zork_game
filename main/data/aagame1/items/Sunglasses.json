@@ -1,7 +1,7 @@
 
 {
     "name"             : "sunglasses",
-    "description"      : "a pair of simple, black pplastic sunglasses",
+    "description"      : "a pair of simple, black plastic sunglasses",
     "state"            : {
         "states"       : ["visible"],
         "graphs"       : ["takeable", "wearable"]

@@ -4,32 +4,32 @@
     "paths"      : {
         "north"  : {
             "name"        : "Exit 1",
-            "description" : "a passage",
+            "description" : "A passage goes north",
             "end"         : "Small Cavern"
         },
         "northwest"  : {
             "name"        : "Exit 2",
-            "description" : "a rustic door",
+            "description" : "A rustic door lies to the northwest",
             "end"         : "Barn"
         },
         "northeast"  : {
             "name"        : "Exit 3",
-            "description" : "a thick metal door",
+            "description" : "A thick metal door leads northeast",
             "end"         : "Armory"
         },
         "southeast"  : {
             "name"        : "Exit 4",
-            "description" : "a small door",
+            "description" : "A small door goes southeast",
             "end"         : "Skate Park"
         },
         "south"  : {
             "name"        : "Exit 5",
-            "description" : "a scarred wooden door",
+            "description" : "A scarred wooden door lies to the south",
             "end"         : "Orge Lair"
         },
         "southwest"  : {
             "name"        : "Exit 6",
-            "description" : "a large rocky passage",
+            "description" : "A large rocky passage leads southwest",
             "end"         : "Giant Cave"
         }
     },

@@ -2,7 +2,7 @@
     "name"             : "trapdoor",
     "aliases"          : ["trap door", "panel"],
     "description"      : [
-        "a small, ",
+        "a small, wooden pael, hinged on one side",
         {
             "type"      : "item_state",
             "responses" : {

@@ -4,7 +4,7 @@
     "paths"      : {
         "east"   : {
             "name"        : "Exit 1",
-            "description" : "a stone step",
+            "description" : "A stone staircase leads east",
             "end"         : "Garden"
         }
     },

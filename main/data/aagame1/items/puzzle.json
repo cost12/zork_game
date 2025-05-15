@@ -1,6 +1,6 @@
 {
     "name"             : "puzzle",
-    "description"      : "a puzzle",
+    "description"      : "an imcomplete jigsaw puzzle",
     "state"            : {
         "states"       : ["visible"],
         "graphs"       : ["takeable"]

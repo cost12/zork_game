@@ -1,6 +1,6 @@
 {
     "name"             : "Spear",
-    "description"      : "A dope-ass long spear with a tuft to catch the blood of your foes",
+    "description"      : "a dope-ass long spear with a tuft to catch the blood of your foes",
     "state"            : {
         "states"       : ["visible", "sharp"],
         "graphs"       : ["takeable"]
