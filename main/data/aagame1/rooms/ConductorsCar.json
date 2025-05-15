@@ -16,7 +16,11 @@
     "details"    : [
         {
             "name"        : "dashboard",
-            "description" : "On a the dashboard, amidst myriad knobs and buttons rusted beyond use, lies",
+            "description" : {
+                "type"    : "contents",
+                "full"    : "On the dashboard, amidst an array of rusty knobs and buttons lies",
+                "empty"   : "The slew of controls and buttons lies neglected and empty"
+            }, 
             "contents"    : ["Burgundy Book"]
         }
     ]
