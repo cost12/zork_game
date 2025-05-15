@@ -18,7 +18,7 @@ A description can be defined for any visible object.
 
 ### id
 
-A unique identifier for an object. Each id must be unique (case insensitive). If no id is given, id defaults to name for most objects. Path ids default to 'f"{name} going {direction_name} in {room_name}"' where name is the path name, direction_name is the name of the direction the path leads, and room_name is the name of the room the path starts. LocationDetail ids default to 'f"{name} {parent_id}"' where name is the LocationDetail name and parent_id is the id of the id of the object that contains the location detail. If the default id for an object would not be unique, it needs to be defined. Ids are not used to reference an object in the game unless it is needed for disambiguation.
+A unique identifier for an object. Each id must be unique (case insensitive). If no id is given, id defaults to name for most objects. Path ids default to `f"{name} going {direction_name} in {room_name}"` where name is the path name, direction_name is the name of the direction the path leads, and room_name is the name of the room the path starts. LocationDetail ids default to `f"{name} {parent_id}"` where name is the LocationDetail name and parent_id is the id of the id of the object that contains the location detail. If the default id for an object would not be unique, it needs to be defined. Ids are not used to reference an object in the game unless it is needed for disambiguation.
 
 ### name
 
@@ -38,13 +38,11 @@ Joins a list of responses by a join string. The default join string is the empty
 To use a combination response make a list of responses where a single response would usually go.
 
 Example:
-`
-{
+`{
 
     "description" : ["Response 1", "response 2", ["nested response"], ...]
-    
-}
-`
+
+}`
 
 ### Contents
 
@@ -62,8 +60,7 @@ Achievements represent notable actions that a character completes. This could in
 
 To create an achievement you need to define a name. ex:
 
-`
-{
+`{
 
     "name"    : "AchievementName",
 
@@ -71,8 +68,7 @@ To create an achievement you need to define a name. ex:
 
     "aliases" : ["Alias1", ..., "AliasN"]
 
-}
-`
+}`
 
 Defining an id and aliases are optional.
 
@@ -82,8 +78,7 @@ Actions represent all the moves a character can take on their turn. This include
 
 To create an action you need to define a name. ex:
 
-`
-{
+`{
 
     "name"    : "ActionName",
 
@@ -91,8 +86,7 @@ To create an action you need to define a name. ex:
 
     "aliases" : ["Alias1", ..., "AliasN"]
 
-}
-`
+}`
 
 Defining an id and aliases are optional.
 
