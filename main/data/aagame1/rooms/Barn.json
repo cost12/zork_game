@@ -12,16 +12,22 @@
     "details"    : [
         {
             "name"        : "spear rack",
-            "description" : "on a spear rack",
-            "responses"   : {
+            "description" :{
+                "type"    : "contents",
+                "full"    : "On a spear rack there is",
+                "empty"   : "An empty spear rack is on one wall"
+            },"responses"   : {
                 "spear"   : "When you place the spear on the rack, a poof of smoke reveals."
             },
             "contents"    : ["Rubber Ducky"]
         },
         {
             "name"        : "pitchfork rack",
-            "description" : "on a pitchfork rack",
-            "responses"   : {
+            "description" : {
+                "type"    : "contents",
+                "full"    : "On a rack for pitchforks is",
+                "empty"   : "An empty pitchfork rack rests on one wall"
+            },"responses"   : {
                 "pitchfork" : "When you place the pitchfork in its rack, a poof of smoke reveals."
             },
             "contents"    : ["warm boots"]

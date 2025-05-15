@@ -16,8 +16,11 @@
     "details"    : [
         {
             "name"        : "wall",
-            "description" : "Hanging from a peg in the wall is",
-            "contents"    : ["dried herbs"]
+            "description" : {
+                "type"    : "contents",
+                "full"    : "Hanging from a peg in the wall is",
+                "empty"   : ""
+            }, "contents"    : ["dried herbs"]
         }
     ]
 }

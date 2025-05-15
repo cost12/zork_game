@@ -17,8 +17,11 @@
     "details"    : [
         {
             "name"        : "rack",
-            "description" : "Sitting on a rack",
-            "contents"    : ["weights"]
+            "description" : {
+                "type"    : "contents",
+                "full"    : "Sitting on a simple and sturdy rack is",
+                "empty"   : "A small pyramid-shamed weight rack stands empty before the poster of Arnold"
+            },"contents"    : ["weights"]
         }
     ]
 }

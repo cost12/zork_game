@@ -16,8 +16,11 @@
     "details"    : [
         {
             "name"        : "counter",
-            "description" : "On the counter is",
-            "contents"    : ["Gray Book"]
+            "description" : {
+                "type"    : "contents",
+                "full"    : "On the counter is",
+                "empty"   : "The counter is empty. Sound familiar?"
+            },"contents"    : ["Gray Book"]
         }
     ]
 }

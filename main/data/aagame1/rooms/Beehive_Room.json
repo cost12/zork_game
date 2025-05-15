@@ -36,8 +36,11 @@
     "details"    : [
         {
             "name"        : "beehive",
-            "description" : "dripping from the beehive",
-            "contents"    : ["honey jar"]
+            "description" : {
+                "type"    : "contents",
+                "full"    : "Dripping from a large, intricate beehive is",
+                "empty"   : "A large beehive buzzes with busy energy"
+            },"contents"    : ["honey"]
         }
     ]
 }

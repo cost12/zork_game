@@ -11,8 +11,11 @@
     "details"    : [
         {
             "name"        : "desk",
-            "description" : "Sitting on the desk is",
-            "contents"    : ["Emerald book", "Magnifying glass"]
+            "description" :  {
+                "type"    : "contents",
+                "full"    : "Sitting on the desk is",
+                "empty"   : "The desk is lacking any contents"
+            },"contents"    : ["Emerald book", "Magnifying glass"]
         }
     ]
 }

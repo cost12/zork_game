@@ -11,8 +11,11 @@
     "details"    : [
         {
             "name"        : "cushion",
-            "description" : "Resting on a delicate cushion is",
-            "contents"    : ["wallet"]
+            "description" : {
+                "type"    : "contents",
+                "full"    : "On a velvet cushion rests",
+                "empty"   : "A velvet cushion sits on a pedestal, notably missing the precious item it seems to be meant to hold"
+            }, "contents"    : ["wallet"]
         }
     ]
 }

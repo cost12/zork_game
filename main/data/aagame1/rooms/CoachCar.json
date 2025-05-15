@@ -16,8 +16,11 @@
     "details"    : [
         {
             "name"        : "seated",
-            "description" : "Sitting in a chair is",
-            "contents"    : ["child"]
+            "description" : {
+                "type"    : "contents",
+                "full"    : "Sitting idly on a chair is",
+                "empty"   : "All of the seats lie empty"
+            },"contents"    : ["child"]
         }
     ]
 }

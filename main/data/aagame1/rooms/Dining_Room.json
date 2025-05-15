@@ -16,8 +16,11 @@
     "details" : [
         {
             "name"        : "table2",
-            "description" : "On the table is",
-            "contents"    : ["Plate"]
+            "description" : {
+                "type"    : "contents",
+                "full"    : "On table sits",
+                "empty"   : "The table is bare and free of burden. That must be nice"
+            }, "contents"    : ["Plate"]
         }
     ]
 }

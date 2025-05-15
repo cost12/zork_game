@@ -24,8 +24,11 @@
     "details"    : [
         {
             "name"        : "in trunk",
-            "description" : "in a corner of the trunk",
-            "contents"    : ["Fuzzy Jacket"],
+            "description" :  {
+                "type"    : "contents",
+                "full"    : "Nestled in the corner of the trunk is",
+                "empty"   : "The trunk is dissapointingly empty"
+            },"contents"    : ["Fuzzy Jacket"],
             "visible_requirements" : {
                 "item_state_requirements" : {
                     "trunk door" : {
