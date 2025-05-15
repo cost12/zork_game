@@ -75,8 +75,6 @@ Actions represent all the moves a character can take on their turn. This include
 
 To create an action you need to define a name. ex:
 
-`
-
 {
 
     "name"    : "ActionName",
@@ -86,8 +84,6 @@ To create an action you need to define a name. ex:
     "aliases" : ["Alias1", ..., "AliasN"]
 
 }
-
-`
 
 Defining an id and aliases are optional.
 
