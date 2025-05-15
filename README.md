@@ -35,7 +35,7 @@ For each of the response types, the object they refer to is assumed to be their 
 
 ### Backup
 
-Currently not an option. Has a list of responses and return the first one that doesn't evaluate to None.
+Currently not an option. Has a list of responses and returns the first one that doesn't evaluate to None.
 
 ### Combination
 
@@ -197,4 +197,10 @@ Defining an id and aliases are optional.
 
 Characters represent user controlled or computer controlled agents. 
 
-To create a character you need to define a name, type, description, state, skills, and inventory.
+To create a character you need to define a name, type, description, state, skills, and inventory:
+
+{
+
+    "name" : "CharacterName
+
+}
