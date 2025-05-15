@@ -26,7 +26,6 @@ A unique identifier for an object. Each id must be unique (case insensitive). If
 
 The primary name of an object. The game will always refer to an object by it's primary name (keeping capitalization) when printing out. Mulitple objects can share the same name.
 
-
 ## Responses
 
 Responses control how the game conveys information/text to the user. They can be triggered by looking at an object (description), performing an action on/with an objects (target/actor/tool responses), or when an object enters a new state (state responses). Responses allow for nesting of other response types inside them.
@@ -46,7 +45,7 @@ To use a combination response make a list of responses where a single response w
 Example:
 
     {
-    "description" : ["Response 1", "response 2", ["nested response", ...], {...}, ...]
+        "description" : ["Response 1", "response 2", ["nested response", ...], {...}, ...]
     }
 
 ### Contents
@@ -56,11 +55,11 @@ Lists the contents of an item/character/detail. Also takes alternative text for 
 To use a contents response specify full and empty responses and the type of response (contents):
 
     {
-    "description" : {
-        "type" : "contents",
-        "full" : "The contents of this object are",
-        "empty": "This object has no contents"
-    }
+        "description" : {
+            "type" : "contents",
+            "full" : "The contents of this object are",
+            "empty": "This object has no contents"
+        }
     }
 
 ### Contents With State
@@ -70,15 +69,15 @@ Checks the contents of an object to see if any of the contents have a specific s
 To use a contents with state response spcecify the responses for each state, an optional default, and the type of response (contents_with_state):
 
     {
-    "description" : {
-        "type" : "contents_with_state",
-        "responses" : {
-            "state1" : "Object has at least one item with state1."
-            "state2" : "Object has at least one item with state2."
-            ...
+        "description" : {
+            "type" : "contents_with_state",
+            "responses" : {
+                "state1" : "Object has at least one item with state1."
+                "state2" : "Object has at least one item with state2."
+                ...
+            }
+            "default" : "Object has no items with any of the states."
         }
-        "default" : "Object has no items with any of the states."
-    }
     }
 
 ### Item State
@@ -88,15 +87,15 @@ Gives a different response depending on the current state of an object. If the o
 To use an item state response specify the responses for each state, an optional default, and the type of response (item_state):
 
     {
-    "description" : {
-        "type" : "item_state",
-        "responses" : {
-            "state1" : "Object has state state1.",      
-            "state2" : "Object has state state2.",
-            ...
+        "description" : {
+            "type" : "item_state",
+            "responses" : {
+                "state1" : "Object has state state1.",      
+                "state2" : "Object has state state2.",
+                ...
+            }
+            "default" : "Object has none of the states."
         }
-        "default" : "Object has none of the states."
-    }
     }
 
 ### Random
@@ -106,10 +105,10 @@ Returns one response from a list of responses, each with equal probability.
 To use a random response specify a list of responses and the type of response (random):
 
     {
-    "description" : {
-        "type" : "random",
-        "responses" : ["Option 1", "Option 2", ["nested option", ...], {...}, ...]
-    }
+        "description" : {
+            "type" : "random",
+            "responses" : ["Option 1", "Option 2", ["nested option", ...], {...}, ...]
+        }
     }
 
 ### Static
@@ -119,7 +118,7 @@ The simplest type of response. Returns the same string every time.
 To use a static response just give the string to return:
 
     {
-    "description": "Simple description"
+        "description": "Simple description"
     }
 
 ## Achievements
@@ -129,9 +128,9 @@ Achievements represent notable actions that a character completes. This could in
 To create an achievement you need to define a name. ex:
 
     {
-    "name"    : "AchievementName",
-    "id"      : "AchievementId",
-    "aliases" : ["Alias1", ..., "AliasN"]
+        "name"    : "AchievementName",
+        "id"      : "AchievementId",
+        "aliases" : ["Alias1", ..., "AliasN"]
     }
 
 Defining an id and aliases are optional.
@@ -143,9 +142,9 @@ Actions represent all the moves a character can take on their turn. This include
 To create an action you need to define a name. ex:
 
     {
-    "name"    : "ActionName",
-    "id"      : "ActionId",
-    "aliases" : ["Alias1", ..., "AliasN"]
+        "name"    : "ActionName",
+        "id"      : "ActionId",
+        "aliases" : ["Alias1", ..., "AliasN"]
     }
 
 Defining an id and aliases are optional.
