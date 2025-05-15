@@ -50,7 +50,7 @@ Example:
 
 ### Contents
 
-Lists the contents of an item/character/detail. Also takes alternative text for the case where the object is empty.
+This can't be used for a room description (it is already done automatically). Lists the contents of an item/character/detail. Also takes alternative text for the case where the object is empty.
 
 To use a contents response specify full and empty responses and the type of response (contents):
 
