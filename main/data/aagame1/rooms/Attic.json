@@ -32,7 +32,7 @@
             "description" : {
                 "type"    : "contents",
                 "full"    : "On a spindly table you find",
-                "empty"   : null
+                "empty"   : "There is a spindly table in the middle of the room"
             },
             "contents"    : ["Leaflet", "hourglass", "yellow book"]
         }

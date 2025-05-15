@@ -1,5 +1,6 @@
 {
     "name"             : "trapdoor",
+    "aliases"          : ["trap door", "panel"],
     "description"      : [
         "a small, ",
         {

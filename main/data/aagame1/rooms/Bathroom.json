@@ -4,14 +4,21 @@
     "paths"      : {
         "west"  : {
             "name"        : "Exit 1",
-            "description" : "a thin door",
+            "description" : "A thin door leads west, offering no privacy",
             "end"         : "Bedroom"
         }
     },
     "details"    : [
         {
             "name"        : "toilet",
-            "description" : "sitting next to the toilet",
+            "description" : {
+                "type" : "contents",
+                "full" : {
+                    "type" : "random",
+                    "responses" : ["Sitting on the toilet's rim is", "Sitting next to the toilet is", "On the sink next to the toilet is"]
+                },
+                "empty" : "The toilet seat glints with grime and muck"
+            },
             "contents"    : ["vermilion book"]
         }
     ],

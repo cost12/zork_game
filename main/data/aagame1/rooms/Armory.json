@@ -5,7 +5,7 @@
     "paths"      : {
         "west"   : {
             "name"        : "Exit 1",
-            "description" : "a passage",
+            "description" : "A passage",
             "end"         : "Beehive Room"
         }
     },

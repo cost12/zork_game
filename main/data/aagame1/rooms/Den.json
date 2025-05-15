@@ -4,29 +4,33 @@
     "paths"      : {
         "north"  : {
             "name"        : "Exit 1",
-            "description" : "a doorway",
+            "description" : "To the east is a doorway",
             "end"         : "Hallway"
         },
         "south"  : {
             "name"        : "Exit 2",
-            "description" : "a passageway",
+            "description" : "A passageway leads south",
             "end"         : "Garden"
         },
         "east"  : {
             "name"        : "Exit 1",
-            "description" : "a doorway",
+            "description" : "A doorway leads east",
             "end"         : "Kitchen"
         },
         "west"  : {
             "name"        : "Exit 1",
-            "description" : "a closed swinging door",
+            "description" : "A closed swinging door lies to the west",
             "end"         : "Dining Room"
         }
     },
     "details"    : [
         {
             "name"        : "couch",
-            "description" : "sitting on a trodden couch cushion",
+            "description" : {
+                "type"    : "contents",
+                "full"    : "Sitting on a troden couch there is",
+                "empty"   : "A trodden couch sits in the middle of the room."
+            },
             "contents"    : ["Red Book", "Wool Hat"]
         }
     ]

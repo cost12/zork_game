@@ -1,6 +1,7 @@
 
 {
     "name"             : "Wool Hat",
+    "aliases"          : ["Hat", "knit hat", "cap", "grandma's hat", "granny cap"],
     "description"      : "a lovely knit hat, as if done by a grandmother",
     "state"            : {
         "states"       : ["visible"],

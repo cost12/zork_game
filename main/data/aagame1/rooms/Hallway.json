@@ -4,17 +4,17 @@
     "paths"      : {
         "north"  : {
             "name"        : "Exit 1",
-            "description" : "a doorway",
+            "description" : "To the north, you see a doorway",
             "end"         : "Bedroom"
         },
         "south"  : {
             "name"        : "Exit 2",
-            "description" : "a doorway",
+            "description" : "Southwards lies a doorway",
             "end"         : "Den"
         },
         "east"  : {
             "name"        : "Exit 3",
-            "description" : "a doorway",
+            "description" : "To the east is a doorway",
             "end"         : "Kitchen"
         }
     }
