@@ -125,14 +125,15 @@ class CommandLineController(CharacterController):
         print(f"By \"{'"/"'.join(texts)}\" did you mean:")
         i = 0
         for objects,_ in options:
-            print(f"[{i}] {" ".join([f"{obj.get_name()} ({obj.get_name()})" for obj in objects])}")
+            print(f"[{i}] {" ".join([f"{obj.get_name()} ({obj.get_id()})" for obj in objects])}")
             i += 1
         response = input("> ")
+        print("")
         try:
             index = int(response)
             if 0 <= index and index < len(options):
                 return index
-        except TypeError:
+        except ValueError:
             i=0
             for objects,_ in options:
                 for obj in objects:
