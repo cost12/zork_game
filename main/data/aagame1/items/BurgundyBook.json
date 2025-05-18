@@ -1,5 +1,6 @@
 {
     "name"             : "Burgundy Book",
+    "aliases"          : ["book"],
     "description"      : "a majestic leather-bound volume with a burgundy hue",
     "state"            : {
         "states"       : ["visible"],

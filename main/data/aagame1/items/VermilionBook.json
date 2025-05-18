@@ -1,5 +1,6 @@
 {
     "name"             : "Vermilion Book",
+    "aliases"          : ["book"],
     "description"      : "a lovely book with a distinctly vermilion cover",
     "state"            : {
         "states"       : ["visible"],

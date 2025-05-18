@@ -1,5 +1,6 @@
 {
     "name"             : "Red Book",
+    "aliases"          : ["book"],
     "description"      : "a little book with a red cover",
     "state"            : {
         "states"       : ["visible"],

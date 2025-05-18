@@ -1,5 +1,6 @@
 {
     "name"             : "Brown Book",
+    "aliases"          : ["book"],
     "description"      : "a plain brown book",
     "state"            : {
         "states"       : ["visible"],

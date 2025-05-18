@@ -1,5 +1,6 @@
 {
     "name"             : "Gray Book",
+    "aliases"          : ["book"],
     "description"      : "a weather-worn little tome with a gray cover",
     "state"            : {
         "states"       : ["visible"],

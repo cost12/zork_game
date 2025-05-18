@@ -1,5 +1,6 @@
 {
     "name"             : "Emerald Book",
+    "aliases"          : ["book"],
     "description"      : "a hearty volume with an emerald cover",
     "state"            : {
         "states"       : ["visible"],

@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 from models.response import ResponseString, Response
 import views.string_views as views
+from models.named import Named
 
 #@dataclass(frozen=True)
 class Feedback:
@@ -51,6 +52,16 @@ class CharacterController:
         """
         pass
 
+    def decide(self, options:list[tuple[list[Named],list[str]]]) -> int:
+        """If the character makes an ambiguous move, this helps disambiguate it
+
+        :param options: The possible interpretations. Each tuple matches the ambiguous text to a possible interpretation
+        :type options: list[tuple[list[Named],list[str]]]
+        :return: The index of the correct interpretation
+        :rtype: int
+        """
+        return 0
+
 class NPCController(CharacterController):
     """Inherits from CharacterController.
     Controls an NPC Character and takes the wait Action every turn.
@@ -97,6 +108,39 @@ class CommandLineController(CharacterController):
         :rtype: str
         """
         return input(views.input_prompt(self.moves,self.turns,self.score))
+    
+    def decide(self, options:list[tuple[list[Named],list[str]]]) -> int:
+        """If the character makes an ambiguous move, this helps disambiguate it
+
+        :param options: The possible interpretations. Each tuple matches the ambiguous text to a possible interpretation
+        :type options: list[tuple[list[Named],list[str]]]
+        :return: The index of the correct interpretation
+        :rtype: int
+        """
+        texts = []
+        for _,words in options:
+            text = " ".join(words)
+            if text not in texts:
+                texts.append(text)
+        print(f"By \"{'"/"'.join(texts)}\" did you mean:")
+        i = 0
+        for objects,_ in options:
+            print(f"[{i}] {" ".join([f"{obj.get_name()} ({obj.get_name()})" for obj in objects])}")
+            i += 1
+        response = input("> ")
+        try:
+            index = int(response)
+            if 0 <= index and index < len(options):
+                return index
+        except TypeError:
+            i=0
+            for objects,_ in options:
+                for obj in objects:
+                    if response.lower() == obj.get_id():
+                        return i
+                i += 1
+        print("Invalid response, please either give the index or id.")
+        return self.decide(options)
     
     def feedback(self, feedback:Feedback) -> None:
         """Reads the moves, turns, and score from the Feedback and prints the rest out to command line for the user to read.

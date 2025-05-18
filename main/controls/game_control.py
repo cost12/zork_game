@@ -4,7 +4,7 @@ from models.actors              import Target, Actor, Location, LocationDetail
 from models.named               import Action, Direction
 from factories.factories        import CharacterControlFactory
 from models.response            import ResponseString, Response, CombinationResponse, StaticResponse, ContentsResponse, BackupResponse
-from controls.character_control import CommandLineController, Feedback
+from controls.character_control import CommandLineController, Feedback, CharacterController
 from controls.translate         import get_input_translator
 from utils.constants            import *
 from utils.relator              import NameFinder
@@ -379,15 +379,19 @@ class GameState:
         """
         pass
 
-    def translate(self, user_input:str) -> tuple[Action,list]:
+    def translate(self, user_input:str, character:Actor, controller:CharacterController) -> tuple[Action,list]:
         """Translates user input into a GameAction
 
         :param user_input: Input from a Character. Can be any string
         :type user_input: str
+        :param character: The character making the input
+        :type character: Actor
+        :param controller: The controller for the character making the input, for clarifications
+        :type controller: CharacterController
         :return: A GameAction and its inputs or an error message
         :rtype: tuple[Action,list]
         """
-        return self.translator.interpret(user_input, self.name_space)
+        return self.translator.interpret(user_input, self.name_space, character, controller)
     
     ###########################################################################
     # Main driver
@@ -406,7 +410,7 @@ class GameState:
             character = self.whose_turn()
             controller = self.controllers.get_controller(character)
             user_input = controller.make_move()
-            action, inputs = self.translate(user_input)
+            action, inputs = self.translate(user_input, character, controller)
             if DEBUG_INPUT:
                 print(f"{character}: {action} {inputs}")
             feedback = self.action(character, action, inputs)

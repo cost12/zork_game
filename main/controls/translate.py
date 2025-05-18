@@ -1,7 +1,8 @@
 from typing import Any
 
 from models.named    import Action, Named
-from models.actors   import HasLocation, LocationDetail
+from models.actors   import HasLocation, LocationDetail, Actor
+from controls.character_control import CharacterController
 from utils.relator   import NameFinder
 from utils.constants import *
 
@@ -82,7 +83,7 @@ class Translator:
     def __init__(self, head:Node):
         self.head = head
 
-    def interpret(self, input:str, name_space:NameFinder) -> tuple[Action,tuple]:
+    def interpret(self, input:str, name_space:NameFinder, character:Actor, controller:CharacterController) -> tuple[Action,tuple]:
         tokens = input.lower().split()
         tokens.append('\n')
         translation = list[Named]()
@@ -90,7 +91,18 @@ class Translator:
         while len(result) > 0:
             if len(result) > 1:
                 # pick one
-                print("Ambiguous meaning, guessing at random...")
+                room = character.get_top_parent()
+                in_room = []
+                for edge,translated_tokens,tokens_used,tokens_left,next_node in result:
+                    for token in translated_tokens:
+                        if room.contains_item(token):
+                            in_room.append((edge,translated_tokens,tokens_used,tokens_left,next_node))
+                            break
+                if len(in_room) >= 1:
+                    result = in_room
+                if len(result) > 1:
+                    index = controller.decide([(translated_tokens,tokens_used) for _,translated_tokens,tokens_used,_,_ in result])
+                    result = [result[index]]
                 if DEBUG_INPUT: print(result)
                 pass
             edge, translated_tokens, tokens_used, tokens_left, next_node = result[0]
