@@ -1,6 +1,6 @@
 {
     "name"       : "Attic",
-    "description": "You are in a musty, small attic. It is mostly empty, except for a table.",
+    "description": "You are in a musty, small attic. It is mostly empty, except for a table. At one end of the room is a sooty brick fireplace, leading upwards to the chimney",
     "paths"      : {
         "down"   : {
             "name"        : "Exit 1",

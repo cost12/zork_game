@@ -1,5 +1,6 @@
 {
     "name"             : "Warm Boots",
+    "aliases"          : ["boots", "hiking boots", "shoes"],
     "description"      : "a pair of hefty hiking boots",
     "state"            : {
         "states"       : ["visible"],
