@@ -20,7 +20,8 @@
                 "type"    : "contents",
                 "full"    : "Sitting idly on a chair is",
                 "empty"   : "All of the seats lie empty"
-            },"contents"    : ["child"]
+            },
+            "contents"    : ["child"]
         }
     ]
 }

@@ -186,11 +186,11 @@ def direction_responses_from_dict(name:str, response_dict:dict[str,Any], name_sp
 
 # OTHER HELPERS
 
-def children_from_dict(name, children_dict:dict[str,Any], name_space:NameFinder) -> dict[str,HasLocation]:
-    children = dict[str,HasLocation]()
+def children_from_dict(name, children_dict:dict[str,Any], name_space:NameFinder) -> list[HasLocation]:
+    children = list[HasLocation]()
     for item_id in children_dict:
         item = name_space.get_from_id(item_id, ['target', 'actor', 'locationdetail'])
-        children[item.get_name()] = item
+        children.append(item)
     return children
 
 def item_limit_from_dict(limit_dict:dict[str,Any]) -> ItemLimit:
@@ -325,7 +325,7 @@ def one_from_dict_inventory(name:str, inventory_dict:dict[str,Any], name_space:N
         'children'    : items,
         'item_limit'  : item_limit,
         'hidden'      : True,
-        'id'          : f"{name}_inventory"
+        'id'          : f"{name}'s inventory"
     }
 
 # ITEMS
@@ -362,7 +362,7 @@ def update_item(item_dict:dict[str,Any], name_space:NameFinder, setup_space:Name
             fails = [kwargs['name'] for s,kwargs in zip(success,new_detail_inputs) if not s]
             if len(fails) > 0: print(f"In {name} failed to add: {fails}")
             assert all(success)
-            item._set_children({detail.get_name():detail for detail in new_details})
+            item._set_children(new_details)
             update_details(item_dict['details'], name_space, setup_space, parent_id=name)
         if 'visible_requirements' in item_dict:
             item.visible_requirements = requirements_from_dict(name, item_dict['visible_requirements'], name_space, setup_space)
@@ -425,8 +425,12 @@ def update_character(character_dict:dict[str,Any], name_space:NameFinder, setup_
         if 'inventory' in character_dict:
             inventory_inputs = one_from_dict_inventory(name, character_dict['inventory'], name_space)
             inventory = LocationDetail(**inventory_inputs)
+            inventories = character.children.get_from_name('inventory')
+            for inv in inventories:
+                assert character.children.remove(inv)
             inventory.parent = character
-            character.children['inventory'] = inventory
+            assert character.children.add(inventory)
+            assert character.get_inventory() is not None
     except ValueError as e:
         print(f"Error in character update {name}: {e}")
 
@@ -549,11 +553,11 @@ def one_from_dict_location(location_dict:dict[str,Any|dict], name_space:NameFind
         detail_inputs = many_from_dict_detail(location_dict['details'], parent_id=name) if 'details' in location_dict else []
         details = [LocationDetail(**kwargs) for kwargs in detail_inputs]
         name_space.add_many(details)
-        contents = {detail.get_name():detail for detail in details}
+        contents = details
         if 'contents' in location_dict:
             for child_id in location_dict['contents']:
                 child = name_space.get_from_id(child_id, ['target', 'actor', 'locationdetail'])
-                contents[child.get_name()] = child
+                contents.append(child)
         inputs['children'] = contents
         inputs['start_location'] = location_dict.get('start', False)
         inputs['item_limit'] = item_limit_from_dict(location_dict['item_limit']) if 'item_limit' in location_dict else None

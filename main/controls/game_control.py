@@ -129,7 +129,9 @@ class LookAction(GameAction):
         if can_look:
             if target is None:
                 location = character.get_top_parent()
-                assert isinstance(location, Location)
+                if not isinstance(location, Location):
+                    print(location)
+                    print(type(location))
                 response.append(character.perform_action_as_actor(self.action))
                 response.append(location.get_description_to(character))
                 return Feedback(self.__combine_responses__(response), Response(character, self.action, True), turns=0)
@@ -244,11 +246,17 @@ class DropAction(GameAction):
     """
 
     def check_inputs(self, inputs) -> tuple[bool,tuple,ResponseString]:
+        targets = []
+        placement = None
         for input in inputs:
-            if not isinstance(input, Target):
+            if isinstance(input, Target):
+                targets.append(input)
+            elif isinstance(input, tuple) and input[0] == 'placement':
+                placement = input[1]
+            else:
                 return False, None, StaticResponse(f"You can't drop a {input.get_name()}!")
         if len(inputs) > 0:
-            return True, (inputs,), None
+            return True, (targets,placement), None
         return False, None, StaticResponse("Drop what?")
     
     def take_action(self, character:Actor, targets:list[Target], placement:Optional[LocationDetail]=None) -> Feedback:
@@ -262,13 +270,16 @@ class DropAction(GameAction):
                 can_be_dropped, target_response = self.__verify_target__(character, target)
                 response.append(target_response)
                 if can_be_dropped:
-                    dropped, r = character.remove_from_inventory(target, placement)
-                    response.append(r)
-                    if dropped:
-                        success = True
-                        response.append(target.perform_action_as_target(self.action))
+                    room = character.get_top_parent()
+                    assert isinstance(room, Location)
+                    if placement is None or room.can_interact_with(character, placement):
+                        dropped, r = character.remove_from_inventory(target, placement)
+                        response.append(r)
+                        if dropped:
+                            success = True
+                            response.append(target.perform_action_as_target(self.action))
                     else:
-                        response.append(StaticResponse(f"You aren't holding a {target.get_name()}."))
+                        response.append(StaticResponse(f"There is no {placement.get_name()} here."))
             if success:
                 response.append(StaticResponse("Dropped."))
                 response.append(character.perform_action_as_actor(self.action))
@@ -327,7 +338,7 @@ class GameState:
     def __init__(self, details:dict[str,Any], name_space:NameFinder, extra_characters:list[Actor], controllers:CharacterControlFactory):
         self.game_details    = details
         self.name_space      = name_space
-        self.character_order = self.name_space.get_from_name(category='actor')
+        self.character_order:list[Actor] = self.name_space.get_from_name(category='actor')
         self.controllers     = controllers
         self.translator      = get_input_translator()
         self.current_turn    = 0
@@ -386,6 +397,11 @@ class GameState:
         Prompts Characters for input on their turn and performs the GameActions until the game is over
         """
         print(self.game_details["welcome_text"])
+        print("")
+        for character in self.character_order:
+            controller = self.controllers.get_controller(character)
+            feedback = self.action(character, self.name_space.get_from_name('look','action')[0], tuple())
+            controller.feedback(feedback)
         while not self.game_over():
             character = self.whose_turn()
             controller = self.controllers.get_controller(character)

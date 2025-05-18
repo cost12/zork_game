@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeVar
 
 if TYPE_CHECKING:
     from models.actors import HasLocation
@@ -65,7 +65,8 @@ class WordTree[T]:
             result.extend(child.all())
         return result
 
-class NameFinder:
+T = TypeVar("T", bound="Named")
+class NameFinder[T]:
     """Stores Items/Objects/Characters/Actions/ anything in the game namespace for quick access.
     Types of access:
         id - Each object has a unique id
@@ -73,40 +74,41 @@ class NameFinder:
         category/location limit - Each object has a category (Item/Character/Action/Room/...) and may have a location (HasLocation). By limiting the scope, fewer items can be returned from the first two types of access.
     """
     def __init__(self):
-        self.by_name = dict[str,WordTree['Named']]()
-        self.by_id   = dict[str,'Named']()
+        self.by_name = dict[str,WordTree[T]]()
+        self.by_id   = dict[str,T]()
 
-    def _category(self, named:'Named') -> str:
+    def _category(self, named:T) -> str:
         return str(type(named)).lower().split(".")[-1][:-2]
 
-    def add(self, named:'Named') -> bool:
+    def add(self, named:'T|Named') -> bool:
         if named.get_id() in self.by_id:
             return False
         self.by_id[named.get_id()] = named
         category = self._category(named)
         if category not in self.by_name:
-            self.by_name[category] = WordTree['Named']()
+            self.by_name[category] = WordTree[T]()
         for name in named.get_aliases():
             name = name.lower().split(" ")
             self.by_name[category].add(name, named)
         return True
     
-    def add_many(self, to_add:list['Named']) -> list[bool]:
+    def add_many(self, to_add:list[T]) -> list[bool]:
         return [self.add(named) for named in to_add]
     
-    def remove(self, named:'Named') -> bool:
+    def remove(self, named:'T|Named') -> bool:
+        if named.get_id() in self.by_id:
+            del self.by_id[named.get_id()]
+        else:
+            return False
         category = self._category(named)
         if category in self.by_name:
             for name in named.get_aliases():
                 name = name.lower().split(" ")
                 self.by_name[category].remove(name, named)
-        if named.get_id() in self.by_id:
-            del self.by_id[named.get_id()]
-            return True
-        return False
+        return True
 
-    def get_from_name(self, name:str=None, category:str|list[str]=None, location:'HasLocation'=None) -> list['Named']:
-        matches = set['Named']()
+    def get_from_name(self, name:str=None, category:str|list[str]=None, location:'HasLocation'=None) -> list[T]:
+        matches = set[T]()
         if isinstance(category, str):
             category = category.lower()
             if category in self.by_name:
@@ -131,12 +133,12 @@ class NameFinder:
                 else:
                     name = name.lower().split(" ")
                     matches.update(set(self.by_name[cat].get_exactly(name)))
-        matches = list['Named'](matches)
+        matches = list[T](matches)
         if location is not None:
             matches = [match for match in matches if isinstance(match, HasLocation) and match.is_in(location)]
         return matches
     
-    def get_from_id(self, id:str, category:str|list[str]=None) -> 'Named':
+    def get_from_id(self, id:str, category:str|list[str]=None) -> T:
         id = id.lower()
         if id in self.by_id:
             if category is None or \
@@ -145,8 +147,11 @@ class NameFinder:
                 return self.by_id[id]
         raise ValueError(f"\"{id}\" not found in category {category}")
     
-    def get_from_input(self, inputs:list[str], category:str|list[str]=None, location:'HasLocation'=None) -> list[tuple['Named',list[str],list[str]]]:
-        matches = list[tuple['Named',list[str],list[str]]]()
+    def contains(self, named:'T|Named') -> bool:
+        return named.get_id() in self.by_id
+    
+    def get_from_input(self, inputs:list[str], category:str|list[str]=None, location:'HasLocation'=None) -> list[tuple[T,list[str],list[str]]]:
+        matches = list[tuple[T,list[str],list[str]]]()
         inputs = [input.lower() for input in inputs]
         if category is None:
             for cat in self.by_name.keys():

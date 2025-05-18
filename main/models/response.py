@@ -100,7 +100,8 @@ class ContentsResponse(ResponseString):
 
     def as_string(self, response:Response) -> Optional[str]:
         if self.inventory:
-            contents = self.target.get_inventory()
+            if TYPE_CHECKING: assert isinstance(self.target, Actor)
+            contents = self.target.get_inventory_items()
         else:
             contents = self.target.list_contents_visible_to(response.character)
         contents = [item.get_description_to(response.character).as_string(response) for item in contents]
