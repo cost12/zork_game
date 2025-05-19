@@ -1,6 +1,6 @@
 {
     "name"             : "Lyre",
-    "description"      : "a rustic Greek lyre, surely loved as is evident from the well-worn neck. ",
+    "description"      : "a rustic Greek lyre, surely loved as is evident from the well-worn neck",
     "state"            : {
         "states"       : ["visible"],
         "graphs"       : ["takeable"],

@@ -1,7 +1,7 @@
 {
     "name"         : "Bully",
     "type"         : "standard",
-    "description"  : "a larger fellow with a pink face. He looks strong, but perhaps not of mind.",
+    "description"  : "a larger fellow with a pink face. He looks strong of body, but perhaps not of mind.",
     "state"        : {
         "graphs"   : ["standard_character"]
     },

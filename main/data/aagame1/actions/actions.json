@@ -1,5 +1,5 @@
 [
-    {"name": "look",        "aliases" : ["look", "inspect", "search", "look around", "investigate"]},
+    {"name": "look",        "aliases" : ["look", "inspect", "search", "look around", "investigate", "stare"]},
     {"name": "take",        "aliases" : ["take", "grab", "pick up"]},
     {"name": "drop",        "aliases" : ["drop", "let go", "put", "place"]},
     {"name": "hang",        "aliases" : ["hang"]},

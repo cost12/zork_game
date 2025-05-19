@@ -15,7 +15,7 @@
     "target_responses" : {
         "look"   : "You feel repulsed as you look at the Orge and struggle to keep it within its gaze",
         "take"   : "A foolish endeavor.",
-        "attack" : "With what?",
+        "attack" : "You attack the orge, damaging it's swolen ego",      
         "hug"    : "This merely confuses and angers the Orge",
         "kiss"   : "The Orge thinks you are cute and kisses you back. With gusto!"
     }
