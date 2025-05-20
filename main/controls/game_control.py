@@ -315,7 +315,9 @@ class DefaultAction(GameAction):
         return True, (inputs,), None
     
     def take_action(self, character:Actor, inputs:tuple[Target]) -> Feedback:
-        response = [StaticResponse("This action is not implemented and may result in errors.")]
+        response = list[ResponseString]()
+        if not self.action.use_default():
+            response = [StaticResponse("This action is not implemented and may result in errors.")]
         can_act, r = self.__verify_character__(character)
         response.append(r)
         success = False

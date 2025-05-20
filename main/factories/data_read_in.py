@@ -49,8 +49,8 @@ def read_in_directions(game:str, name_space:NameFinder) -> None:
     
 def read_in_actions(game:str, name_space:NameFinder) -> None:
     folder  = f"data/{game}/actions"
-    data       = __read_in_folder(folder)
-    inputs  = factories.many_from_dict_named(data)
+    data    = __read_in_folder(folder)
+    inputs  = factories.many_from_dict_action(data)
     actions = [Action(**kwargs) for kwargs in inputs]
     success = name_space.add_many(actions)
     if DEBUG_READIN: print(f"Loaded {len(success)} actions")

@@ -211,6 +211,16 @@ def one_from_dict_named(named_dict:dict[str,Any], *, name:str=None) -> dict[str,
 def many_from_dict_named(named_dicts:list[dict[str,Any]]) -> list[dict[str,Any]]:
     return [one_from_dict_named(named_dict) for named_dict in named_dicts]
 
+# ACTION
+
+def one_from_dict_action(action_dict:dict[str,Any]) -> dict[str,Any]:
+    inputs = one_from_dict_named(action_dict)
+    inputs['is_default'] = action_dict.get('is_default', False)
+    return inputs
+
+def many_from_dict_action(action_dicts:list[dict[str,Any]],) -> list[dict[str,Any]]:
+    return [one_from_dict_action(action_dict) for action_dict in action_dicts]
+
 # STATE
 
 def input_list(ids:list[str], name_space:NameFinder, category:str=None) -> list:

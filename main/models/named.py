@@ -32,14 +32,15 @@ class Action(Named):
     """Base class for an Action that a Character can make
     """
 
-    def __init__(self, name:str, aliases:Optional[list[str]]=None, id:str=None):
+    def __init__(self, name:str, *, aliases:Optional[list[str]]=None, is_default:bool=False, id:str=None):
         super().__init__(name, aliases, id)
+        self.is_default = is_default
 
     def __repr__(self):
         return f"[Action: {self.name}]"
     
-    def act(self):
-        pass
+    def use_default(self) -> bool:
+        return self.is_default
 
 class Direction(Named):
     """The Directions a Character can move to get from Room to Room.
