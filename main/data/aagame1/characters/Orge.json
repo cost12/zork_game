@@ -1,7 +1,7 @@
 {
     "name"         : "Orge",
     "type"         : "orge",
-    "description"  : "a hulking brute, more scar tissue than clear skin, greenish, rank, and steaming.",
+    "description"  : "an Orge (very different from an Ogre), a hulking brute, more scar tissue than clear skin, greenish, rank, and steaming.",
     "state"        : {
         "graphs"   : ["standard_character"]
     },

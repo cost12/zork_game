@@ -1,11 +1,11 @@
 
 {
     "name"       : "Theatre Entrance",
-    "description": "You are standing at the back of a large Theatre. Above grandiose wall decor to the North are the words: “The Conductor's Job is to Make the Music Enter as a Sheaf of Scores and Leave as a Single Instrument. Music Truly Transports Us.",
+    "description": "You are standing at the back of a large Theatre. Above grandiose wall decor to the North are the words: 'The Conductor's Job is to Make the Music Enter as a Sheaf of Scores and Leave as a Single Instrument. Music Truly Transports Us.'",
     "paths"      : {
         "north"  : {
             "name"        : "Exit 1",
-            "description" : "A gilded double door leads north",
+            "description" : "A gilded double door leads north, slight light streaking through the thin gap running down their seam",
             "end"         : null,
             "multi_end"   : {
                 "baton"   : "Bright Room",

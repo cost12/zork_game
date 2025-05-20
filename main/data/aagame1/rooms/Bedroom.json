@@ -17,7 +17,7 @@
                     "target"     : "trapdoor",
                     "responses"  : {
                         "opened" : "an opened",
-                        "closed" : "a closed"
+                        "closed" : "a closed, barely noticable"
                     }
                 },
                 " trapdoor in the ceiling."

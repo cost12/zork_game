@@ -1,6 +1,6 @@
 {
     "name"       : "Theatre Stage",
-    "description": "You stand on a meekly lit Theatre Stage. A music stand rests proudly on the stage.",
+    "description": "You stand on a meekly lit Theatre Stage. A lone music stand stands proudly on the stage.",
     "paths"      : {
         "north"  : {
             "name"        : "Exit 1",
@@ -41,15 +41,15 @@
                 "type"    : "contents",
                 "full"    : "Laying abandoned on the stage is",
                 "empty"   : "The stage is empty and barren."
-            },"contents"    : ["lyre", "triangle", "slide whistle", "bongo", "violin", "note"]
+            },"contents"    : ["lyre", "triangle", "slide whistle", "bongo", "violin"]
         },
         {
             "name"        : "stand",
             "description" :  {
                 "type"    : "contents",
                 "full"    : "Sitting on the music stand is",
-                "empty"   : "An empty music stand stands proudly on the stage"
-            },"contents"    : ["baton"]
+                "empty"   : ""
+            },"contents"    : ["baton", "note"]
         }
     ]
 }

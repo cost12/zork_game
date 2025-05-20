@@ -2,18 +2,18 @@
     "name"       : "Carpeted Hall",
     "description": "You stand in a long torch-lit hallway adorned with an ornate, illustrative carpet stretching as far as you can see to the East.",
     "paths"      : {
-        "west"  : {
+        "east"  : {
             "name"        : "Exit 1",
             "description" :{
                  "type" : "random",
-                "responses" : ["Distantly in the west lies a wooden door", "A wooden door awaits you in the west","To the west, a wooden door lies tantalizingly"]
+                "responses" : ["Distantly in the east lies a wooden door", "A wooden door awaits you in the east","To the east, a wooden door lies tantalizingly"]
             },
-            "end"         : "Theatre Stage"
-        },
-        "east"  : {
-            "name"        : "Exit 2",
-            "description" : "the hallway continues",
             "end"         : "Carpeted Hall"
+        },
+        "west"  : {
+            "name"        : "Exit 2",
+            "description" : "In the west, a wooden door stands stoically",
+            "end"         : "Theatre Stage"
         }
     }
 }
