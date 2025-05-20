@@ -1,6 +1,6 @@
 {
     "name"             : "Sword",
-    "description"      : "a classic yet deadly-looking sword. It glints, as if mocking its slain enemies",
+    "description"      : "a classic yet deadly-looking sword, glinting, as if mocking its slain enemies",
     "state"            : {
         "states"       : ["visible", "sharp"],
         "graphs"       : ["takeable"]

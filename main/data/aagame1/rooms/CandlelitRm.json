@@ -18,9 +18,9 @@
             "name"        : "floor",
             "description" : {
                 "type"    : "contents",
-                "full"    : "While most of the candles are melted past the point of retrieval, more intact are some candles. You see ",
+                "full"    : "While most of the candles are melted past the point of retrieval, more intact are some candles. Among the handleable candles you see ",
                 "empty"   : "All candles on the floor are too melted or misshapen to take"
-            },"contents"    : ["a candle", "another candle", "a third candle", "a fourth candle"]
+            },"contents"    : ["Beeswax candle", "Small candle", "square candle", "thin candle", "squat candle"]
         }
     ]
 }

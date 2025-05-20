@@ -1,6 +1,6 @@
 {
     "name"             : "Shower",
-    "description"      : "a stained shower occupies one wall",
+    "description"      : "a stained shower occupying one wall",
     "state"            : {
         "states"       : ["visible"],
         "graphs"       : ["switch"]

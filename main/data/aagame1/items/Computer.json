@@ -1,7 +1,7 @@
 
 {
     "name"             : "Computer",
-    "description"      : "an old-school computer hums soflty, the gentle light of its screen illuminating the space.",
+    "description"      : "an old-school computer hums soflty, the gentle light of its screen illuminating the space",
     "state"            : {
         "states"       : ["visible"],
         "graphs"       : ["takeable", "switch"],

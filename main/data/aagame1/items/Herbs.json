@@ -1,6 +1,6 @@
 {
     "name"             : "Dried Herbs",
-    "description"      : "a small, tightly packed bundle of herbs bound by a short length of hemp twine.",
+    "description"      : "a small, tightly packed bundle of herbs bound by a short length of hemp twine",
     "state"            : {
         "states"       : ["visible"],
         "graphs"       : ["takeable", "fragile_untie", "flammable"]

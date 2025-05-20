@@ -11,7 +11,7 @@
     "size"             : 1,
     "target_responses" : {
         "take"         : "You take the note",
-        "read"         : "It says: \"May the single instrument transport. When we arrive, let us go on with it in our hearts, if not on our personage.\""
+        "read"         : "It says: 'May the single instrument transport. When we arrive, let us go on with it in our hearts, if not on our personage.'"
     },
     "state_responses"  : {
         "broken"       : "You rip the note in two, and then four, then eight. Its shreds fall to the floor."

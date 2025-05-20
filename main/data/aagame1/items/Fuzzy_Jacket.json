@@ -1,6 +1,6 @@
 {
     "name"             : "Fuzzy Jacket",
-    "description"      : "a poofy and comfortable winter jacket, just your size!",
+    "description"      : "a poofy and comfortable winter jacket, just your size",
     "state"            : {
         "states"       : ["visible"],
         "graphs"       : ["takeable", "flammable", "wearable"]

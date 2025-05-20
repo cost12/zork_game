@@ -1,6 +1,6 @@
 {
     "name"             : "Keys",
-    "description"      : "a simple keychain with a single car key, an archaic brass key, and a tiny plushie of Nami from One Piece.",
+    "description"      : "a simple keychain with a single car key, an archaic brass key, and a tiny plushie of Nami from One Piece",
     "state"            : {
         "states"       : ["visible", "key"],
         "graphs"       : ["takeable"]

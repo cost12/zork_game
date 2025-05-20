@@ -1,5 +1,5 @@
 {
-    "name"             : "Candle",
+    "name"             : "Beeswax candle",
     "description"      : "a simple pale, beeswax candle",
     "state"            : {
         "states"       : ["visible"],

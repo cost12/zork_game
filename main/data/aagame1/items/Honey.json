@@ -1,6 +1,6 @@
 {
     "name"             : "Honey",
-    "description"      : "a bit of honey.",
+    "description"      : "a bit of honey",
     "state"            : {
         "states"       : ["visible", "edible"],
         "graphs"       : ["takeable"]

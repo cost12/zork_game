@@ -1,6 +1,6 @@
 {
-    "name"             : "A candle",
-    "description"      : "a small candle.",
+    "name"             : "Square candle",
+    "description"      : "a square candle",
     "state"            : {
         "states"       : ["visible"],
         "graphs"       : ["takeable", "lightable", "breakable"]

@@ -1,6 +1,6 @@
 {
     "name"             : "Hercules",
-    "description"      : "a medium-sized painting depictiong Hercules wrestling the Nemean Lion, gracefully rendered in romantic fashion.",
+    "description"      : "a medium-sized painting depictiong Hercules wrestling the Nemean Lion, gracefully rendered in romantic fashion",
     "state"            : {
         "states"       : ["visible"],
         "graphs"       : ["takeable", "flammable"],
