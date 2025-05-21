@@ -42,7 +42,8 @@ class WordTree[T]:
                     del self.tree[words[0]]
             else:
                 first, rest = words[0], words[1:]
-                self.tree[first].remove(rest, value)
+                if first in self.tree:
+                    self.tree[first].remove(rest, value)
 
     def get_exactly(self, words:list[str]) -> list[T]:
         if len(words) == 0:
