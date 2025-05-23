@@ -3,7 +3,7 @@
     "description"      : "a battered, greasy stove",
     "state"            : {
         "states"       : ["visible"],
-        "graphs"       : ["takeable", "switch"]
+        "graphs"       : ["switch"]
     },
     "weight"           : 5,
     "value"            : 3,
