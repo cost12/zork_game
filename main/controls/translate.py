@@ -80,12 +80,19 @@ class TranslatePlacementNode(Node):
 
 class Translator:
 
-    def __init__(self, head:Node):
+    def __init__(self, head:Node, *, remove=None):
         self.head = head
+        self.remove = list[str]() if remove is None else remove
+        self.remove = [token.lower() for token in self.remove]
+
+    def __clean(self, input:str) -> list[str]:
+        cleaned = input.lower().split()
+        cleaned = [token for token in cleaned if token not in self.remove]
+        cleaned.append('\n')
+        return cleaned
 
     def interpret(self, input:str, name_space:NameFinder, character:Actor, controller:CharacterController) -> tuple[Action,tuple]:
-        tokens = input.lower().split()
-        tokens.append('\n')
+        tokens = self.__clean(input)
         translation = list[Named]()
         result = self.head.interpret(tokens, name_space)
         while len(result) > 0:
@@ -143,8 +150,6 @@ def get_input_translator() -> Translator:
         'actor'     :target,
         '\n'        :action_leaf
     })
-    action.add_edge('the',action)
-    action.add_edge('a',action)
     direction_leaf = TranslateNode('direction', {})
     direction = TranslateNode('direction', {'\n':direction_leaf}, implied=('action', 'go'))
     start_error = TranslateError('No command given.')
@@ -153,5 +158,4 @@ def get_input_translator() -> Translator:
         'direction' :direction,
         '\n'        :start_error
     })
-    standard_input.add_edge('i',standard_input)
-    return Translator(standard_input)
+    return Translator(standard_input, remove=['a','an','the','i'])

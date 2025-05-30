@@ -331,7 +331,8 @@ class DefaultAction(GameAction):
                     response.append(target.perform_action_as_target(self.action))
             if success:
                 response.append(character.perform_action_as_actor(self.action))
-        return Feedback(self.__combine_responses__(response), Response(character, self.action, success=success, target=target), turns=0)
+        response = BackupResponse([self.__combine_responses__(response), StaticResponse("Success." if success else "Fail.")])
+        return Feedback(response, Response(character, self.action, success=success, target=target), turns=0)
 
 class GameState:
     """Represents an instance of a Zork game
