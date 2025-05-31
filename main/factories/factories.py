@@ -305,9 +305,10 @@ def one_from_dict_sdg(name:str, sdg_dict:dict[str,list[str]], name_space:NameFin
                 state_group = StateGroup(state.get_name(), [state])
                 state_graphs.append(StateGraph(state_group.get_name(), state_group))
         if "breakable" in sdg_dict:
-            breakable_states = list[State]()
+            breakable_states = name_space.get_from_name('breakable', 'state')
             for state_id in sdg_dict["breakable"]:
-                state = name_space.get_from_id(state_id)
+                state = name_space.get_from_id(state_id, 'state')
+                breakable_states.append(state)
             state_group = StateGroup(f"{name}_breakable", breakable_states)
             break_action = name_space.get_from_name("break", 'action')[0]
             broken_state = name_space.get_from_name("broken", 'state')[0]

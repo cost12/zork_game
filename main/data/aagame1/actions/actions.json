@@ -6,7 +6,7 @@
     {"name": "inventory",   "aliases" : ["inventory", "check inventory"]},
     {"name": "wait",        "aliases" : ["wait", "chill", "relax"]},
     {"name": "walk",        "aliases" : ["walk","go","g","head","proceed","run", "advance", "strut", "meander"]},
-    {"name": "break",       "aliases" : ["break", "shatter", "smash"]},
+    {"name": "break",       "aliases" : ["break", "shatter", "smash"], "is_default": true},
     {"name": "turn on",     "aliases" : ["turn on"], "is_default" : true},
     {"name": "turn off",    "aliases" : ["turn off"], "is_default" : true},
     {"name": "toggle",      "aliases" : ["toggle", "switch", "flip"], "is_default" : true},
