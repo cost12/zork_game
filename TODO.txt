@@ -53,6 +53,7 @@ Low Priority:
 [] multiplayer
 [] character selection/creation?
 [] detail wearing for characters
+[] different levels of description like brief/vague, normal, descriptive/detailed 
 
 Formatting/style:
 [] inputs for actions should use **kwargs format
