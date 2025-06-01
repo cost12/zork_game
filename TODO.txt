@@ -71,3 +71,6 @@ Needs input:
     contents of wallet at the end are determined by actions during the game
     do theatre passages need instruments to be unbroken
 [] improve disambiguation/ change it to be more zork style?
+[] loop response
+    different response every time, but loops through in same order
+    pair with doing same action over and over reveals clue for something
