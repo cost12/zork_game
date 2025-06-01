@@ -9,6 +9,15 @@
             "end"         : "Beehive Room"
         }
     },
+    "action_restrictions" : {
+        "take" : {
+            "item_state_requirements" : {
+                "hourglass" : {
+                    "broken" : [true, "As you move to place the item in your inventory, it turns to dust. As if guided by some ancient curse it slips through your fingers and reforms in it's previous location."]
+                }
+            }
+        }
+    },
     "details" : [
         {
             "name"        : "rack",
@@ -16,7 +25,8 @@
                 "type"    : "contents",
                 "full"    : "Hanging on a well-worn wooden rack is",
                 "empty"   : "An empty weapons rack hangs on the wall"
-            },"contents"    : ["spear", "pitchfork", "sword"]
+            },
+            "contents"    : ["spear", "pitchfork", "sword"]
         }
     ]
 }

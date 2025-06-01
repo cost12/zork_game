@@ -8,6 +8,7 @@ from controls.character_control import CommandLineController, Feedback, Characte
 from controls.translate         import get_input_translator
 from utils.constants            import *
 from utils.relator              import NameFinder
+from models.requirement         import ActionRequirement
 
 class GameAction:
     """This is an abstract class and should not be instantiated.
@@ -66,9 +67,14 @@ class GameAction:
         :rtype: tuple[bool,Optional[str]]
         """
         response = character.get_actor_response(self.action)
+        r2 = None
         if self.action in character.get_actions_as_actor():
-            return True, response
-        return False, BackupResponse([response, StaticResponse("You are unable to perform this action.")])
+            room = character.get_top_parent()
+            assert isinstance(room, Location)
+            allowed, r2 = room.action_allowed(character, self.action)
+            if allowed:
+                return True, response
+        return False, BackupResponse([response, r2, StaticResponse("You are unable to perform this action.")])
 
     def __verify_target__(self, character:Actor, target:Target) -> tuple[bool,ResponseString]:
         """Verifies that target can have the GameAction performed on it.
@@ -338,11 +344,12 @@ class GameState:
     """Represents an instance of a Zork game
     """
 
-    def __init__(self, details:dict[str,Any], name_space:NameFinder, extra_characters:list[Actor], controllers:CharacterControlFactory):
+    def __init__(self, details:dict[str,Any], name_space:NameFinder, extra_characters:list[Actor], controllers:CharacterControlFactory, every_turn_requirement:list[ActionRequirement]):
         self.game_details    = details
         self.name_space      = name_space
         self.character_order:list[Actor] = self.name_space.get_from_name(category='actor')
         self.controllers     = controllers
+        self.every_turn_requirement = every_turn_requirement
         self.translator      = get_input_translator()
         self.current_turn    = 0
         self.moves           = 0
@@ -403,13 +410,18 @@ class GameState:
         """Driving function to advance GameState.
         Prompts Characters for input on their turn and performs the GameActions until the game is over
         """
-        print(self.game_details["welcome_text"])
-        print("")
+        print(f"{self.game_details["welcome_text"]}\n")
+        # Initial look for all characters
         for character in self.character_order:
             controller = self.controllers.get_controller(character)
             feedback = self.action(character, self.name_space.get_from_name('look','action')[0], tuple())
             controller.feedback(feedback)
         while not self.game_over():
+            # Check/update requirements that need to be checked every turn
+            for character in self.character_order:
+                for requirement in self.every_turn_requirement:
+                    requirement._check_every_turn(character)
+            # do the turn
             character = self.whose_turn()
             controller = self.controllers.get_controller(character)
             user_input = controller.make_move()

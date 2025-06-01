@@ -3,7 +3,7 @@ from typing import Optional, Any
 from utils.relator      import NameFinder
 from models.named       import Action, Direction
 from models.actors      import ItemLimit, HasLocation, Location, Path, Target, Actor, LocationDetail, SingleEndPath, MultiEndPath, Achievement
-from models.requirement import ActionRequirement, CharacterAchievementRequirement, CharacterStateRequirement, ItemsHeldRequirement, ItemStateRequirement, ItemPlacementRequirement
+from models.requirement import ActionRequirement, CharacterAchievementRequirement, CharacterStateRequirement, ItemsHeldRequirement, ItemStateRequirement, ItemPlacementRequirement, HappenedRequirement
 from models.state       import State, StateGroup, StateGraph, Skill, StateDisconnectedGraph
 from models.response    import ResponseString, StaticResponse, CombinationResponse, ItemStateResponse, ContentsResponse, RandomResponse, ContentsWithStateResponse
 from controls.character_control import CharacterController, CommandLineController, NPCController
@@ -65,7 +65,19 @@ def items_held_requirement_from_dict(name:str, requirement_dict:dict[str,Any], n
             items_needed[item] = (needed[0], response_from_input(name, needed[1], name_space))
     return ItemsHeldRequirement(items_needed)
 
-def requirements_from_dict(name:str, requirements_dict:dict[str,Any], name_space:NameFinder, setup_space:NameFinder) -> list[ActionRequirement]:
+def happened_requirements_from_dict(name:str, requirement_dict:dict[str,Any], name_space:NameFinder, every_turn:list[ActionRequirement]) -> HappenedRequirement:
+    requirement = requirements_from_dict(name, requirement_dict, name_space)
+    yes_response = None
+    if 'yes_response' in requirement_dict:
+        yes_response = response_from_input(name, requirement_dict['yes_response'], name_space)
+    no_response = None
+    if 'no_response' in requirement_dict:
+        no_response = response_from_input(name, requirement_dict['no_response'], name_space)
+    req = HappenedRequirement(requirement, yes_response=yes_response, no_response=no_response)
+    every_turn.append(req)
+    return req
+
+def requirements_from_dict(name:str, requirements_dict:dict[str,Any], name_space:NameFinder, every_turn:list[ActionRequirement]) -> list[ActionRequirement]:
     requirements = list[ActionRequirement]()
     if 'character_state_requirements' in requirements_dict:
         states_needed_raw = requirements_dict['character_state_requirements']
@@ -82,7 +94,20 @@ def requirements_from_dict(name:str, requirements_dict:dict[str,Any], name_space
     if 'item_placement_requirements' in requirements_dict:
         item_placements_raw = requirements_dict['item_placement_requirements']
         requirements.append(item_placement_requirements_from_dict(name, item_placements_raw, name_space))
+    if 'happened_requirements' in requirements_dict:
+        happened_raw = requirements_dict['happened_requirements']
+        requirements.append(happened_requirements_from_dict(name, happened_raw, name_space, every_turn))
     return requirements
+
+# REQUIREMENT RELATED
+
+def action_restrictions_from_dict(name:str, restrictions_dict:dict[str,dict], name_space:NameFinder, every_turn:list[ActionRequirement]) -> dict[Action,list[ActionRequirement]]:
+    restrictions = dict[Action,list[ActionRequirement]]()
+    for action_id, requirements_dict in restrictions_dict.items():
+        action = name_space.get_from_id(action_id, 'action')
+        requirements = requirements_from_dict(name, requirements_dict, name_space, every_turn)
+        restrictions[action] = requirements
+    return restrictions
 
 # RESPONSES
 
@@ -358,7 +383,7 @@ def one_from_dict_item(item_dict:dict[str,Any], name_space:NameFinder, setup_spa
 def many_from_dict_item(item_dicts:list[dict[str,Any]], name_space:NameFinder, setup_space:NameFinder) -> list[dict[str,Any]]:
     return [one_from_dict_item(item_dict, name_space, setup_space) for item_dict in item_dicts]
 
-def update_item(item_dict:dict[str,Any], name_space:NameFinder, setup_space:NameFinder) -> None:
+def update_item(item_dict:dict[str,Any], name_space:NameFinder, every_turn:list[ActionRequirement]) -> None:
     name = item_dict['name']
     id   = item_dict['id'] if 'id' in item_dict else name
     id   = id.lower()
@@ -374,9 +399,9 @@ def update_item(item_dict:dict[str,Any], name_space:NameFinder, setup_space:Name
             if len(fails) > 0: print(f"In {name} failed to add: {fails}")
             assert all(success)
             item._set_children(new_details)
-            update_details(item_dict['details'], name_space, setup_space, parent_id=name)
+            update_details(item_dict['details'], name_space, every_turn, parent_id=name)
         if 'visible_requirements' in item_dict:
-            item.visible_requirements = requirements_from_dict(name, item_dict['visible_requirements'], name_space, setup_space)
+            item.visible_requirements = requirements_from_dict(name, item_dict['visible_requirements'], name_space, every_turn)
         if 'target_responses' in item_dict:
             item.target_responses = action_responses_from_dict(name, item_dict['target_responses'], name_space)
         if 'tool_responses' in item_dict:
@@ -386,8 +411,8 @@ def update_item(item_dict:dict[str,Any], name_space:NameFinder, setup_space:Name
     except ValueError as e:
         print(f"Error in item update {name}: {e}")
     
-def update_items(item_dicts:list[dict[str,Any]], name_space:NameFinder, setup_space:NameFinder) -> None:
-    [update_item(item_dict, name_space, setup_space) for item_dict in item_dicts]
+def update_items(item_dicts:list[dict[str,Any]], name_space:NameFinder, every_turn:list[ActionRequirement]) -> None:
+    [update_item(item_dict, name_space, every_turn) for item_dict in item_dicts]
 
 # SKILL SET
 
@@ -423,8 +448,8 @@ def one_from_dict_character(character_dict:dict[str,Any], name_space:NameFinder,
 def many_from_dict_character(character_dicts:list[dict[str,Any]], name_space:NameFinder, setup_space:NameFinder) -> list[dict[str,Any]]:
     return [one_from_dict_character(character_dict, name_space, setup_space) for character_dict in character_dicts]
 
-def update_character(character_dict:dict[str,Any], name_space:NameFinder, setup_space:NameFinder) -> None:
-    update_item(character_dict, name_space, setup_space)
+def update_character(character_dict:dict[str,Any], name_space:NameFinder, every_turn:list[ActionRequirement]) -> None:
+    update_item(character_dict, name_space, every_turn)
     name = character_dict['name']
     id   = character_dict['id'] if 'id' in character_dict else name
     id   = id.lower()
@@ -445,8 +470,8 @@ def update_character(character_dict:dict[str,Any], name_space:NameFinder, setup_
     except ValueError as e:
         print(f"Error in character update {name}: {e}")
 
-def update_characters(character_dicts:list[dict[str,Any]], name_space:NameFinder, setup_space:NameFinder) -> None:
-    [update_character(character_dict, name_space, setup_space) for character_dict in character_dicts]
+def update_characters(character_dicts:list[dict[str,Any]], name_space:NameFinder, every_turn:list[ActionRequirement]) -> None:
+    [update_character(character_dict, name_space, every_turn) for character_dict in character_dicts]
 
 # LOCATION DETAIL
 
@@ -468,7 +493,7 @@ def one_from_dict_detail(detail_dict:dict[str,Any], *, parent_id:str=None) -> di
 def many_from_dict_detail(detail_dicts:dict[str,Any], *, parent_id:str=None) -> list[dict[str,Any]]:
     return [one_from_dict_detail(detail_dict, parent_id=parent_id) for detail_dict in detail_dicts]
 
-def update_detail(detail_dict:dict[str,Any], name_space:NameFinder, setup_space:NameFinder, *, parent_id:str=None) -> None:
+def update_detail(detail_dict:dict[str,Any], name_space:NameFinder, every_turn:list[ActionRequirement], *, parent_id:str=None) -> None:
     name = detail_dict['name']
     id   = detail_id(detail_dict.get('id', None), name, parent_id)
     if id is None:
@@ -483,12 +508,12 @@ def update_detail(detail_dict:dict[str,Any], name_space:NameFinder, setup_space:
         if 'contents' in detail_dict:
             detail._set_children(children_from_dict(id, detail_dict['contents'], name_space))
         if 'visible_requirements' in detail_dict:
-            detail.visible_requirements = requirements_from_dict(id, detail_dict['visible_requirements'], name_space, setup_space)
+            detail.visible_requirements = requirements_from_dict(id, detail_dict['visible_requirements'], name_space, every_turn)
     except ValueError as e:
         print(f"Error in detail '{name}' ({id}) update: {e}")
 
-def update_details(detail_dicts:list[dict[str,Any]], name_space:NameFinder, setup_space:NameFinder, *, parent_id:str=None) -> None:
-    [update_detail(detail_dict, name_space, setup_space, parent_id=parent_id) for detail_dict in detail_dicts]
+def update_details(detail_dicts:list[dict[str,Any]], name_space:NameFinder, every_turn:list[ActionRequirement], *, parent_id:str=None) -> None:
+    [update_detail(detail_dict, name_space, every_turn, parent_id=parent_id) for detail_dict in detail_dicts]
 
 # PATHS
 
@@ -518,7 +543,7 @@ def one_from_dict_path(path_dict:dict[str,Any|dict], name_space:NameFinder, room
         print(f"Error in path {inputs['name']}: {e}")
     return inputs
     
-def update_path(path_dict:dict[str,Any], name_space:NameFinder, setup_space, room_name:str, direction_name:str) -> None:
+def update_path(path_dict:dict[str,Any], name_space:NameFinder, room_name:str, direction_name:str, every_turn:list[ActionRequirement]) -> None:
     name = path_dict['name']
     id   = path_id(path_dict.get('id',None), name, direction_name, room_name)
     path = name_space.get_from_id(id)
@@ -529,9 +554,9 @@ def update_path(path_dict:dict[str,Any], name_space:NameFinder, setup_space, roo
             path.exit_response = response_from_input(name, path_dict['exit_response'], name_space)
         path.description = response_from_input(name, path_dict['description'], name_space)
         if 'visible_requirements' in path_dict:
-            path.visible_requirements = requirements_from_dict(name, path_dict['visible_requirements'], name_space, setup_space)
+            path.visible_requirements = requirements_from_dict(name, path_dict['visible_requirements'], name_space, every_turn)
         if 'passing_requirements' in path_dict:
-            path.passing_requirements = requirements_from_dict(name, path_dict['passing_requirements'], name_space, setup_space)
+            path.passing_requirements = requirements_from_dict(name, path_dict['passing_requirements'], name_space, every_turn)
         if 'path_items' in path_dict:
             path._set_children(children_from_dict(name, path_dict['path_items'], name_space))
         if 'item_responses' in path_dict:
@@ -580,7 +605,7 @@ def one_from_dict_location(location_dict:dict[str,Any|dict], name_space:NameFind
 def many_from_dict_location(location_dicts:dict[str,Any], name_space:NameFinder, setup_space:NameFinder) -> list[dict[str,Any]]:
     return [one_from_dict_location(location_dict, name_space, setup_space) for location_dict in location_dicts]
 
-def update_location(location_dict:dict[str,Any|dict], name_space:NameFinder, setup_space:NameFinder) -> None:
+def update_location(location_dict:dict[str,Any|dict], name_space:NameFinder, every_turn:list[ActionRequirement]) -> None:
     name = location_dict['name']
     id   = location_dict['id'] if 'id' in location_dict else name
     id   = id.lower()
@@ -590,22 +615,24 @@ def update_location(location_dict:dict[str,Any|dict], name_space:NameFinder, set
         if 'paths' in location_dict:
             for direction_id, path_dict in location_dict['paths'].items():
                 direction = name_space.get_from_id(direction_id)
-                update_path(path_dict, name_space, setup_space, name, direction.get_name())
+                update_path(path_dict, name_space, name, direction.get_name(), every_turn)
         if 'details' in location_dict:
-            update_details(location_dict['details'], name_space, setup_space, parent_id=name)
+            update_details(location_dict['details'], name_space, every_turn, parent_id=name)
         if 'visible_requirements' in location_dict:
-            location.visible_requirements = requirements_from_dict(name, location_dict['visible_requirements'], name_space, setup_space)
+            location.visible_requirements = requirements_from_dict(name, location_dict['visible_requirements'], name_space, every_turn)
         if 'item_responses' in location_dict:
             location.item_responses = item_responses_from_dict(name, location_dict['item_responses'], name_space)
         if 'description' in location_dict:
             location.description = response_from_input(name, location_dict['description'], name_space)
         if 'direction_responses' in location_dict:
             location.direction_responses = direction_responses_from_dict(name, location_dict['direction_responses'], name_space)
+        if 'action_restrictions' in location_dict:
+            location.action_restrictions = action_restrictions_from_dict(name, location_dict['action_restrictions'], name_space, every_turn)
     except ValueError as e:
         print(f"Error in location update {name}: {e}")
 
-def update_locations(location_dicts:list[dict[str,Any|dict]], name_space:NameFinder, setup_space:NameFinder) -> None:
-    [update_location(location_dict, name_space, setup_space) for location_dict in location_dicts]
+def update_locations(location_dicts:list[dict[str,Any|dict]], name_space:NameFinder, every_turn:list[ActionRequirement]) -> None:
+    [update_location(location_dict, name_space, every_turn) for location_dict in location_dicts]
 
 # CHARACTER CONTROL
 

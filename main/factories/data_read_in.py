@@ -2,11 +2,12 @@ import glob
 import json
 from typing import Any
 
-from utils.relator   import NameFinder
-from models.named    import Action, Direction
-from models.state    import Skill, State, StateGraph, SkillSet, StateGroup, Achievement
-from models.actors   import Target, Actor, Location
-from utils.constants import *
+from utils.relator      import NameFinder
+from models.named       import Action, Direction
+from models.state       import Skill, State, StateGraph, SkillSet, StateGroup, Achievement
+from models.actors      import Target, Actor, Location
+from models.requirement import ActionRequirement
+from utils.constants    import *
 
 from factories.factories import CharacterControlFactory
 import factories.factories as factories
@@ -153,18 +154,18 @@ def read_in_rooms(game:str, name_space:NameFinder, setup_space:NameFinder) -> No
     if len(fails) > 0: print(f"Failed to add: {fails}")
     assert all(success)
 
-def updates(game:str, name_space:NameFinder, setup_space:NameFinder) -> None:
+def updates(game:str, name_space:NameFinder, setup_space:NameFinder, every_turn:list[ActionRequirement]) -> None:
     folder = f"data/{game}/items"
     data   = __read_in_folder(folder)
-    factories.update_items(data, name_space, setup_space)
+    factories.update_items(data, name_space, every_turn)
     if DEBUG_READIN: print("Items updated")
     folder = f"data/{game}/characters"
     data   = __read_in_folder(folder)
-    factories.update_characters(data, name_space, setup_space)
+    factories.update_characters(data, name_space, every_turn)
     if DEBUG_READIN: print("Characters updated")
     folder = f"data/{game}/rooms"
     data   = __read_in_folder(folder)
-    factories.update_locations(data, name_space, setup_space)
+    factories.update_locations(data, name_space, every_turn)
     if DEBUG_READIN: print("Locations updated")
 
 def read_in_character_control(game:str, name_space:NameFinder) -> CharacterControlFactory:
@@ -181,6 +182,7 @@ def read_in_game_details(game:str) -> Any:
 def read_in_game(game:str) -> tuple[NameFinder, NameFinder, CharacterControlFactory, dict[str,Any]]:
     name_space  = NameFinder()
     setup_space = NameFinder()
+    every_turn  = list[ActionRequirement]()
     read_in_directions  (game, name_space)
     read_in_actions     (game, name_space)
     read_in_achievements(game, name_space)
@@ -191,9 +193,9 @@ def read_in_game(game:str) -> tuple[NameFinder, NameFinder, CharacterControlFact
     read_in_skill_sets  (game, name_space)
     read_in_characters  (game, name_space, setup_space)
     read_in_rooms       (game, name_space, setup_space)
-    updates             (game, name_space, setup_space)
+    updates             (game, name_space, setup_space, every_turn)
 
     controllers  = read_in_character_control(game, name_space)
     game_details = read_in_game_details(game)
     game_details['playable_characters'] = controllers.playable_characters()
-    return name_space, setup_space, controllers, game_details
+    return name_space, setup_space, every_turn, controllers, game_details

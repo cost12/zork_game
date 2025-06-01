@@ -468,15 +468,24 @@ class Actor(Target):
 
 class Location(HasLocation):
 
-    def __init__(self, name:str, description:ResponseString, paths:dict[Direction,Path], *, direction_responses:dict[Direction,ResponseString]=None, start_location:bool=False, parent:'HasLocation'=None, children:list[HasLocation]=None, origin:bool=False, item_limit:ItemLimit=None, visible_requirements:list[ActionRequirement]=None, item_responses:dict['HasLocation',ResponseString]=None, aliases:Optional[str]=None, id:str=None):
+    def __init__(self, name:str, description:ResponseString, paths:dict[Direction,Path], *, action_restrictions:dict[Action,list[ActionRequirement]]=None, direction_responses:dict[Direction,ResponseString]=None, start_location:bool=False, parent:'HasLocation'=None, children:list[HasLocation]=None, origin:bool=False, item_limit:ItemLimit=None, visible_requirements:list[ActionRequirement]=None, item_responses:dict['HasLocation',ResponseString]=None, aliases:Optional[str]=None, id:str=None):
         super().__init__(name, parent=parent, children=children, origin=origin, item_limit=item_limit, visible_requirements=visible_requirements, item_responses=item_responses, aliases=aliases, id=id)
         self.description = description
         self.paths = paths
         self.direction_responses = dict[Direction,ResponseString]() if direction_responses is None else direction_responses
+        self.action_restrictions = dict[Action,list[ActionRequirement]]() if action_restrictions is None else action_restrictions
         self.start_location = start_location
 
     def __repr__(self):
         return f"[Location {self.name}]"
+
+    def action_allowed(self, character:Actor, action:Action) -> tuple[bool,ResponseString]:
+        if action in self.action_restrictions:
+            for requirement in self.action_restrictions[action]:
+                meets, response = requirement.meets_requirement(character)
+                if not meets:
+                    return False, response
+        return True, None
 
     def get_description_to(self, actor:Actor) -> ResponseString:
         responses = [StaticResponse(f"[{self.name}]"), self.description]
