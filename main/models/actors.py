@@ -1,9 +1,10 @@
 from typing import Optional, TYPE_CHECKING
+import random
 
 from models.state       import State, Skill, FullState, SkillSet, Achievement
 from models.named       import Named, Action, Direction
 from models.requirement import ActionRequirement, ItemPlacementRequirement
-from models.response    import Response, ResponseString, StaticResponse, CombinationResponse
+from models.response    import ResponseString, StaticResponse, CombinationResponse
 from utils.constants    import *
 from utils.relator      import NameFinder
 
@@ -524,9 +525,11 @@ class Location(HasLocation):
         if direction in self.paths:
             path = self.paths[direction]
         if path is None:
-            for direction, path2 in self.paths.items():
-                if direction.get_name() == 'any':
+            for direction2, path2 in self.paths.items():
+                if direction2.get_name() == 'any':
                     path = path2
+        if direction.get_name() == 'random':
+            path = random.choice(list(self.paths.values()))
         response = self.direction_responses.get(direction, None)
         if path is None or not path.is_visible_to(character):
             return None, response

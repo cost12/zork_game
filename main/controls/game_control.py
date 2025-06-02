@@ -58,7 +58,7 @@ class GameAction:
         """
         return CombinationResponse(responses=[response for response in responses if response is not None], joiner="\n")
 
-    def __verify_character__(self, character:Actor) -> tuple[bool,ResponseString]:
+    def __verify_character__(self, character:Actor, *, action:Action=None) -> tuple[bool,ResponseString]:
         """Verifies that character can perform the requested GameAction.
 
         :param character: The Character attempting to perform a GameAction
@@ -66,12 +66,14 @@ class GameAction:
         :return: A bool that describes whether character can perform the GameAction and the character's response
         :rtype: tuple[bool,Optional[str]]
         """
-        response = character.get_actor_response(self.action)
+        if action is None:
+            action = self.action
+        response = character.get_actor_response(action)
         r2 = None
-        if self.action in character.get_actions_as_actor():
+        if action in character.get_actions_as_actor():
             room = character.get_top_parent()
             assert isinstance(room, Location)
-            allowed, r2 = room.action_allowed(character, self.action)
+            allowed, r2 = room.action_allowed(character, action)
             if allowed:
                 return True, response
         return False, BackupResponse([response, r2, StaticResponse("You are unable to perform this action.")])
@@ -168,13 +170,20 @@ class WalkAction(GameAction):
     def take_action(self, character:Actor, direction:Direction) -> Feedback:
         response = []
         can_walk, r = self.__verify_character__(character)
+        can_see, _ = self.__verify_character__(character, action=Action("look"))
+        if not can_see:
+            response.append(StaticResponse("You fumble around in the darkness blindly, finally finding an exit."))
+            direction = Direction("random")
         response.append(r)
         if can_walk:
             room = character.get_top_parent()
             assert isinstance(room, Location)
             exit, r = room.get_path(character, direction)
             if exit is None:
-                response.append(BackupResponse([r, StaticResponse(f"There is nothing {direction.get_name()}.")]))
+                if direction.get_name() == 'random':
+                    response.append(BackupResponse([r, StaticResponse(f"Unfortunately you can't seem to exit through the path you've found. Maybe try again.")]))
+                else:
+                    response.append(BackupResponse([r, StaticResponse(f"There is nothing {direction.get_name()}.")]))
             else:
                 response.append(r)
                 can_pass, r = exit.can_pass(character)
