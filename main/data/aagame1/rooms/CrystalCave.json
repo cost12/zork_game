@@ -12,5 +12,17 @@
             "description" : "A passage leads south",
             "end"         : "Pool"
         }
+    },
+    "action_restrictions" : {
+        "look" : {
+            "item_state_requirements" : {
+                "lantern" : {
+                    "on" : [true, "You try to look, but you can't see a thing."]
+                }
+            },
+            "item_placement_requirements" : {
+                "lantern" : [["Crystal Cave", true, "You try to look but you can't see a thing."]]
+            }
+        }
     }
 }

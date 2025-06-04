@@ -34,7 +34,7 @@
                 "full"    : "On a spindly table you find",
                 "empty"   : "There is a spindly table in the middle of the room"
             },
-            "contents"    : ["Leaflet", "hourglass", "yellow book"]
+            "contents"    : ["Leaflet", "hourglass", "yellow book", "lantern"]
         }
     ]
 }

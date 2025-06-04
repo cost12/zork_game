@@ -16,6 +16,16 @@
                     "broken" : [true, "As you move to place the item in your inventory, it turns to dust. As if guided by some ancient curse it slips through your fingers and reforms in it's previous location."]
                 }
             }
+        },
+        "look" : {
+            "item_state_requirements" : {
+                "lantern" : {
+                    "on" : [true, "You try to look, but you can't see a thing."]
+                }
+            },
+            "item_placement_requirements" : {
+                "lantern" : [["Armory", true, "You try to look but you can't see a thing."]]
+            }
         }
     },
     "details" : [

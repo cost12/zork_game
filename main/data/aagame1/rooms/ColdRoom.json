@@ -12,5 +12,17 @@
             "description" : "An earthen passage leads south",
             "end"         : "Bear's Den"
         }
+    },
+    "action_restrictions" : {
+        "look" : {
+            "item_state_requirements" : {
+                "lantern" : {
+                    "on" : [true, "You try to look, but you can't see a thing."]
+                }
+            },
+            "item_placement_requirements" : {
+                "lantern" : [["Cold Room", true, "You try to look but you can't see a thing."]]
+            }
+        }
     }
 }

@@ -23,5 +23,17 @@
                 "empty"   : "A small pyramid-shamed weight rack stands empty before the poster of Arnold"
             },"contents"    : ["weights"]
         }
-    ]
+    ],
+    "action_restrictions" : {
+        "look" : {
+            "item_state_requirements" : {
+                "lantern" : {
+                    "on" : [true, "You try to look, but you can't see a thing."]
+                }
+            },
+            "item_placement_requirements" : {
+                "lantern" : [["Gym", true, "You try to look but you can't see a thing."]]
+            }
+        }
+    }
 }

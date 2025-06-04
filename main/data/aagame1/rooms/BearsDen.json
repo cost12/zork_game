@@ -1,4 +1,3 @@
-
 {
     "name"       : "Bear's Den",
     "description": "You are standing in a round, earthen den, reeking sickly sweet. A huge, hulking bear blocks a passageway to the North. In an alcove in the Eastern wall is a pile of large, empty jars decorated with what looks like simple depictions of bees.",
@@ -14,5 +13,17 @@
             "end"         : "Puzzle Room"
         }
     },
-    "contents"   : ["bear"]
+    "contents"   : ["bear"],
+    "action_restrictions" : {
+        "look" : {
+            "item_state_requirements" : {
+                "lantern" : {
+                    "on" : [true, "You try to look, but you can't see a thing."]
+                }
+            },
+            "item_placement_requirements" : {
+                "lantern" : [["Bear's Den", true, "You try to look but you can't see a thing."]]
+            }
+        }
+    }
 }

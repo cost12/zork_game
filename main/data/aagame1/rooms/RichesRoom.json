@@ -12,5 +12,17 @@
             "description" : "A cement walkway goes to the south",
             "end"         : "Parking Lot"
         }
+    },
+    "action_restrictions" : {
+        "look" : {
+            "item_state_requirements" : {
+                "lantern" : {
+                    "on" : [true, "You try to look, but you can't see a thing."]
+                }
+            },
+            "item_placement_requirements" : {
+                "lantern" : [["Riches Room", true, "You try to look but you can't see a thing."]]
+            }
+        }
     }
 }

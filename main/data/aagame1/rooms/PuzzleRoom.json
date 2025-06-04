@@ -22,5 +22,17 @@
                 "empty"   : "There is a spindly table in the middle of the room, holding nothing"
             },"contents"    : ["puzzle"]
         }
-    ]
+    ],
+    "action_restrictions" : {
+        "look" : {
+            "item_state_requirements" : {
+                "lantern" : {
+                    "on" : [true, "You try to look, but you can't see a thing."]
+                }
+            },
+            "item_placement_requirements" : {
+                "lantern" : [["Puzzle Room", true, "You try to look but you can't see a thing."]]
+            }
+        }
+    }
 }
