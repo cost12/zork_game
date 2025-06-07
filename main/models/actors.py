@@ -397,6 +397,8 @@ class Actor(Target):
 
         if self.get_inventory() is None:
             self.children.add(LocationDetail(name='inventory', description=StaticResponse(f"{name}'s inventory"), hidden=True))
+        if self.get_inventory(inventory='wearing') is None:
+            self.children.add(LocationDetail(name='wearing', description=StaticResponse(f"{name}'s wearing"), hidden=True))
 
     def __repr__(self):
         return f"[Actor {self.name}]"
@@ -447,23 +449,23 @@ class Actor(Target):
 
     # INVENTORY
 
-    def add_to_inventory(self, item:'Target') -> tuple[bool,ResponseString]:
-        return self.get_inventory().add_child(item)
+    def add_to_inventory(self, item:'Target', *, inventory='inventory') -> tuple[bool,ResponseString]:
+        return self.get_inventory(inventory=inventory).add_child(item)
     
-    def remove_from_inventory(self, item:'Target', placement:Optional[HasLocation]=None) -> tuple[bool,ResponseString]:
-        if self.get_inventory().contains_item(item):
+    def remove_from_inventory(self, item:'Target', placement:Optional[HasLocation]=None, *, inventory='inventory') -> tuple[bool,ResponseString]:
+        if self.get_inventory(inventory=inventory).contains_item(item):
             if placement is None:
                 item.set_location(self.get_top_parent())
                 return True, None
             else:
                 return placement.add_child(item)
-        return False, StaticResponse(f"You aren't holding a {item.get_name()}")
+        return False, StaticResponse(f"You don't have {item.get_name()}")
     
-    def get_inventory_items(self) -> list[Target]:
-        return list(self.get_inventory().children.get_from_name())
+    def get_inventory_items(self, *, inventory='inventory') -> list[Target]:
+        return list(self.get_inventory(inventory=inventory).children.get_from_name())
     
-    def get_inventory(self) -> 'HasLocation':
-        return self.get_special_child('inventory')
+    def get_inventory(self, *, inventory='inventory') -> 'HasLocation':
+        return self.get_special_child(inventory)
 
 # LOCATIONS
 

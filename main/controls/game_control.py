@@ -255,6 +255,45 @@ class TakeAction(GameAction):
                 response.append(StaticResponse("No items were taken."))
         return Feedback(self.__combine_responses__(response), Response(character, self.action, success, target=target), turns=1 if success else 0)
 
+class WearAction(GameAction):
+    """Inherits from GameAction
+    A GameAction that allows a Character to wear an item (or items)
+    """
+
+    def check_inputs(self, inputs) -> tuple[bool,tuple,ResponseString]:
+        for input in inputs:
+            if not isinstance(input, Target):
+                return False, None, StaticResponse(f"You can't wear a {input.get_name()}!")
+        if len(inputs) > 0:
+            return True, (inputs,), None
+        return False, None, StaticResponse("Wear what?")
+    
+    def take_action(self, character:Actor, targets:list[Target]) -> Feedback:
+        response = []
+        can_wear, r = self.__verify_character__(character)
+        response.append(r)
+        success = False
+        target=None
+        if can_wear:
+            for target in targets:
+                can_be_worn, target_response = self.__verify_target__(character, target)
+                if DEBUG_TAKE: print(f"Take {target}? {can_be_worn}")
+                response.append(target_response)
+                if can_be_worn:
+                    added, r = character.add_to_inventory(target, inventory='wearing')
+                    response.append(r)
+                    if added:
+                        success = True
+                        response.append(target.perform_action_as_target(self.action))
+                    else:
+                        response.append(StaticResponse(f"You're wearing too much to add {target.get_name()}."))
+            if success:
+                response.append(StaticResponse("Worn."))
+                response.append(character.perform_action_as_actor(self.action))
+            else:
+                response.append(StaticResponse("No items were worn."))
+        return Feedback(self.__combine_responses__(response), Response(character, self.action, success, target=target), turns=1 if success else 0)
+
 class DropAction(GameAction):
     """Inherits from GameAction
     A GameAction that allows a Character to drop an item (or items) from their Inventory
@@ -367,6 +406,7 @@ class GameState:
             self.name_space.get_from_name('walk', 'action')[0]: WalkAction(self.name_space.get_from_name('walk', 'action')[0]),
             self.name_space.get_from_name('wait', 'action')[0]: WaitAction(self.name_space.get_from_name('wait', 'action')[0]),
             self.name_space.get_from_name('take', 'action')[0]: TakeAction(self.name_space.get_from_name('take', 'action')[0]),
+            self.name_space.get_from_name('wear', 'action')[0]: WearAction(self.name_space.get_from_name('wear', 'action')[0]),
             self.name_space.get_from_name('drop', 'action')[0]: DropAction(self.name_space.get_from_name('drop', 'action')[0]),
             self.name_space.get_from_name('inventory', 'action')[0]:CheckInventoryAction(self.name_space.get_from_name('inventory', 'action')[0]),
         })

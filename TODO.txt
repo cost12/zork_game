@@ -74,3 +74,5 @@ Needs input:
 [] loop response
     different response every time, but loops through in same order
     pair with doing same action over and over reveals clue for something
+[] after fumbling around in the dark for long enough, some creature/person appears to help
+[] command "wake up" brings you back to the bedroom/bed inventory is placed on bedside/floor as if you have just woken up from a dream
