@@ -5,7 +5,7 @@
     "description"      : "a lovely knit hat, as if done by a grandmother",
     "state"            : {
         "states"       : ["visible"],
-        "graphs"       : ["takeable", "wearable"]
+        "graphs"       : ["wearable"]
     },
     "weight"           : 1,
     "value"            : 3,

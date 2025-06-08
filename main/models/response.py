@@ -78,11 +78,12 @@ class RandomResponse(ResponseString):
         return random.choice(self.responses).as_string(response)
 
 class ContentsResponse(ResponseString):
-    def __init__(self, full_response:ResponseString, empty_response:ResponseString, target:'Target', *, inventory=False):
+    def __init__(self, full_response:ResponseString, empty_response:ResponseString, target:'Target', *, inventory=False, inventory_type='inventory'):
         self.full_response = full_response
         self.empty_response = empty_response
         self.target = target
         self.inventory=inventory
+        self.inventory_type = inventory_type
 
     def __get_list_string(self, contents:list[str]) -> str:
         if len(contents) > 0:
@@ -101,7 +102,7 @@ class ContentsResponse(ResponseString):
     def as_string(self, response:Response) -> Optional[str]:
         if self.inventory:
             if TYPE_CHECKING: assert isinstance(self.target, Actor)
-            contents = self.target.get_inventory_items()
+            contents = self.target.get_inventory_items(inventory=self.inventory_type)
         else:
             contents = self.target.list_contents_visible_to(response.character)
         contents = [item.get_description_to(response.character).as_string(response) for item in contents]

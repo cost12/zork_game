@@ -5,7 +5,7 @@
     "description"      : "a pair of thick-hide gloves",
     "state"            : {
         "states"       : ["visible"],
-        "graphs"       : ["takeable", "wearable"]
+        "graphs"       : ["wearable"]
     },
     "weight"           : 2,
     "value"            : 3,

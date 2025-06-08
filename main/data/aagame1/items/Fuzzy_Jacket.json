@@ -3,7 +3,7 @@
     "description"      : "a poofy and comfortable winter jacket, just your size",
     "state"            : {
         "states"       : ["visible"],
-        "graphs"       : ["takeable", "flammable", "wearable"]
+        "graphs"       : ["flammable", "wearable"]
     },
     "weight"           : 3,
     "value"            : 5,

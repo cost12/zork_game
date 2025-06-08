@@ -4,6 +4,7 @@
     {"name": "drop",        "aliases" : ["drop", "let go", "put", "place"]},
     {"name": "hang",        "aliases" : ["hang"]},
     {"name": "inventory",   "aliases" : ["inventory", "check inventory"]},
+    {"name": "wearing",     "aliases" : ["wearing"]},
     {"name": "wait",        "aliases" : ["wait", "chill", "relax"]},
     {"name": "walk",        "aliases" : ["walk","go","g","head","proceed","run", "advance", "strut", "meander"]},
     {"name": "break",       "aliases" : ["break", "shatter", "smash"], "is_default": true},

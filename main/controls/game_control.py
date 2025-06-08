@@ -221,13 +221,22 @@ class TakeAction(GameAction):
     A GameAction that allows a Character to add an item (or items) to their Inventory
     """
 
+    def __init__(self, action:Action, inventory:str, cant_take_text:str, empty_take_text:str, full_pack_text:str, taken_text:str, not_taken_text:str):
+        super().__init__(action)
+        self.inventory = inventory
+        self.cant_take_text = cant_take_text
+        self.empty_take_text = empty_take_text
+        self.full_pack_text = full_pack_text
+        self.taken_text = taken_text
+        self.not_taken_text = not_taken_text
+
     def check_inputs(self, inputs) -> tuple[bool,tuple,ResponseString]:
         for input in inputs:
             if not isinstance(input, Target):
-                return False, None, StaticResponse(f"You can't take a {input.get_name()}!")
+                return False, None, StaticResponse(f"{self.cant_take_text} {input.get_name()}!")
         if len(inputs) > 0:
             return True, (inputs,), None
-        return False, None, StaticResponse("Take what?")
+        return False, None, StaticResponse(self.empty_take_text)
     
     def take_action(self, character:Actor, targets:list[Target]) -> Feedback:
         response = []
@@ -241,57 +250,18 @@ class TakeAction(GameAction):
                 if DEBUG_TAKE: print(f"Take {target}? {can_be_taken}")
                 response.append(target_response)
                 if can_be_taken:
-                    added, r = character.add_to_inventory(target)
+                    added, r = character.add_to_inventory(target, inventory=self.inventory)
                     response.append(r)
                     if added:
                         success = True
                         response.append(target.perform_action_as_target(self.action))
                     else:
-                        response.append(StaticResponse(f"The {target.get_name()} doesn't fit in your pack."))
+                        response.append(StaticResponse(f"{target.get_name()} {self.full_pack_text}"))
             if success:
-                response.append(StaticResponse("Taken."))
+                response.append(StaticResponse(self.taken_text))
                 response.append(character.perform_action_as_actor(self.action))
             else:
-                response.append(StaticResponse("No items were taken."))
-        return Feedback(self.__combine_responses__(response), Response(character, self.action, success, target=target), turns=1 if success else 0)
-
-class WearAction(GameAction):
-    """Inherits from GameAction
-    A GameAction that allows a Character to wear an item (or items)
-    """
-
-    def check_inputs(self, inputs) -> tuple[bool,tuple,ResponseString]:
-        for input in inputs:
-            if not isinstance(input, Target):
-                return False, None, StaticResponse(f"You can't wear a {input.get_name()}!")
-        if len(inputs) > 0:
-            return True, (inputs,), None
-        return False, None, StaticResponse("Wear what?")
-    
-    def take_action(self, character:Actor, targets:list[Target]) -> Feedback:
-        response = []
-        can_wear, r = self.__verify_character__(character)
-        response.append(r)
-        success = False
-        target=None
-        if can_wear:
-            for target in targets:
-                can_be_worn, target_response = self.__verify_target__(character, target)
-                if DEBUG_TAKE: print(f"Take {target}? {can_be_worn}")
-                response.append(target_response)
-                if can_be_worn:
-                    added, r = character.add_to_inventory(target, inventory='wearing')
-                    response.append(r)
-                    if added:
-                        success = True
-                        response.append(target.perform_action_as_target(self.action))
-                    else:
-                        response.append(StaticResponse(f"You're wearing too much to add {target.get_name()}."))
-            if success:
-                response.append(StaticResponse("Worn."))
-                response.append(character.perform_action_as_actor(self.action))
-            else:
-                response.append(StaticResponse("No items were worn."))
+                response.append(StaticResponse(self.not_taken_text))
         return Feedback(self.__combine_responses__(response), Response(character, self.action, success, target=target), turns=1 if success else 0)
 
 class DropAction(GameAction):
@@ -354,6 +324,12 @@ class CheckInventoryAction(GameAction):
     A GameAction that allows a Character to view the contents of their Inventory
     """
 
+    def __init__(self, action:Action, inventory:str, contains_text:str, empty_text:str):
+        super().__init__(action)
+        self.inventory = inventory
+        self.contains_text = contains_text
+        self.empty_text = empty_text
+
     def check_inputs(self, inputs:tuple) -> tuple[bool,tuple,ResponseString]:
         if len(inputs) == 0:
             return True, None, None
@@ -364,7 +340,7 @@ class CheckInventoryAction(GameAction):
         can_check, r = self.__verify_character__(character)
         response.append(r)
         if can_check:
-            response.append(ContentsResponse(StaticResponse("Your inventory contains:\n\t"), StaticResponse("Your inventory is empty."), character, inventory=True))
+            response.append(ContentsResponse(StaticResponse(f"{self.contains_text}:\n\t"), StaticResponse(f"{self.empty_text}"), character, inventory=True, inventory_type=self.inventory))
             return Feedback(self.__combine_responses__(response), Response(character, self.action, True), turns=0)
         return Feedback(self.__combine_responses__(response), Response(character, self.action, False), turns=0)
 
@@ -413,11 +389,12 @@ class GameState:
             self.name_space.get_from_name('look',      'action')[0]: LookAction(self.name_space.get_from_name('look',     'action')[0]),
             self.name_space.get_from_name('walk',      'action')[0]: WalkAction(self.name_space.get_from_name('walk',     'action')[0]),
             self.name_space.get_from_name('wait',      'action')[0]: WaitAction(self.name_space.get_from_name('wait',     'action')[0]),
-            self.name_space.get_from_name('take',      'action')[0]: TakeAction(self.name_space.get_from_name('take',     'action')[0]),
-            self.name_space.get_from_name('wear',      'action')[0]: WearAction(self.name_space.get_from_name('wear',     'action')[0]),
+            self.name_space.get_from_name('take',      'action')[0]: TakeAction(self.name_space.get_from_name('take',     'action')[0], "inventory", cant_take_text="You can't take",     empty_take_text="Take what?", full_pack_text="doesn't fit in your inventory.",     taken_text="Taken.", not_taken_text="No items were taken."),
+            self.name_space.get_from_name('wear',      'action')[0]: TakeAction(self.name_space.get_from_name('wear',     'action')[0], "wearing",   cant_take_text="You can't wear",     empty_take_text="Wear what?", full_pack_text="doesn't fit over your many layers.", taken_text="Worn.",  not_taken_text="No items were worn."),
             self.name_space.get_from_name('drop',      'action')[0]: DropAction(self.name_space.get_from_name('drop',     'action')[0], "inventory", cant_drop_text="You can't drop",     empty_drop_text="Drop what?",     dropped_text="Dropped.", no_drop_text="No items were dropped."),
             self.name_space.get_from_name('take off',  'action')[0]: DropAction(self.name_space.get_from_name('take off', 'action')[0], "wearing",   cant_drop_text="You can't take off", empty_drop_text="Take off what?", dropped_text="Dropped.", no_drop_text="No items were taken off."),
-            self.name_space.get_from_name('inventory', 'action')[0]:CheckInventoryAction(self.name_space.get_from_name('inventory', 'action')[0]),
+            self.name_space.get_from_name('inventory', 'action')[0]: CheckInventoryAction(self.name_space.get_from_name('inventory', 'action')[0], "inventory", contains_text="Your inventory contains", empty_text="Your inventory is empty."),
+            self.name_space.get_from_name('wearing',   'action')[0]: CheckInventoryAction(self.name_space.get_from_name('wearing',   'action')[0], "wearing",   contains_text="You are wearing", empty_text="You have nothing on but the clothes you woke up in."),
         })
         self.default_action = DefaultAction(self.name_space.get_from_name('look', 'action'))
         i = 0

@@ -4,7 +4,7 @@
     "description"      : "a pair of simple, black plastic sunglasses",
     "state"            : {
         "states"       : ["visible"],
-        "graphs"       : ["takeable", "wearable"]
+        "graphs"       : ["wearable"]
     },
     "weight"           : 1,
     "value"            : 3,

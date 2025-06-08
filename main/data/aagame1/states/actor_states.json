@@ -7,6 +7,7 @@
             "drop",
             "hang",
             "inventory",
+            "wearing",
             "wait",
             "walk",
             "break",
