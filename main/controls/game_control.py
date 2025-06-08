@@ -299,6 +299,14 @@ class DropAction(GameAction):
     A GameAction that allows a Character to drop an item (or items) from their Inventory
     """
 
+    def __init__(self, action:Action, inventory:str, cant_drop_text:str, empty_drop_text:str, dropped_text:str, no_drop_text:str):
+        super().__init__(action)
+        self.inventory = inventory
+        self.cant_drop_text = cant_drop_text
+        self.empty_drop_text = empty_drop_text
+        self.dropped_text = dropped_text
+        self.no_drop_text = no_drop_text
+
     def check_inputs(self, inputs) -> tuple[bool,tuple,ResponseString]:
         targets = []
         placement = None
@@ -308,10 +316,10 @@ class DropAction(GameAction):
             elif isinstance(input, tuple) and input[0] == 'placement':
                 placement = input[1]
             else:
-                return False, None, StaticResponse(f"You can't drop a {input.get_name()}!")
+                return False, None, StaticResponse(f"{self.cant_drop_text} {input.get_name()}!")
         if len(inputs) > 0:
             return True, (targets,placement), None
-        return False, None, StaticResponse("Drop what?")
+        return False, None, StaticResponse(self.empty_drop_text)
     
     def take_action(self, character:Actor, targets:list[Target], placement:Optional[LocationDetail]=None) -> Feedback:
         response = []
@@ -327,7 +335,7 @@ class DropAction(GameAction):
                     room = character.get_top_parent()
                     assert isinstance(room, Location)
                     if placement is None or room.can_interact_with(character, placement):
-                        dropped, r = character.remove_from_inventory(target, placement)
+                        dropped, r = character.remove_from_inventory(target, placement, inventory=self.inventory)
                         response.append(r)
                         if dropped:
                             success = True
@@ -335,10 +343,10 @@ class DropAction(GameAction):
                     else:
                         response.append(StaticResponse(f"There is no {placement.get_name()} here."))
             if success:
-                response.append(StaticResponse("Dropped."))
+                response.append(StaticResponse(self.dropped_text))
                 response.append(character.perform_action_as_actor(self.action))
             else:
-                response.append(StaticResponse("No items were dropped."))
+                response.append(StaticResponse(self.no_drop_text))
         return Feedback(self.__combine_responses__(response), Response(character, self.action, success=success, target=target), turns=1 if success else 0)
 
 class CheckInventoryAction(GameAction):
@@ -402,12 +410,13 @@ class GameState:
         self.current_turn    = 0
         self.moves           = 0
         self.action_dict     = dict[Action,GameAction]({
-            self.name_space.get_from_name('look', 'action')[0]: LookAction(self.name_space.get_from_name('look', 'action')[0]),
-            self.name_space.get_from_name('walk', 'action')[0]: WalkAction(self.name_space.get_from_name('walk', 'action')[0]),
-            self.name_space.get_from_name('wait', 'action')[0]: WaitAction(self.name_space.get_from_name('wait', 'action')[0]),
-            self.name_space.get_from_name('take', 'action')[0]: TakeAction(self.name_space.get_from_name('take', 'action')[0]),
-            self.name_space.get_from_name('wear', 'action')[0]: WearAction(self.name_space.get_from_name('wear', 'action')[0]),
-            self.name_space.get_from_name('drop', 'action')[0]: DropAction(self.name_space.get_from_name('drop', 'action')[0]),
+            self.name_space.get_from_name('look',      'action')[0]: LookAction(self.name_space.get_from_name('look',     'action')[0]),
+            self.name_space.get_from_name('walk',      'action')[0]: WalkAction(self.name_space.get_from_name('walk',     'action')[0]),
+            self.name_space.get_from_name('wait',      'action')[0]: WaitAction(self.name_space.get_from_name('wait',     'action')[0]),
+            self.name_space.get_from_name('take',      'action')[0]: TakeAction(self.name_space.get_from_name('take',     'action')[0]),
+            self.name_space.get_from_name('wear',      'action')[0]: WearAction(self.name_space.get_from_name('wear',     'action')[0]),
+            self.name_space.get_from_name('drop',      'action')[0]: DropAction(self.name_space.get_from_name('drop',     'action')[0], "inventory", cant_drop_text="You can't drop",     empty_drop_text="Drop what?",     dropped_text="Dropped.", no_drop_text="No items were dropped."),
+            self.name_space.get_from_name('take off',  'action')[0]: DropAction(self.name_space.get_from_name('take off', 'action')[0], "wearing",   cant_drop_text="You can't take off", empty_drop_text="Take off what?", dropped_text="Dropped.", no_drop_text="No items were taken off."),
             self.name_space.get_from_name('inventory', 'action')[0]:CheckInventoryAction(self.name_space.get_from_name('inventory', 'action')[0]),
         })
         self.default_action = DefaultAction(self.name_space.get_from_name('look', 'action'))
