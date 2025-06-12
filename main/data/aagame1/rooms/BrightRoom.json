@@ -1,7 +1,6 @@
-
 {
     "name"       : "Bright Room",
-    "description": "Upon entering the room, a shockingly bright light strikes your eyes, forcing you to shut them tight. You simply cannot bear to open them. (If sunglasses on): The room is possessed by an overwhelmingly bright light. By squinting hard, you can just barely make out an eerily smooth room.",
+    "description": "The room is possessed by an overwhelmingly bright light. By squinting hard, you can just barely make out an eerily smooth room.",
     "paths"      : {
         "northeast"  : {
             "name"        : "Exit 1",
@@ -12,6 +11,16 @@
             "name"        : "Exit 2",
             "description" : "Somewhere in your field of vision is a passage, but you are disoriented by the brightness and cannot tell in which direction it lies. ",
             "end"         : "Theatre Entrance"
+        }
+    },
+    "action_restrictions" : {
+        "look" : {
+            "wearing_requirements" : {
+                "sunglasses"   : {
+                    "needed"   : true,
+                    "response" : "[Bright Room]\nUpon entering the room, a shockingly bright light strikes your eyes, forcing you to shut them tight. You simply cannot bear to open them."
+                }
+            }
         }
     }
 }

@@ -3,7 +3,7 @@ from typing import Optional, Any
 from utils.relator      import NameFinder
 from models.named       import Action, Direction
 from models.actors      import ItemLimit, HasLocation, Location, Path, Target, Actor, LocationDetail, SingleEndPath, MultiEndPath, Achievement
-from models.requirement import ActionRequirement, CharacterAchievementRequirement, CharacterStateRequirement, ItemsHeldRequirement, ItemStateRequirement, ItemPlacementRequirement, HappenedRequirement
+from models.requirement import ActionRequirement, CharacterAchievementRequirement, CharacterStateRequirement, ItemsHeldRequirement, WearingRequirement, ItemStateRequirement, ItemPlacementRequirement, HappenedRequirement
 from models.state       import State, StateGroup, StateGraph, Skill, StateDisconnectedGraph
 from models.response    import ResponseString, StaticResponse, CombinationResponse, ItemStateResponse, ContentsResponse, RandomResponse, ContentsWithStateResponse
 from controls.character_control import CharacterController, CommandLineController, NPCController
@@ -65,6 +65,15 @@ def items_held_requirement_from_dict(name:str, requirement_dict:dict[str,Any], n
             items_needed[item] = (needed[0], response_from_input(name, needed[1], name_space))
     return ItemsHeldRequirement(items_needed)
 
+def wearing_requirements_from_dict(name:str, requirement_dict:dict[str,dict], name_space:NameFinder) -> WearingRequirement:
+    items_needed = dict[Target,tuple[bool,ResponseString]]()
+    for item_id, item_info in requirement_dict.items():
+        item = name_space.get_from_id(item_id, ['target', 'actor'])
+        needed   = item_info['needed']
+        response = response_from_input(name, item_info['response'], name_space) if 'response' in item_info else None
+        items_needed[item] = (needed, response)
+    return ItemsHeldRequirement(items_needed)
+
 def happened_requirements_from_dict(name:str, requirement_dict:dict[str,Any], name_space:NameFinder, every_turn:list[ActionRequirement]) -> HappenedRequirement:
     requirement = requirements_from_dict(name, requirement_dict, name_space)
     yes_response = None
@@ -97,6 +106,8 @@ def requirements_from_dict(name:str, requirements_dict:dict[str,Any], name_space
     if 'happened_requirements' in requirements_dict:
         happened_raw = requirements_dict['happened_requirements']
         requirements.append(happened_requirements_from_dict(name, happened_raw, name_space, every_turn))
+    if 'wearing_requirements' in requirements_dict:
+        requirements.append(wearing_requirements_from_dict(name, requirements_dict['wearing_requirements'], name_space))
     return requirements
 
 # REQUIREMENT RELATED

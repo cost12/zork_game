@@ -77,6 +77,17 @@ class ItemsHeldRequirement(ActionRequirement):
                 return False, response
         return True, None
     
+class WearingRequirement(ActionRequirement):
+    def __init__(self, items_needed:dict['Target',tuple[bool,ResponseString]]):
+        self.items_needed = items_needed
+
+    def meets_requirement(self, character:'Actor') -> tuple[bool,ResponseString]:
+        for item, tup in self.items_needed.items():
+            needed, response = tup
+            if not character.is_wearing(item) == needed:
+                return False, response
+        return True, None
+    
 class ItemPlacementRequirement(ActionRequirement):
     def __init__(self, item_placements:dict['Target',list[tuple['HasLocation',bool,ResponseString]]]):
         self.item_placements = item_placements

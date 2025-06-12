@@ -466,6 +466,9 @@ class Actor(Target):
     
     def get_inventory(self, *, inventory='inventory') -> 'HasLocation':
         return self.get_special_child(inventory)
+    
+    def is_wearing(self, item:Target) -> bool:
+        return self.get_inventory(inventory='wearing').contains_item(item)
 
 # LOCATIONS
 
