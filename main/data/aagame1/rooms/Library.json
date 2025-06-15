@@ -9,67 +9,27 @@
             "multi_end"   : {
                 "violin"  : "Theatre Stage"
             },
-            "item_placement_requirements" : {
-                "Red book" : [
-                    ["Library", true, null],
-                    ["shelf 3", true, null]
-                ],
-                "Gray book" : [
-                    ["Library", true, null],
-                    ["shelf 4", true, null]
-                ],
-                "Brown book" : [
-                    ["Library", true, null],
-                    ["shelf 5", true, null]
-                ],
-                "Yellow book" : [
-                    ["Library", true, null],
-                    ["shelf 6", true, null]
-                ],
-                "Emerald book" : [
-                    ["Library", true, null],
-                    ["shelf 7", true, null]
-                ],
-                "Burgundy book" : [
-                    ["Library", true, null],
-                    ["shelf 8", true, null]
-                ],
-                "Vermilion book" : [
-                    ["Library", true, null],
-                    ["shelf 9", true, null]
-                ]
+            "passing_requirements" : {
+                "item_placement_requirements" : {
+                    "Red book" : [["shelf 3 library", true, null]],
+                    "Gray book" : [["shelf 4 library", true, null]],
+                    "Brown book" : [["shelf 5 library", true, null]],
+                    "Yellow book" : [["shelf 6 library", true, null]],
+                    "Emerald book" : [["shelf 7 library", true, null]],
+                    "Burgundy book" : [["shelf 8 library", true, null]],
+                    "Vermilion book" : [["shelf 9 library", true, null]]
+                }
             }
         }
     },
-    "details"    : [
-        {
-            "name" : "shelf 3",
-            "description" : "on the third slot"
-        },
-        {
-            "name" : "shelf 4",
-            "description" : "on the fourth slot"
-        },
-        {
-            "name" : "shelf 5",
-            "description" : "on the fifth slot"
-        },
-        {
-            "name" : "shelf 6",
-            "description" : "on the sixth slot"
-        },
-        {
-            "name" : "shelf 7",
-            "description" : "on the seventh slot"
-        },
-        {
-            "name" : "shelf 8",
-            "description" : "on the eighth slot"
-        },
-        {
-            "name" : "shelf 9",
-            "description" : "on the ninth slot"
-        }
+    "details"   : [
+        {"name" : "shelf 3", "description" : "on the third slot"},
+        {"name" : "shelf 4", "description" : "on the fourth slot"},
+        {"name" : "shelf 5", "description" : "on the fifth slot"},
+        {"name" : "shelf 6", "description" : "on the sixth slot"},
+        {"name" : "shelf 7", "description" : "on the seventh slot"},
+        {"name" : "shelf 8", "description" : "on the eighth slot"},
+        {"name" : "shelf 9", "description" : "on the ninth slot"}
     ],
     "action_restrictions" : {
         "look" : {

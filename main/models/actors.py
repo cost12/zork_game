@@ -263,10 +263,10 @@ class MultiEndPath(Path):
 
     def can_pass(self, character:'Actor') -> tuple[bool,ResponseString]:
         can_pass, response = super().can_pass(character)
-        if not can_pass:
-            return False, response
+        #if not can_pass:
+        #    return False, response
         items_holding = len([1 for item in self.multi_end.keys() if character.contains_item(item)])
-        return items_holding == 1 or items_holding == 0 and self.default_end is not None, self.exit_response
+        return items_holding == 1 or items_holding == 0 and self.default_end is not None and can_pass, self.exit_response
 
     def get_end(self, character:'Actor'):
         if self.can_pass(character):

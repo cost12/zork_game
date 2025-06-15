@@ -623,12 +623,12 @@ def update_location(location_dict:dict[str,Any|dict], name_space:NameFinder, eve
     location = name_space.get_from_id(id)
     assert isinstance(location, Location)
     try:
+        if 'details' in location_dict:
+            update_details(location_dict['details'], name_space, every_turn, parent_id=name)
         if 'paths' in location_dict:
             for direction_id, path_dict in location_dict['paths'].items():
                 direction = name_space.get_from_id(direction_id)
                 update_path(path_dict, name_space, name, direction.get_name(), every_turn)
-        if 'details' in location_dict:
-            update_details(location_dict['details'], name_space, every_turn, parent_id=name)
         if 'visible_requirements' in location_dict:
             location.visible_requirements = requirements_from_dict(name, location_dict['visible_requirements'], name_space, every_turn)
         if 'item_responses' in location_dict:

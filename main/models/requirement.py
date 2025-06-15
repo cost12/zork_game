@@ -95,6 +95,6 @@ class ItemPlacementRequirement(ActionRequirement):
     def meets_requirement(self, character:'Actor'):
         for item, placement_info in self.item_placements.items():
             for location, needed, response in placement_info:
-                if not item.is_in(location) == needed:
+                if not (item.is_in(location) == needed):
                     return False, response
-        return True, None               
+        return True, None
