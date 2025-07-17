@@ -13,16 +13,16 @@ def add_to_name_space(name_space:NameFinder) -> None:
         name_space        =name_space
     )
 
-    brown_book = Target(
-        name="Brown Book",
+    book = Target(
+        name="gray book",
         aliases=["book"],
-        description=(plain_text, "a plain brown book"),
+        description=(plain_text, "a weather-worn little tome with a gray cover"),
         states=sdg,
         weight=1,
         value=1,
         size=1,
         target_responses={
-            name_space.get_from_id("read", "action") : StaticResponse("You try to read the book, but its script is one which you can neither recognize nor decipher.")
+            name_space.get_from_id("read", "action") : StaticResponse("You try to read the book, but its script is one which you can neither recognize nor decipher. On the very last page is a note that says 'Property of Miles Harrison and Griffin Gould'.")
         },
         state_responses={
             name_space.get_from_id("taken", "state") : StaticResponse("You take the Gray Book."),
@@ -30,4 +30,4 @@ def add_to_name_space(name_space:NameFinder) -> None:
         }
     )
 
-    name_space.add(brown_book)
+    name_space.add(book)

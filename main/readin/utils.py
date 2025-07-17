@@ -1,7 +1,11 @@
 from models.state  import State, StateGroup, StateGraph, StateDisconnectedGraph
 from utils.relator import NameFinder
 
-def sdg_from_parts(state_graphs:list[StateGraph], unbreakable_states:list[State], breakable_states:list[State], name_space:NameFinder):
+def sdg_from_parts(name_space:NameFinder, state_graphs:list[StateGraph]=None, unbreakable_states:list[State]=None, breakable_states:list[State]=None):
+    if state_graphs       is None: state_graphs       = []
+    if unbreakable_states is None: unbreakable_states = []
+    if breakable_states   is None: breakable_states   = []
+    
     broken_state = name_space.get_from_id("broken", "state")
     break_action = name_space.get_from_id("break", "action")
     broken_group = StateGroup(name="Broken", states=[broken_state])

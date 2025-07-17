@@ -1,7 +1,6 @@
 from models.actors import Actor, Target, Location, LocationDetail, SingleEndPath
 from models.requirement import ItemStateRequirement
-from models.named import Action, Direction
-from models.state import State
+from models.named import Action
 from utils.relator import NameFinder
 from readin.stand_in import StandIn
 from readin.description_helpers import plain_text, contents_text
@@ -36,7 +35,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
 
     bedside = LocationDetail(
         name="Bedside",
-        description=(contents_text, (StandIn[Location]("Bedside", "locationdetail"), "Next to the bed sits an empty table.", "On the bedside table rests")),
+        description=(contents_text, ("Next to the bed sits an empty table.", "On the bedside table rests")),
         children=[StandIn("mug", "target"), StandIn("brown book", "target")]
     )
 

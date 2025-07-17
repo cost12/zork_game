@@ -13,10 +13,10 @@ def add_to_name_space(name_space:NameFinder) -> None:
         name_space        =name_space
     )
 
-    brown_book = Target(
-        name="Brown Book",
+    book = Target(
+        name="emerald book",
         aliases=["book"],
-        description=(plain_text, "a plain brown book"),
+        description=(plain_text, "a hearty volume with an emerald cover"),
         states=sdg,
         weight=1,
         value=1,
@@ -30,4 +30,4 @@ def add_to_name_space(name_space:NameFinder) -> None:
         }
     )
 
-    name_space.add(brown_book)
+    name_space.add(book)

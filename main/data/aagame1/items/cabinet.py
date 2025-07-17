@@ -1,0 +1,35 @@
+from utils.relator import NameFinder
+from models.actors import Target, LocationDetail, ItemLimit
+from readin.description_helpers import state_text
+from readin.restriction_helpers import item_state_restriction
+from readin.utils import sdg_from_parts
+from readin.stand_in import StandIn
+
+def add_to_name_space(name_space:NameFinder) -> None:
+    sdg = sdg_from_parts(
+        unbreakable_states=[name_space.get_from_id("visible",    "state")],
+        state_graphs      =[name_space.get_from_id("open_close", "stategraph")],
+        name_space        =name_space
+    )
+
+    cabinet = Target(
+        name="cabinet",
+        description=(state_text, {
+            name_space.get_from_id("open",   "state") : "an open cabinet",
+            name_space.get_from_id("closed", "state") : "a closed cabinet"
+        }),
+        states=sdg,
+        children=[
+            LocationDetail(
+                name="in",
+                item_limit=ItemLimit(20, 50),
+                children=[StandIn("mason jar", "target"), StandIn("rusty fork", "target")],
+                visible_requirements=(item_state_restriction, (StandIn("cabinet", "target"), name_space.get_from_id("opened", "state"), "The cabinet is closed."))
+            )
+        ],
+        weight=5,
+        value=3,
+        size=1,
+    )
+
+    name_space.add(cabinet)

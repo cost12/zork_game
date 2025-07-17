@@ -5,19 +5,19 @@ from readin.utils import sdg_from_parts
 
 def add_to_name_space(name_space:NameFinder) -> None:
     sdg = sdg_from_parts(
-        unbreakable_states=[name_space.get_from_id("visible",  "state")],
+        unbreakable_states=[name_space.get_from_id("visible",  "state"),
+                            name_space.get_from_id("edible",   "state")],
         state_graphs      =[name_space.get_from_id("takeable", "stategraph")],
-        breakable_states  =[name_space.get_from_id("musical",  "state")],
         name_space        =name_space
     )
 
-    bongo = Target(
-        name="Bongo",
-        description=(plain_text, "a bongo"),
+    honey = Target(
+        name="honey",
+        description=(plain_text, "a bit of honey"),
         states=sdg,
-        weight=5,
-        value=3,
-        size=1
+        weight=1,
+        value=1,
+        size=1,
     )
 
-    name_space.add(bongo)
+    name_space.add(honey)
