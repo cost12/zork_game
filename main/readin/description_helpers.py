@@ -1,6 +1,8 @@
+"""Commonly used functions in Target descriptions"""
+
 from models.named  import Action
 from models.state  import State
-from models.actors import Actor, Target, LocationDetail
+from models.actors import Actor, Target
 from utils.utils   import list_to_str
 
 def plain_text(action:Action, success:bool, character:Actor, target:Target, tool:Target, described:Target, text:str) -> str:

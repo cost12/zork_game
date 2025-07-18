@@ -13,20 +13,21 @@ def add_to_name_space(name_space:NameFinder) -> None:
         name_space        =name_space
     )
 
-    keys = Target(
-        name="keys",
-        description=(plain_text, "a simple keychain with a single car key, an archaic brass key, and a tiny plushie of Nami from One Piece"),
+    book = Target(
+        name="red book",
+        aliases=["book"],
+        description=(plain_text, "a little book with a red cover"),
         states=sdg,
         weight=1,
         value=1,
         size=1,
         target_responses={
-            name_space.get_from_id("take off", "action") : StaticResponse("You try to remove it from the keychain's ring but your fingernails are too short to separate the ring's loops."),
-            name_space.get_from_id("admire",   "action") : StaticResponse("Nami so pretty.")
+            name_space.get_from_id("read", "action") : StaticResponse("You try to read the book, but its script is one which you can neither recognize nor decipher.")
         },
         state_responses={
-            name_space.get_from_id("taken",  "state") : StaticResponse("You take the jangling keychain.")
+            name_space.get_from_id("taken", "state") : StaticResponse("You take the Red Book."),
+            name_space.get_from_id("broken", "state") : StaticResponse("You rip the book in two, destroying its readability. Nice going...")
         }
     )
 
-    name_space.add(keys)
+    name_space.add(book)
