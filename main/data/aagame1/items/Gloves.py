@@ -23,7 +23,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
             name_space.get_from_id("break",   "action") : StaticResponse("You tear at the jacket, but it must have been made by valiant manufacturers- you can't seem to do any damage.")
         },
         state_responses={
-            name_space.get_from_id("taken",    "state") : StaticResponse("The gloves feel tough yet warm."),
+            name_space.get_from_id("held",     "state") : StaticResponse("The gloves feel tough yet warm."),
             name_space.get_from_id("worn",     "state") : StaticResponse("You put the gloves on, feeling their warm protection"),
             name_space.get_from_id("wearable", "state") : StaticResponse("You take the gloves off."),
             name_space.get_from_id("broken",   "state") : StaticResponse("You tear at the gloves, hampering their ability to keep your little fingies warm. uWu!")

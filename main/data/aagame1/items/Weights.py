@@ -21,11 +21,11 @@ def add_to_name_space(name_space:NameFinder) -> None:
         value=10,
         size=1,
         target_responses={
-            name_space.get_from_id("lift", "action") : StaticResponse("Nice rep. Your form isn't perfect but you feel a bit stronger for having done it."),
+            name_space.get_from_id("lift",  "action") : StaticResponse("Nice rep. Your form isn't perfect but you feel a bit stronger for having done it."),
             name_space.get_from_id("break", "action") : StaticResponse("Ha! Even Arnold couldn't break this.")
         },
         state_responses={
-            name_space.get_from_id("taken", "state") : StaticResponse("You take the weights, they are heavy.")
+            name_space.get_from_id("held",   "state") : StaticResponse("You take the weights, they are heavy.")
         }
     )
 

@@ -22,10 +22,10 @@ def add_to_name_space(name_space:NameFinder) -> None:
         value=1,
         size=4,
         target_responses={
-            name_space.get_from_id("hang", "action") : StaticResponse("The painting rests on the wall, proudly displayed")
+            name_space.get_from_id("hang",  "action") : StaticResponse("The painting rests on the wall, proudly displayed")
         },
         state_responses={
-            name_space.get_from_id("taken",  "state") : StaticResponse("You take the painting from its resting place, marveling at the detail from so close. Be careful!"),
+            name_space.get_from_id("held",   "state") : StaticResponse("You take the painting from its resting place, marveling at the detail from so close. Be careful!"),
             name_space.get_from_id("broken", "state") : StaticResponse("As a complete vandal, shitting on the annals of history, you destroy this priceless work of art.")
         }
     )

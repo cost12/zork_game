@@ -20,10 +20,10 @@ def add_to_name_space(name_space:NameFinder) -> None:
         value=10,
         size=1,
         target_responses={
-            name_space.get_from_id("play", "action") : StaticResponse("You're not very good, but the spirit seems to stay your novice hand, and you are able to stumble through a simple yet haunting melody.")
+            name_space.get_from_id("play",  "action") : StaticResponse("You're not very good, but the spirit seems to stay your novice hand, and you are able to stumble through a simple yet haunting melody.")
         },
         state_responses={
-            name_space.get_from_id("taken",  "state") : StaticResponse("You momentarily feel transported back to Ancient Athênai as a the spirit of a minstrel fleetingly posesses you."),
+            name_space.get_from_id("held",   "state") : StaticResponse("You momentarily feel transported back to Ancient Athênai as a the spirit of a minstrel fleetingly posesses you."),
             name_space.get_from_id("broken", "state") : StaticResponse("Why oh why? The olden lyre so lovingly passed down between generations is no more.")
         }
     )

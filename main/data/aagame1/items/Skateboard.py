@@ -19,7 +19,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
         value=1,
         size=5,
         state_responses={
-            name_space.get_from_id("taken",  "state") : StaticResponse("You take the skateboard and immediately look 20% cooler")
+            name_space.get_from_id("held", "state") : StaticResponse("You take the skateboard and immediately look 20% cooler")
         }
     )
 

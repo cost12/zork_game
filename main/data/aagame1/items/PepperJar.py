@@ -29,7 +29,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
         value=3,
         size=2,
         state_responses={
-            name_space.get_from_id("taken",         "state") : StaticResponse("The jar is cool to the touch."),
+            name_space.get_from_id("held",          "state") : StaticResponse("The jar is cool to the touch."),
             name_space.get_from_id("full",          "state") : StaticResponse("The jar is full."),
             name_space.get_from_id("empty (state)", "state") : StaticResponse("The jar is empty."),
             name_space.get_from_id("broken",        "state") : StaticResponse("The jar shatters, rendering itself unusable. Nice going."),

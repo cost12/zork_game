@@ -21,10 +21,10 @@ def add_to_name_space(name_space:NameFinder) -> None:
         value=1,
         size=1,
         target_responses={
-            name_space.get_from_id("read", "action") : StaticResponse("It says: 'May the single instrument transport. When we arrive, let us go on with it in our hearts, if not on our personage.'")
+            name_space.get_from_id("read",  "action") : StaticResponse("It says: 'May the single instrument transport. When we arrive, let us go on with it in our hearts, if not on our personage.'")
         },
         state_responses={
-            name_space.get_from_id("taken",  "state") : StaticResponse("You take the note."),
+            name_space.get_from_id("held",   "state") : StaticResponse("You take the note."),
             name_space.get_from_id("broken", "state") : StaticResponse("You rip the note in two, and then four, then eight. Its shreds fall to the floor."),
         }
     )

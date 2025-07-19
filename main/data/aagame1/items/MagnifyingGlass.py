@@ -21,10 +21,10 @@ def add_to_name_space(name_space:NameFinder) -> None:
         size=1,
         state_responses={
             name_space.get_from_id("broken", "state") : StaticResponse("Now that's just a waste!"),
-            name_space.get_from_id("taken",  "state") : StaticResponse("You take the magnifying glass.")
+            name_space.get_from_id("held",   "state") : StaticResponse("You take the magnifying glass.")
         },
         tool_responses={
-            name_space.get_from_id("burn", "action") : StaticResponse("Using the magnifying glass to refract the light, you light the candle.")
+            name_space.get_from_id("burn",  "action") : StaticResponse("Using the magnifying glass to refract the light, you light the candle.")
         }
     )
 

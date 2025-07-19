@@ -24,8 +24,8 @@ def add_to_name_space(name_space:NameFinder) -> None:
             name_space.get_from_id("toggle", "action") : StaticResponse("Grains of sand tumble through the hourglass, mezmerising you.")
         },
         state_responses={
-            name_space.get_from_id("broken", "state") : StaticResponse("The hourglass easily snaps, the sang spilling. You hear a whooshing sound, as if some spell or curse has been lifted somewhere."),
-            name_space.get_from_id("taken",  "state") : StaticResponse("The hourglass is delicate in your grasp.")
+            name_space.get_from_id("broken",  "state") : StaticResponse("The hourglass easily snaps, the sang spilling. You hear a whooshing sound, as if some spell or curse has been lifted somewhere."),
+            name_space.get_from_id("held",    "state") : StaticResponse("The hourglass is delicate in your grasp.")
         }
     )
 

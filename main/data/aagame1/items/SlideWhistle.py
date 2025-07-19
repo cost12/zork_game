@@ -21,10 +21,10 @@ def add_to_name_space(name_space:NameFinder) -> None:
         value=10,
         size=1,
         target_responses={
-            name_space.get_from_id("play", "action") : StaticResponse("You produce a few shrill, slippery notes. It sounds niether great, nor horrible, evoking little emotion.")
+            name_space.get_from_id("play",  "action") : StaticResponse("You produce a few shrill, slippery notes. It sounds niether great, nor horrible, evoking little emotion.")
         },
         state_responses={
-            name_space.get_from_id("taken",  "state") : StaticResponse("The whistle feels less flimsy than you expected."),
+            name_space.get_from_id("held",   "state") : StaticResponse("The whistle feels less flimsy than you expected."),
             name_space.get_from_id("broken", "state") : StaticResponse("Bullishly, you rend the slide whistle into mishapen pieces.")
         }
     )

@@ -20,7 +20,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
         value=3,
         size=5,
         state_responses={
-            name_space.get_from_id("taken",  "state") : StaticResponse("You feel many hours of farm work in the wooden handle's grain"),
+            name_space.get_from_id("held",   "state") : StaticResponse("You feel many hours of farm work in the wooden handle's grain"),
             name_space.get_from_id("broken", "state") : StaticResponse("Seems odd. You break the handle in two.")
         }
     )

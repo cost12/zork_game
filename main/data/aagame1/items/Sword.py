@@ -23,7 +23,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
             name_space.get_from_id("break", "action") : StaticResponse("A blade of this making cannot be broken by one such as you. HA!")
         },
         state_responses={
-            name_space.get_from_id("taken",  "state") : StaticResponse("The sword is well-balanced. Its maker speaks to you through it, warning you of the deathly power it holds, expressing himself through sheer emotion, lest words sully the message's import."),
+            name_space.get_from_id("held",   "state") : StaticResponse("The sword is well-balanced. Its maker speaks to you through it, warning you of the deathly power it holds, expressing himself through sheer emotion, lest words sully the message's import."),
         }
     )
 

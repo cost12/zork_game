@@ -24,7 +24,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
             name_space.get_from_id("on",     "state") : StaticResponse("The lantern is on."),
             name_space.get_from_id("off",    "state") : StaticResponse("The lantern is off."),
             name_space.get_from_id("broken", "state") : StaticResponse("The lantern is broken and can't be turned on. Pity..."),
-            name_space.get_from_id("taken",  "state") : StaticResponse("The lantern is surprisingly light!")
+            name_space.get_from_id("held",   "state") : StaticResponse("The lantern is surprisingly light!")
         }
     )
 

@@ -5,6 +5,9 @@ from readin.stand_in import replace_standins
 from importlib import import_module
 import pkgutil
 
+# TODO: replace taken with held in items
+# TODO: add location details of jar etc to namespace
+
 def get_level1() -> NameFinder:
     name_space = NameFinder()
     

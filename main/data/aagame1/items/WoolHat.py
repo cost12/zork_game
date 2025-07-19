@@ -20,7 +20,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
         value=3,
         size=1,
         state_responses={
-            name_space.get_from_id("taken",    "state") : StaticResponse("You take the woolen hat, feeling its soft warmth."),
+            name_space.get_from_id("held",     "state") : StaticResponse("You take the woolen hat, feeling its soft warmth."),
             name_space.get_from_id("worn",     "state") : StaticResponse("Though it itches minorly, the hat should keep your head nice and cozy."),
             name_space.get_from_id("wearable", "state") : StaticResponse("You take the hat off."),
             name_space.get_from_id("broken",   "state") : StaticResponse("You rip the hat to shreds, defiling the gentle work of a caring, lovely grandma somewhere.")

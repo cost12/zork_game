@@ -25,7 +25,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
             name_space.get_from_id("admire",   "action") : StaticResponse("Nami so pretty.")
         },
         state_responses={
-            name_space.get_from_id("taken",  "state") : StaticResponse("You take the jangling keychain.")
+            name_space.get_from_id("held",      "state") : StaticResponse("You take the jangling keychain.")
         }
     )
 

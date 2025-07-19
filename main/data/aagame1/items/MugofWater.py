@@ -28,10 +28,10 @@ def add_to_name_space(name_space:NameFinder) -> None:
         value=1,
         size=1,
         target_responses={
-            name_space.get_from_id("pour", "action") : ContentsWithStateResponse(StandIn("mug", "target"), {name_space.get_from_id("liquid", "state") : "You empty the mug's contents, making a bit of a mess..."}, default="You turn the mug upside down, but nothing comes out.")
+            name_space.get_from_id("pour",  "action") : ContentsWithStateResponse(StandIn("mug", "target"), {name_space.get_from_id("liquid", "state") : "You empty the mug's contents, making a bit of a mess..."}, default="You turn the mug upside down, but nothing comes out.")
         },
         state_responses={
-            name_space.get_from_id("taken",  "state") : ContentsWithStateResponse(StandIn("mug", "target"), {name_space.get_from_id("liquid", "state") : "You take the mug. Be fareful not to slosh!"}, default="You take the mug."),
+            name_space.get_from_id("held",   "state") : ContentsWithStateResponse(StandIn("mug", "target"), {name_space.get_from_id("liquid", "state") : "You take the mug. Be fareful not to slosh!"}, default="You take the mug."),
             name_space.get_from_id("broken", "state") : StaticResponse("The mug is broken and can't be put back together again. Pity..."),
         },
         item_responses={

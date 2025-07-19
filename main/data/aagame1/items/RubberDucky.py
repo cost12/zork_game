@@ -24,7 +24,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
             name_space.get_from_id("break",   "action") : StaticResponse("It's rubber, how do you want to break it?")
         },
         state_responses={
-            name_space.get_from_id("taken",  "state") : StaticResponse("You take the rubber ducky. It squeaks when you squeeze it.")
+            name_space.get_from_id("held",     "state") : StaticResponse("You take the rubber ducky. It squeaks when you squeeze it.")
         }
     )
 

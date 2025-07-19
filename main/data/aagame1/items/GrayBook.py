@@ -22,10 +22,10 @@ def add_to_name_space(name_space:NameFinder) -> None:
         value=1,
         size=1,
         target_responses={
-            name_space.get_from_id("read", "action") : StaticResponse("You try to read the book, but its script is one which you can neither recognize nor decipher. On the very last page is a note that says 'Property of Miles Harrison and Griffin Gould'.")
+            name_space.get_from_id("read",  "action") : StaticResponse("You try to read the book, but its script is one which you can neither recognize nor decipher. On the very last page is a note that says 'Property of Miles Harrison and Griffin Gould'.")
         },
         state_responses={
-            name_space.get_from_id("taken", "state") : StaticResponse("You take the Gray Book."),
+            name_space.get_from_id("held",   "state") : StaticResponse("You take the Gray Book."),
             name_space.get_from_id("broken", "state") : StaticResponse("You rip the book in two, destroying its readability. Nice going...")
         }
     )
