@@ -13,16 +13,19 @@ def add_to_name_space(name_space:NameFinder) -> None:
         name_space        =name_space
     )
 
+    inside = LocationDetail(
+        name="in",
+        id="in mason jar",
+        item_limit=ItemLimit(1, 1)
+    )
+
     jar = Target(
         name="mason jar",
         aliases=["jar"],
         description=(plain_text, "a smudged and empty mason jar"),
         states=sdg,
         children=[
-            LocationDetail(
-                name="in",
-                item_limit=ItemLimit(1, 1)
-            )
+            inside
         ],
         weight=1,
         value=3,
@@ -40,4 +43,4 @@ def add_to_name_space(name_space:NameFinder) -> None:
         }
     )
 
-    name_space.add(jar)
+    name_space.add_many([jar, inside])

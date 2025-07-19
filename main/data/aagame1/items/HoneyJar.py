@@ -13,17 +13,20 @@ def add_to_name_space(name_space:NameFinder) -> None:
         name_space        =name_space
     )
 
+    inside = LocationDetail(
+        name="in",
+        id="in honey jar",
+        item_limit=ItemLimit(1, 1),
+        children=[StandIn("honey", "target")]
+    )
+
     jar = Target(
         name="honey jar",
         aliases=["jar"],
         description=(plain_text, "a jar for honey"),
         states=sdg,
         children=[
-            LocationDetail(
-                name="in",
-                item_limit=ItemLimit(1, 1),
-                children=[StandIn("honey", "target")]
-            )
+            inside
         ],
         weight=1,
         value=3,
@@ -39,4 +42,4 @@ def add_to_name_space(name_space:NameFinder) -> None:
         }
     )
 
-    name_space.add(jar)
+    name_space.add_many([jar, inside])

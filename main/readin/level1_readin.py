@@ -1,17 +1,14 @@
+from importlib import import_module
+import pkgutil
+
 import data.aagame1
 from utils.relator   import NameFinder
 from readin.stand_in import replace_standins
 
-from importlib import import_module
-import pkgutil
-
-# TODO: replace taken with held in items
-# TODO: add location details of jar etc to namespace
-
 def get_level1() -> NameFinder:
     name_space = NameFinder()
     
-    modules = ['directions', 'actions', 'achievements', 'states', 'state_graphs']#, 'items', 'skills', 'skill_sets', 'characters', 'rooms', 'character_control']
+    modules = ['directions', 'actions', 'achievements', 'states', 'state_graphs', 'items']#, 'skills', 'skill_sets', 'characters', 'rooms', 'character_control']
     for module in modules:
         try:
             imported_module = import_module(f'data.aagame1.{module}')

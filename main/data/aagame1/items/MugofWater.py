@@ -13,16 +13,19 @@ def add_to_name_space(name_space:NameFinder) -> None:
         name_space        =name_space
     )
 
+    inside = LocationDetail(
+        name="in",
+        id="in mug",
+        item_limit=ItemLimit(1, 1),
+        children=[StandIn("water", "target")]
+    )
+
     mug = Target(
         name="mug",
         description=(contents_text, ("an empty ceramic mug", "a small ceramic mug full of")),
         states=sdg,
         children=[
-            LocationDetail(
-                name="in",
-                item_limit=ItemLimit(1, 1),
-                children=[StandIn("water", "target")]
-            )
+            inside
         ],
         weight=1,
         value=1,
@@ -41,4 +44,4 @@ def add_to_name_space(name_space:NameFinder) -> None:
         }
     )
 
-    name_space.add(mug)
+    name_space.add_many([mug, inside])

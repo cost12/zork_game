@@ -12,6 +12,14 @@ def add_to_name_space(name_space:NameFinder) -> None:
         name_space        =name_space
     )
 
+    inside = LocationDetail(
+        name="in",
+        id="in cabinet",
+        item_limit=ItemLimit(20, 50),
+        children=[StandIn("mason jar", "target"), StandIn("rusty fork", "target")],
+        visible_requirements=(item_state_restriction, (StandIn("cabinet", "target"), name_space.get_from_id("opened", "state"), "The cabinet is closed."))
+    )
+
     cabinet = Target(
         name="cabinet",
         description=(state_text, {
@@ -20,16 +28,11 @@ def add_to_name_space(name_space:NameFinder) -> None:
         }),
         states=sdg,
         children=[
-            LocationDetail(
-                name="in",
-                item_limit=ItemLimit(20, 50),
-                children=[StandIn("mason jar", "target"), StandIn("rusty fork", "target")],
-                visible_requirements=(item_state_restriction, (StandIn("cabinet", "target"), name_space.get_from_id("opened", "state"), "The cabinet is closed."))
-            )
+            inside
         ],
         weight=5,
         value=3,
         size=1,
     )
 
-    name_space.add(cabinet)
+    name_space.add_many([cabinet, inside])

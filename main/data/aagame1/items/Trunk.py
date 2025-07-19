@@ -33,7 +33,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
         id="on trunk",
         item_limit=ItemLimit(20, 100),
         children=[
-            name_space.get_from_id("jar of peppers", "target")
+            name_space.get_from_id("pepper jar", "target")
         ]
     )
 

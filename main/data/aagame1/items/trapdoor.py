@@ -20,7 +20,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
         value=3,
         size=5,
         target_responses={
-            name_space.get_from_id("take", "action") : StaticResponse("???")
+            name_space.get_from_id("take",  "action") : StaticResponse("???")
         },
         state_responses={
             name_space.get_from_id("opened", "state") : StaticResponse("The trapdoor is now open."),

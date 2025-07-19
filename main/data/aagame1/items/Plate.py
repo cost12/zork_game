@@ -13,16 +13,19 @@ def add_to_name_space(name_space:NameFinder) -> None:
         name_space        =name_space
     )
 
+    on = LocationDetail(
+        name="on",
+        id="on plate",
+        item_limit=ItemLimit(1, 1),
+        children=[StandIn("meal", "target")]
+    )
+
     plate = Target(
         name="plate",
         description=(plain_text, "a simple clay plate"),
         states=sdg,
         children=[
-            LocationDetail(
-                name="on",
-                item_limit=ItemLimit(1, 1),
-                children=[StandIn("meal", "target")]
-            )
+            on
         ],
         weight=2,
         value=1,
@@ -33,4 +36,4 @@ def add_to_name_space(name_space:NameFinder) -> None:
         }
     )
 
-    name_space.add(plate)
+    name_space.add_many([plate, on])
