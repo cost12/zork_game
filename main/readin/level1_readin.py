@@ -8,7 +8,7 @@ from readin.stand_in import replace_standins
 def get_level1() -> NameFinder:
     name_space = NameFinder()
     
-    modules = ['directions', 'actions', 'achievements', 'states', 'state_graphs', 'items', 'skills']#, 'skill_sets', 'characters', 'rooms', 'character_control']
+    modules = ['directions', 'actions', 'achievements', 'states', 'state_graphs', 'items', 'skills', 'skill_sets']#, 'characters', 'rooms', 'character_control']
     for module in modules:
         try:
             imported_module = import_module(f'data.aagame1.{module}')
