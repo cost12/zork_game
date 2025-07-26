@@ -1,7 +1,7 @@
 from utils.relator              import NameFinder
 from models.actors              import Target
 from models.response            import StaticResponse
-from readin.description_helpers import plain_text
+from readin.description_helpers import Description, PlainTextDescription, PlainTextContext
 from readin.utils               import sdg_from_parts
 
 def add_to_name_space(name_space:NameFinder) -> None:

@@ -1,7 +1,7 @@
 from utils.relator              import NameFinder
 from models.actors              import Target, LocationDetail, ItemLimit
 from models.response            import StaticResponse, ContentsWithStateResponse
-from readin.description_helpers import contents_text
+from readin.description_helpers import Description, contents_text
 from readin.utils               import sdg_from_parts
 from readin.stand_in            import StandIn
 

@@ -1,6 +1,6 @@
 from utils.relator import NameFinder
 from models.actors import Target, LocationDetail, ItemLimit
-from readin.description_helpers import state_text
+from readin.description_helpers import Description, state_text
 from readin.restriction_helpers import item_state_restriction
 from readin.utils import sdg_from_parts
 from readin.stand_in import StandIn
