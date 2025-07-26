@@ -14,7 +14,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
 
     water = Target(
         name="water",
-        description=(plain_text, "water"),
+        description=Description[PlainTextContext](PlainTextContext("water"), PlainTextDescription()),
         states=sdg,
         weight=1,
         value=1,

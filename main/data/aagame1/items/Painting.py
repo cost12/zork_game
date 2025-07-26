@@ -16,7 +16,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
     painting = Target(
         name="painting",
         aliases=["hercules"],
-        description=(plain_text, "a medium-sized painting depictiong Hercules wrestling the Nemean Lion, gracefully rendered in romantic fashion"),
+        description=Description[PlainTextContext](PlainTextContext("a medium-sized painting depictiong Hercules wrestling the Nemean Lion, gracefully rendered in romantic fashion"), PlainTextDescription()),
         states=sdg,
         weight=3,
         value=1,

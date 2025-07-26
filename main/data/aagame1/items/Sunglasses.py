@@ -14,7 +14,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
     glasses = Target(
         name="sunglasses",
         aliases=["glasses"],
-        description=(plain_text, "a pair of simple, black plastic sunglasses"),
+        description=Description[PlainTextContext](PlainTextContext("a pair of simple, black plastic sunglasses"), PlainTextDescription()),
         states=sdg,
         weight=1,
         value=3,

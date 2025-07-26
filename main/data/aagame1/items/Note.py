@@ -15,7 +15,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
 
     note = Target(
         name="note",
-        description=(plain_text, "a small handwritten note, scrawled in dark black ink"),
+        description=Description[PlainTextContext](PlainTextContext("a small handwritten note, scrawled in dark black ink"), PlainTextDescription()),
         states=sdg,
         weight=1,
         value=1,

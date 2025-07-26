@@ -14,7 +14,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
 
     spear = Target(
         name="spear",
-        description=(plain_text, "a dope-ass long spear with a tuft to catch the blood of your foes"),
+        description=Description[PlainTextContext](PlainTextContext("a dope-ass long spear with a tuft to catch the blood of your foes"), PlainTextDescription()),
         states=sdg,
         weight=3,
         value=3,

@@ -14,7 +14,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
 
     pitchfork = Target(
         name="pitchfork",
-        description=(plain_text, "a long-handled pitchfork with three sharp tines"),
+        description=Description[PlainTextContext](PlainTextContext("a long-handled pitchfork with three sharp tines"), PlainTextDescription()),
         states=sdg,
         weight=3,
         value=3,

@@ -14,7 +14,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
 
     violin = Target(
         name="violin",
-        description=(plain_text, "an elegant violin, seemingly out of place, as if from a bygone era (its caretakers (for surely there have been many generations, between which this delicate masterpiece has been passed) have done well to guard their custody)"),
+        description=Description[PlainTextContext](PlainTextContext("an elegant violin, seemingly out of place, as if from a bygone era (its caretakers (for surely there have been many generations, between which this delicate masterpiece has been passed) have done well to guard their custody)"), PlainTextDescription()),
         states=sdg,
         weight=2,
         value=10,

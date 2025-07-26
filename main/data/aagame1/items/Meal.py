@@ -14,7 +14,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
 
     meal = Target(
         name="meal",
-        description=(plain_text, "a decadent, steaming meal"),
+        description=Description[PlainTextContext](PlainTextContext("a decadent, steaming meal"), PlainTextDescription()),
         states=sdg,
         weight=3,
         value=3,

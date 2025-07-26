@@ -14,7 +14,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
 
     triangle = Target(
         name="triangle",
-        description=(plain_text, "a small metal triangle"),
+        description=Description[PlainTextContext](PlainTextContext("a small metal triangle"), PlainTextDescription()),
         states=sdg,
         weight=2,
         value=10,

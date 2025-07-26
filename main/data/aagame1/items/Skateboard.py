@@ -13,7 +13,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
 
     skateboard = Target(
         name="skateboard",
-        description=(plain_text, "a classic skateboard with Rob Dyrdek's brand designs on the bottom"),
+        description=Description[PlainTextContext](PlainTextContext("a classic skateboard with Rob Dyrdek's brand designs on the bottom"), PlainTextDescription()),
         states=sdg,
         weight=4,
         value=1,

@@ -14,7 +14,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
     duck = Target(
         name="rubber ducky",
         aliases=["rubber duck", "duck", "ducky"],
-        description=(plain_text, "a classic yellow rubber ducky"),
+        description=Description[PlainTextContext](PlainTextContext("a classic yellow rubber ducky"), PlainTextDescription()),
         states=sdg,
         weight=1,
         value=1,

@@ -14,7 +14,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
     hat = Target(
         name="wool hat",
         aliases=["hat", "knit hat", "cap", "grandma's hat", "granny cap"],
-        description=(plain_text, "a lovely knit hat, as if done by a grandmother"),
+        description=Description[PlainTextContext](PlainTextContext("a lovely knit hat, as if done by a grandmother"), PlainTextDescription()),
         states=sdg,
         weight=1,
         value=3,

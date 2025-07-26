@@ -13,7 +13,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
 
     wallet = Target(
         name="wallet",
-        description=(plain_text, "a wallet"),
+        description=Description[PlainTextContext](PlainTextContext("a wallet"), PlainTextDescription()),
         states=sdg,
         weight=5,
         value=3,

@@ -15,7 +15,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
     jacket = Target(
         name="fuzzy jacket",
         aliases=["jacket"],
-        description=(plain_text, "a poofy and comfortable winter jacket, just your size"),
+        description=Description[PlainTextContext](PlainTextContext("a poofy and comfortable winter jacket, just your size"), PlainTextDescription()),
         states=sdg,
         weight=3,
         value=5,

@@ -16,7 +16,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
     herbs = Target(
         name="dried herbs",
         aliases=["herbs"],
-        description=(plain_text, "a small, tightly packed bundle of herbs bound by a short length of hemp twine"),
+        description=Description[PlainTextContext](PlainTextContext("a small, tightly packed bundle of herbs bound by a short length of hemp twine"), PlainTextDescription()),
         states=sdg,
         weight=1,
         value=1,

@@ -15,7 +15,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
     lantern = Target(
         name="lantern",
         aliases=["lamp"],
-        description=(plain_text, "a small survival lantern"),
+        description=Description[PlainTextContext](PlainTextContext("a small survival lantern"), PlainTextDescription()),
         states=sdg,
         weight=1,
         value=1,

@@ -13,7 +13,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
 
     trowel = Target(
         name="trowel",
-        description=(plain_text, "an old rusty metal fork"),
+        description=Description[PlainTextContext](PlainTextContext("an old rusty metal fork"), PlainTextDescription()),
         states=sdg,
         weight=2,
         value=1,

@@ -15,7 +15,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
 
     computer = Target(
         name="computer",
-        description=(plain_text, "an old-school computer hums soflty, the gentle light of its screen illuminating the space"),
+        description=Description[PlainTextContext](PlainTextContext("an old-school computer hums soflty, the gentle light of its screen illuminating the space"), PlainTextDescription()),
         states=sdg,
         weight=100,
         value=100,

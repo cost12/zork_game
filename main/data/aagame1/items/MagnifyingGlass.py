@@ -14,7 +14,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
 
     magnifying_glass = Target(
         name="magnifying glass",
-        description=(plain_text, "a simple, plastic-handled magnifying glass"),
+        description=Description[PlainTextContext](PlainTextContext("a simple, plastic-handled magnifying glass"), PlainTextDescription()),
         states=sdg,
         weight=2,
         value=5,

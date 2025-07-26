@@ -39,7 +39,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
 
     trunk = Target(
         name="trunk",
-        description=(plain_text, "an honest, squat trunk"),
+        description=Description[PlainTextContext](PlainTextContext("an honest, squat trunk"), PlainTextDescription()),
         states=sdg,
         children=[
             inside,

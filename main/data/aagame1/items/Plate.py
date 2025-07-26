@@ -22,7 +22,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
 
     plate = Target(
         name="plate",
-        description=(plain_text, "a simple clay plate"),
+        description=Description[PlainTextContext](PlainTextContext("a simple clay plate"), PlainTextDescription()),
         states=sdg,
         children=[
             on

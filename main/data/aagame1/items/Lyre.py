@@ -14,7 +14,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
 
     lyre = Target(
         name="lyre",
-        description=(plain_text, "a rustic Greek lyre, surely loved as is evident from the well-worn neck"),
+        description=Description[PlainTextContext](PlainTextContext("a rustic Greek lyre, surely loved as is evident from the well-worn neck"), PlainTextDescription()),
         states=sdg,
         weight=2,
         value=10,

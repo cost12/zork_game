@@ -15,7 +15,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
     whistle = Target(
         name="slide whistle",
         aliases=["whistle"],
-        description=(plain_text, "a slide whistle which, although it is a simple toy, posesses an attractive potential for unforseen elevation and unlikely craft"),
+        description=Description[PlainTextContext](PlainTextContext("a slide whistle which, although it is a simple toy, posesses an attractive potential for unforseen elevation and unlikely craft"), PlainTextDescription()),
         states=sdg,
         weight=2,
         value=10,

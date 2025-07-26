@@ -51,3 +51,45 @@ def add_to_name_space(name_space:NameFinder) -> None:
         start_location=True
     )
     name_space.add_many([east_path, up_path, south_path, bedside, bedroom])
+
+{
+    "name"       : "Armory",
+    "description": "You stand in an old armory that once held many armaments and much armor. All that remains are a few neglected weapons. On the floor is a mosaic resembling an hourglass with both glass canisters cracked.",
+    "paths"      : {
+        "west"   : {
+            "name"        : "Exit 1",
+            "description" : "A harsh looking metal doorway leads west",
+            "end"         : "Beehive Room"
+        }
+    },
+    "action_restrictions" : {
+        "take" : {
+            "item_state_requirements" : {
+                "hourglass" : {
+                    "broken" : [true, "As you move to place the item in your inventory, it turns to dust. As if guided by some ancient curse it slips through your fingers and reforms in it's previous location."]
+                }
+            }
+        },
+        "look" : {
+            "item_state_requirements" : {
+                "lantern" : {
+                    "on" : [true, "You try to look, but you can't see a thing."]
+                }
+            },
+            "item_placement_requirements" : {
+                "lantern" : [["Armory", true, "You try to look but you can't see a thing."]]
+            }
+        }
+    },
+    "details" : [
+        {
+            "name"        : "rack",
+            "description" : {
+                "type"    : "contents",
+                "full"    : "Hanging on a well-worn wooden rack is",
+                "empty"   : "An empty weapons rack hangs on the wall"
+            },
+            "contents"    : ["spear", "pitchfork", "sword"]
+        }
+    ]
+}

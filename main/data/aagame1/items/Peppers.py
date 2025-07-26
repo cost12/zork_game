@@ -13,7 +13,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
 
     peppers = Target(
         name="peppers",
-        description=(plain_text, "a bunch of peppers"),
+        description=Description[PlainTextContext](PlainTextContext("a bunch of peppers"), PlainTextDescription()),
         states=sdg,
         weight=1,
         value=1,

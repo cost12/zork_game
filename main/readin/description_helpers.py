@@ -1,23 +1,64 @@
 """Commonly used functions in Target descriptions"""
 
+from dataclasses   import dataclass
+from abc           import ABC, abstractmethod
+from typing        import TypeVar, Generic
+
 from models.named  import Action
 from models.state  import State
 from models.actors import Actor, Target
 from utils.utils   import list_to_str
 
-def plain_text(action:Action, success:bool, character:Actor, target:Target, tool:Target, described:Target, text:str) -> str:
-    return text
+T = TypeVar("T")
 
-def contents_text(action:Action, success:bool, character:Actor, target:Target, tool:Target, described:Target, info:tuple[str,str]) -> str:
-    empty_text, full_text = info
-    contents = described.list_contents_visible_to(character)
-    if len(contents) == 0:
-        return empty_text
-    return f"{full_text} {list_to_str([item.get_description_to(character) for item in contents])}"
+@dataclass
+class DescriptionContext:
+    action    : Action
+    success   : bool
+    character : Actor
+    target    : Target
+    tool      : Target
+    described : Target
 
-def state_text(action:Action, success:bool, character:Actor, target:Target, tool:Target, described:Target, info:dict[State,str]) -> str:
-    description = ""
-    for state in described.get_current_state():
-        if state in info:
-            description += info[state]
-    return description
+class DescriptionStrategy(ABC, Generic[T]):
+    @abstractmethod
+    def describe(self, context:DescriptionContext, specific:T) -> str:
+        pass
+
+@dataclass
+class Description(Generic[T]):
+    specific : T
+    strategy : DescriptionStrategy
+
+
+@dataclass
+class PlainTextContext:
+    text : str = None
+
+class PlainTextDescription(DescriptionStrategy[PlainTextContext]):
+    def describe(self, context:DescriptionContext, specific:PlainTextContext) -> str:
+        return specific.text
+
+@dataclass
+class ContentsContext:
+    full_text  : str = None
+    empty_text : str = None
+
+class ContentsDescription(DescriptionStrategy[ContentsContext]):
+    def describe(self, context:DescriptionContext, specific:ContentsContext) -> str:
+        contents = context.described.list_contents_visible_to(context.character)
+        if len(contents) == 0:
+            return specific.empty_text
+        return f"{specific.full_text} {list_to_str([item.get_description_to(context.character) for item in contents])}"
+
+@dataclass
+class StateContext:
+    state_responses : dict[State,str] = None
+
+class StateDescription(DescriptionStrategy[ContentsContext]):
+    def describe(self, context:DescriptionContext, specific:StateContext) -> str:
+        description = ""
+        for state in context.described.get_current_state():
+            if state in specific.state_responses:
+                description += specific.state_responses[state]
+        return description

@@ -23,7 +23,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
     jar = Target(
         name="honey jar",
         aliases=["jar"],
-        description=(plain_text, "a jar for honey"),
+        description=Description[PlainTextContext](PlainTextContext("a jar for honey"), PlainTextDescription()),
         states=sdg,
         children=[
             inside

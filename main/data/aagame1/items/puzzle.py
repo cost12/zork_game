@@ -13,7 +13,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
     puzzle = Target(
         name="puzzle",
         aliases=["jigsaw puzzle"],
-        description=(plain_text, "an imcomplete jigsaw puzzle"),
+        description=Description[PlainTextContext](PlainTextContext("an imcomplete jigsaw puzzle"), PlainTextDescription()),
         states=sdg,
         weight=5,
         value=3,

@@ -15,7 +15,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
 
     keys = Target(
         name="keys",
-        description=(plain_text, "a simple keychain with a single car key, an archaic brass key, and a tiny plushie of Nami from One Piece"),
+        description=Description[PlainTextContext](PlainTextContext("a simple keychain with a single car key, an archaic brass key, and a tiny plushie of Nami from One Piece"), PlainTextDescription()),
         states=sdg,
         weight=1,
         value=1,

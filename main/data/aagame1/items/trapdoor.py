@@ -14,7 +14,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
     trapdoor = Target(
         name="trapdoor",
         aliases=["trap door", "panel"],
-        description=(plain_text, "a small, wooden panel, hinged along one edge"),
+        description=Description[PlainTextContext](PlainTextContext("a small, wooden panel, hinged along one edge"), PlainTextDescription()),
         states=sdg,
         weight=3,
         value=3,

@@ -14,7 +14,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
     sink = Target(
         name="kitchen sink",
         aliases=["sink"],
-        description=(plain_text, "a stained metal sink"),
+        description=Description[PlainTextContext](PlainTextContext("a stained metal sink"), PlainTextDescription()),
         states=sdg,
         weight=50, 
         value=5,

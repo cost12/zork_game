@@ -1,8 +1,8 @@
-from utils.relator import NameFinder
-from models.actors import Target
-from models.response import StaticResponse
-from readin.description_helpers import plain_text
-from readin.utils import sdg_from_parts
+from utils.relator              import NameFinder
+from models.actors              import Target
+from models.response            import StaticResponse
+from readin.description_helpers import Description, PlainTextContext, PlainTextDescription
+from readin.utils               import sdg_from_parts
 
 def add_to_name_space(name_space:NameFinder) -> None:
     sdg = sdg_from_parts(
@@ -14,7 +14,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
 
     baton = Target(
         name="Baton",
-        description=(plain_text, "an elegant conductor's baton, wrought from ivory"),
+        description=Description[PlainTextContext](PlainTextContext("an elegant conductor's baton, wrought from ivory"), PlainTextDescription()),
         states=sdg,
         weight=1,
         value=10,

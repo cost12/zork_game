@@ -14,7 +14,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
 
     sword = Target(
         name="sword",
-        description=(plain_text, "a classic yet deadly-looking sword, glinting, as if mocking its slain enemies"),
+        description=Description[PlainTextContext](PlainTextContext("a classic yet deadly-looking sword, glinting, as if mocking its slain enemies"), PlainTextDescription()),
         states=sdg,
         weight=3,
         value=3,

@@ -14,7 +14,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
     fork = Target(
         name="rusty fork",
         aliases=["fork"],
-        description=(plain_text, "an old rusty metal fork"),
+        description=Description[PlainTextContext](PlainTextContext("an old rusty metal fork"), PlainTextDescription()),
         states=sdg,
         weight=1,
         value=1,

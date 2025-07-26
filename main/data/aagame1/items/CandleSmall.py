@@ -16,7 +16,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
     candle = Target(
         name="small candle",
         aliases=["candle"],
-        description=(plain_text, "a small candle"),
+        description=Description[PlainTextContext](PlainTextContext("a small candle"), PlainTextDescription()),
         states=sdg,
         weight=1,
         value=1,

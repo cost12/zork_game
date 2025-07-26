@@ -15,7 +15,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
 
     leaflet = Target(
         name="leaflet",
-        description=(plain_text, "a small handwritten leaflet"),
+        description=Description[PlainTextContext](PlainTextContext("a small handwritten leaflet"), PlainTextDescription()),
         states=sdg,
         weight=0.5,
         value=1,

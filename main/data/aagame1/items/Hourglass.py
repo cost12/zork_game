@@ -15,7 +15,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
     hourglass = Target(
         name="hourglass",
         aliases=["herbs"],
-        description=(plain_text, "an ancient fragile hourglass"),
+        description=Description[PlainTextContext](PlainTextContext("an ancient fragile hourglass"), PlainTextDescription()),
         states=sdg,
         weight=0.5,
         value=5,

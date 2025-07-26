@@ -16,7 +16,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
     book = Target(
         name="yellow book",
         aliases=["book", "paperback", "book with slip", "paperback with a garish yellow slip"],
-        description=(plain_text, "a nice paperback with a garish yellow slip"),
+        description=Description[PlainTextContext](PlainTextContext("a nice paperback with a garish yellow slip"), PlainTextDescription()),
         states=sdg,
         weight=1,
         value=1,
