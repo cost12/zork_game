@@ -1,7 +1,7 @@
 from utils.relator import NameFinder
 from models.actors import Target, LocationDetail, ItemLimit
-from readin.description_helpers import Description, state_text
-from readin.restriction_helpers import item_state_restriction
+from readin.description_helpers import Description, StateDescription, StateContext
+from readin.restriction_helpers import Restriction, ItemStateRestriction, ItemStateContext
 from readin.utils import sdg_from_parts
 from readin.stand_in import StandIn
 
@@ -17,15 +17,15 @@ def add_to_name_space(name_space:NameFinder) -> None:
         id="in cabinet",
         item_limit=ItemLimit(20, 50),
         children=[StandIn("mason jar", "target"), StandIn("rusty fork", "target")],
-        visible_requirements=(item_state_restriction, (StandIn("cabinet", "target"), name_space.get_from_id("opened", "state"), "The cabinet is closed."))
+        visible_requirements=Restriction[ItemStateContext](ItemStateContext(StandIn("cabinet", "target"), name_space.get_from_id("opened", "state"), "The cabinet is closed."), ItemStateRestriction())
     )
 
     cabinet = Target(
         name="cabinet",
-        description=(state_text, {
+        description=Description[StateContext](StateContext({
             name_space.get_from_id("open",   "state") : "an open cabinet",
             name_space.get_from_id("closed", "state") : "a closed cabinet"
-        }),
+        }), StateDescription()),
         states=sdg,
         children=[
             inside
