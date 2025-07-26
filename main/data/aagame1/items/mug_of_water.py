@@ -1,7 +1,7 @@
 from utils.relator              import NameFinder
 from models.actors              import Target, LocationDetail, ItemLimit
 from models.response            import StaticResponse, ContentsWithStateResponse
-from readin.description_helpers import Description, contents_text
+from readin.description_helpers import Description, ContentsContext, ContentsDescription
 from readin.utils               import sdg_from_parts
 from readin.stand_in            import StandIn
 
@@ -22,7 +22,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
 
     mug = Target(
         name="mug",
-        description=(contents_text, ("an empty ceramic mug", "a small ceramic mug full of")),
+        description=Description[ContentsContext](ContentsContext("a small ceramic mug full of", "an empty ceramic mug"), ContentsDescription()),
         states=sdg,
         children=[
             inside

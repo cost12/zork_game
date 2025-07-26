@@ -4,7 +4,7 @@ from models.response            import StaticResponse
 from readin.description_helpers import Description, PlainTextDescription, PlainTextContext
 from readin.utils               import sdg_from_parts
 from readin.stand_in            import StandIn
-from readin.restriction_helpers import item_state_restriction
+from readin.restriction_helpers import Restriction, ItemStateContext, ItemStateRestriction
 
 def add_to_name_space(name_space:NameFinder) -> None:
     sdg = sdg_from_parts(
@@ -18,10 +18,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
         name="in",
         id="in trunk",
         item_limit=ItemLimit(30, 100),
-        visible_requirements=(
-            item_state_restriction,
-            (StandIn("trunk", "target"), name_space.get_from_id("opened", "state"), "The trunk is closed.")
-        ),
+        visible_requirements=Restriction[ItemStateContext](ItemStateContext(StandIn("trunk", "target"), name_space.get_from_id("opened", "state"), "The trunk is closed."), ItemStateRestriction()),
         children=[
             name_space.get_from_id("basketball", "target"),
             name_space.get_from_id("skateboard", "target")
