@@ -1,8 +1,8 @@
-from models.actors import Actor, Target, Location, LocationDetail, SingleEndPath
-from models.requirement import ItemStateRequirement
-from utils.relator import NameFinder
-from readin.stand_in import StandIn
+from models.actors              import Actor, Target, Location, LocationDetail, SingleEndPath
+from utils.relator              import NameFinder
+from readin.stand_in            import StandIn
 from readin.description_helpers import DescriptionStrategy, DescriptionContext, Description, PlainTextContext, PlainTextDescription, ContentsContext, ContentsDescription
+from readin.restriction_helpers import Restriction, ItemStateRestriction, ItemStateContext
 
 class FstringDescription(DescriptionStrategy[Target]):
     def describe(self, context:DescriptionContext, specific:Target) -> str:
@@ -20,11 +20,9 @@ def add_to_name_space(name_space:NameFinder) -> None:
         description=Description[Target](StandIn[Target]("trapdoor", "target"), FstringDescription()),
         end=StandIn[Location]("Attic", "location"),
         children=[StandIn[Target]("trapdoor", "target")],
-        passing_requirements=ItemStateRequirement({
-            StandIn[Target]("trapdoor", "target") : {
-                name_space.get_from_id("open", "state") : [True, None]
-            }
-        })
+        passing_requirements={
+            Restriction[ItemStateContext](ItemStateContext(name_space.get_from_id("trapdoor", "target"), name_space.get_from_id("opened", "state"), "The trapdoor is closed."), ItemStateRestriction())
+        }
     )
 
     south_path = SingleEndPath(

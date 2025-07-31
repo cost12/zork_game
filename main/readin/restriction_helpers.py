@@ -37,3 +37,15 @@ class ItemStateRestriction(RestrictionStrategy[ItemStateContext]):
         if specific.state in specific.item.get_current_state():
             return True, None
         return False, StaticResponse(specific.response)
+
+@dataclass
+class ItemPlacementContext:
+    item     : Target
+    location : Target
+    response : str
+
+class ItemPlacementRestriction(RestrictionStrategy[ItemPlacementContext]):
+    def passes(self, context:RestrictionContext, specific:ItemPlacementContext) -> tuple[bool,ResponseString]:
+        if not specific.item.is_in(specific.location):
+            return False, specific.response
+        return True, None
