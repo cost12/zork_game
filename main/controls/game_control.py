@@ -376,7 +376,7 @@ class GameState:
     """Represents an instance of a Zork game
     """
 
-    def __init__(self, details:dict[str,Any], name_space:NameFinder, extra_characters:list[Actor], controllers:CharacterControlFactory, every_turn_requirement:list[ActionRequirement]):
+    def __init__(self, details:dict[str,Any], name_space:NameFinder, extra_characters:list[Actor], controllers:CharacterControlFactory, *, every_turn_requirement:list[ActionRequirement]=None):
         self.game_details    = details
         self.name_space      = name_space
         self.character_order:list[Actor] = self.name_space.get_from_name(category='actor')

@@ -2,7 +2,6 @@ import sys
 
 from utils.visualize_game   import visualize_game
 from controls.game_control  import GameState
-from factories.data_read_in import read_in_game
 from models.actors          import Actor
 from readin.level1_readin   import get_level1
 
@@ -11,10 +10,7 @@ def main(args:list[str]):
         if args[0] in ['visualize','v','vis']:
             visualize_game(args[1])
             return
-    #game_name = input("Which game do you want to play? ")
-    #game_name = 'aagame1'
-    #name_space, _, every_turn, controllers, details = read_in_game(game_name)
-    name_space, _, every_turn, controllers, details = get_level1()
+    name_space, controllers, details = get_level1()
     players = 1
     while 0 and (players < details['min_players'] or players > details['max_players']):
         players = int(input("How many players are playing? "))
@@ -25,7 +21,7 @@ def main(args:list[str]):
     if players < details['playable_characters']:
         pass
     
-    game = GameState(details, name_space, extra_characters, controllers, every_turn)
+    game = GameState(details, name_space, extra_characters, controllers)
     game.play()
 
 if __name__=="__main__":
