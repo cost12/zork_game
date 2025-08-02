@@ -1,14 +1,27 @@
 from importlib import import_module
+from typing    import Any
 import pkgutil
+import json
 
 import data.aagame1
-from utils.relator   import NameFinder
-from readin.stand_in import replace_standins
+from data.aagame1.character_control.character_control import get_character_control
+from factories.factories                              import CharacterControlFactory
+from utils.relator                                    import NameFinder
+from readin.stand_in                                  import replace_standins
 
-def get_level1() -> NameFinder:
+def __read_in_json(file:str) -> dict:
+    with open(file) as contents:
+        info = json.load(contents)
+        return info
+
+def read_in_game_details(game:str) -> dict:
+    file = f"main/data/{game}/game_details.json"
+    return __read_in_json(file)
+
+def get_level1() -> tuple[NameFinder, CharacterControlFactory, dict[str,Any]]:
     name_space = NameFinder()
 
-    modules = ['directions', 'actions', 'achievements', 'states', 'state_graphs', 'items', 'skills', 'skill_sets', 'characters', 'rooms']#, 'character_control']
+    modules = ['directions', 'actions', 'achievements', 'states', 'state_graphs', 'items', 'skills', 'skill_sets', 'characters', 'rooms']
     for module in modules:
         try:
             imported_module = import_module(f'data.aagame1.{module}')
@@ -26,4 +39,7 @@ def get_level1() -> NameFinder:
             raise e
 
     replace_standins(name_space)
-    return name_space, None, None, None, None
+    controllers = get_character_control(name_space)
+    game_details = read_in_game_details('aagame1')
+    game_details['playable_characters'] = controllers.playable_characters()
+    return name_space, controllers, game_details
