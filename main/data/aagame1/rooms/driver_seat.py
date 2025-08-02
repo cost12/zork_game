@@ -4,46 +4,25 @@ from readin.stand_in            import StandIn
 from readin.description_helpers import Description, PlainTextContext, PlainTextDescription, ContentsContext, ContentsDescription
 
 def add_to_name_space(name_space:NameFinder) -> None:
-    west_path = SingleEndPath(
-        name="Display Room West Exit",
-        description=Description[PlainTextContext](PlainTextContext("A simple slanted passage leads west."), PlainTextDescription()),
-        end=StandIn[Location]("man cave", "location")
+    out_path = SingleEndPath(
+        name="Driver's Seat Out Exit",
+        description=Description[PlainTextContext](PlainTextContext("The door leads out."), PlainTextDescription()),
+        end=StandIn[Location]("parking lot", "location")
     )
 
     child = LocationDetail(
-        name="cushion",
-        description=Description[ContentsContext](ContentsContext("On a velvet cushion rests", "A velvet cushion sits on a pedestal, notably missing the precious item it seems to be meant to hold."), ContentsDescription()),
-        children=[name_space.get_from_id("wallet", "target")]
+        name="mirror",
+        description=Description[ContentsContext](ContentsContext("Hanging from the neck of the rearview mirror is", "The rearview mirror is undecorated, and with it you can see into the empty lot"), ContentsDescription()),
+        children=[name_space.get_from_id("sunglasses", "target")]
     )
 
     location = Location(
-        name="Display Room",
-        description=Description[PlainTextContext](PlainTextContext("You enter a small, dark room with a luxurious velvet carpet."), PlainTextDescription()),
+        name="Driver's Seat",
+        description=Description[PlainTextContext](PlainTextContext("You sit in the driver's seat of the car, feeling the cool leather on your bottom."), PlainTextDescription()),
         paths={
-            name_space.get_from_id('west',  'direction') : west_path
+            name_space.get_from_id('out',  'direction') : out_path
         },
         children=[child],
     )
 
-    name_space.add_many([child, location, west_path])
-a={
-    "name"       : "Driver's Seat",
-    "description": "You sit in the driver's seat of the car, feeling the cool leather on your bottom.",
-    "paths"      : {
-        "out"    : {
-            "name"        : "Exit 1",
-            "description" : "The door leads out",
-            "end"         : "Parking Lot"
-        }
-    },
-    "details"    : [
-        {
-            "name"        : "mirror",
-            "description" : {
-                "type"    : "contents",
-                "full"    : "Hanging from the neck of the rearview mirror is",
-                "empty"   : "The rearview mirror is undecorated, and with it you can see into the empty lot"
-            },"contents"    : ["Sunglasses"]
-        }
-    ]
-}
+    name_space.add_many([child, location, out_path])

@@ -2,7 +2,7 @@ from dataclasses     import dataclass
 from abc             import ABC, abstractmethod
 from typing          import TypeVar, Generic
 
-from models.state    import State
+from models.state    import State, Achievement
 from models.actors   import Actor, Target
 from models.response import ResponseString, StaticResponse
 
@@ -49,3 +49,14 @@ class ItemPlacementRestriction(RestrictionStrategy[ItemPlacementContext]):
         if not specific.item.is_in(specific.location):
             return False, specific.response
         return True, None
+    
+@dataclass
+class CharacterAchievementContext:
+    achievement : Achievement
+    response    : str
+
+class CharacterAchievementRestriciton(RestrictionStrategy[CharacterAchievementContext]):
+    def passes(self, context:RestrictionContext, specific:CharacterAchievementContext) -> tuple[bool,ResponseString]:
+        if context.character.has_completed_achievement(specific.achievement):
+            return True, None
+        return False, specific.response
