@@ -30,19 +30,25 @@ class Description(Generic[T]):
     specific : T
     strategy : DescriptionStrategy
 
+    def describe(self, context:DescriptionContext) -> str:
+        return self.strategy.describe(context, self.specific)
+
 
 @dataclass
 class PlainTextContext:
-    text : str = None
+    text : str
 
 class PlainTextDescription(DescriptionStrategy[PlainTextContext]):
     def describe(self, context:DescriptionContext, specific:PlainTextContext) -> str:
         return specific.text
 
+def plain_text_description(description:str) -> Description[PlainTextContext]:
+    return Description[PlainTextContext](PlainTextContext(description), PlainTextDescription())
+
 @dataclass
 class ContentsContext:
-    full_text  : str = None
-    empty_text : str = None
+    full_text  : str
+    empty_text : str
 
 class ContentsDescription(DescriptionStrategy[ContentsContext]):
     def describe(self, context:DescriptionContext, specific:ContentsContext) -> str:
@@ -53,7 +59,7 @@ class ContentsDescription(DescriptionStrategy[ContentsContext]):
 
 @dataclass
 class StateContext:
-    state_responses : dict[State,str] = None
+    state_responses : dict[State,str]
 
 class StateDescription(DescriptionStrategy[ContentsContext]):
     def describe(self, context:DescriptionContext, specific:StateContext) -> str:
@@ -62,3 +68,12 @@ class StateDescription(DescriptionStrategy[ContentsContext]):
             if state in specific.state_responses:
                 description += specific.state_responses[state]
         return description
+
+@dataclass
+class CombinationContext:
+    descriptions : list[Description]
+    joiner       : str = '\n'
+
+class CombinationDescription(DescriptionStrategy[CombinationContext]):
+    def describe(self, context:DescriptionContext, specific:CombinationContext) -> str:
+        return specific.joiner.join([description.describe(context) for description in specific.descriptions])

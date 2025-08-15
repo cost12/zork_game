@@ -8,7 +8,7 @@ class StandIn[T]:
 
     def get_from_name_space(self, name_space:NameFinder) -> T:
         return name_space.get_from_id(self.id, self.category)
-    
+
 def replace_standins_item(item:Target, name_space:NameFinder) -> None:
     pass
 
