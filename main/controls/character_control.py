@@ -1,23 +1,23 @@
-from dataclasses import dataclass
+from abc import ABC, abstractmethod
 
-from models.response import ResponseString, Response
 import views.string_views as views
 from models.named import Named
+from readin.description_helpers import Description, DescriptionContext
 
 #@dataclass(frozen=True)
 class Feedback:
     """This is a dataclass.
     Represents a response from the GameState to the CharacterController after an Action
     """
-    def __init__(self, response_string:ResponseString, response:Response, moves:int=1, turns:int=1, score:int=0):
-        self.response_string = response_string
-        self.response = response
+    def __init__(self, description:Description, context:DescriptionContext, moves:int=1, turns:int=1, score:int=0):
+        self.description = description
+        self.context = context
         self.moves = moves
         self.turns = turns
         self.score = score
 
     def get_success(self) -> bool:
-        return self.response.success
+        return self.context.success
 
     def as_string(self) -> str:
         """A string representation of the Feedback to be output to the command line.
@@ -25,15 +25,16 @@ class Feedback:
         :return: A string representation of the Feedback
         :rtype: str
         """
-        return self.response_string.as_string(self.response)
+        return self.description.describe(self.context)
 
-class CharacterController:
+class CharacterController(ABC):
     """This is an abstract class and should not be initialized.
     Determines which Action a Character should complete on their turn.
     Receives Feedback from completing Actions or from noticing other Characters
     This Feedback can be used to determine future Actions.
     """
 
+    @abstractmethod
     def make_move(self) -> str:
         """Returns a string representation of the Action to be attempted.
         No information is passed in, but information can be stored from Feedback to help make a decision.
@@ -41,8 +42,8 @@ class CharacterController:
         :return: A string representing the Action to be attempted.
         :rtype: str
         """
-        pass
 
+    @abstractmethod
     def feedback(self, feedback:Feedback) -> None:
         """Gives the CharacterController information about recently attempted Actions.
         Future decisions can use this Feedback to determine which Action to perform.
@@ -50,8 +51,8 @@ class CharacterController:
         :param feedback: Feedback from a recently attempted Action. Typically by the controlled Character, but could be from another Character that the controlled Character perceives in some way (sees, hears, smells, ...)
         :type feedback: Feedback
         """
-        pass
 
+    @abstractmethod
     def decide(self, options:list[tuple[list[Named],list[str]]]) -> int:
         """If the character makes an ambiguous move, this helps disambiguate it
 
@@ -60,7 +61,6 @@ class CharacterController:
         :return: The index of the correct interpretation
         :rtype: int
         """
-        return 0
 
 class NPCController(CharacterController):
     """Inherits from CharacterController.
@@ -69,7 +69,6 @@ class NPCController(CharacterController):
     def __init__(self) -> 'NPCController':
         """Creates an NPCController
         """
-        pass
 
     def make_move(self) -> str:
         """Controls which Action the NPC Character will attempt to make. Always chooses wait.
@@ -85,7 +84,6 @@ class NPCController(CharacterController):
         :param feedback: Feedback from a recently attempted Action. Typically by the controlled Character, but could be from another Character that the controlled Character perceives in some way (sees, hears, smells, ...)
         :type feedback: Feedback
         """
-        pass
 
 class CommandLineController(CharacterController):
     """Inherits from CharacterController.
@@ -108,7 +106,7 @@ class CommandLineController(CharacterController):
         :rtype: str
         """
         return input(views.input_prompt(self.moves,self.turns,self.score))
-    
+
     def decide(self, options:list[tuple[list[Named],list[str]]]) -> int:
         """If the character makes an ambiguous move, this helps disambiguate it
 
@@ -142,7 +140,7 @@ class CommandLineController(CharacterController):
                 i += 1
         print("Invalid response, please either give the index or id.")
         return self.decide(options)
-    
+
     def feedback(self, feedback:Feedback) -> None:
         """Reads the moves, turns, and score from the Feedback and prints the rest out to command line for the user to read.
 

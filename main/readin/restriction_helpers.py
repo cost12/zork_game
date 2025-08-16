@@ -4,8 +4,7 @@ from typing          import TypeVar, Generic
 
 from models.state    import State, Achievement
 from models.actors   import Actor, Target, ItemTree
-from models.response import ResponseString, StaticResponse
-
+from readin.description_helpers import Description
 T = TypeVar('T')
 
 @dataclass
@@ -15,7 +14,7 @@ class RestrictionContext:
 
 class RestrictionStrategy(ABC, Generic[T]):
     @abstractmethod
-    def passes(self, context:RestrictionContext, specific:T) -> tuple[bool,ResponseString]:
+    def passes(self, context:RestrictionContext, specific:T) -> tuple[bool,Description]:
         pass
 
 @dataclass
@@ -23,7 +22,7 @@ class Restriction(Generic[T]):
     specific : T
     strategy : RestrictionStrategy[T]
 
-    def passes(self, context:RestrictionContext) -> tuple[bool,ResponseString]:
+    def passes(self, context:RestrictionContext) -> tuple[bool,Description]:
         return self.strategy.passes(context, self.specific)
 
 
@@ -31,22 +30,22 @@ class Restriction(Generic[T]):
 class ItemStateContext:
     item     : Target
     state    : State
-    response : str
+    response : Description
 
 class ItemStateRestriction(RestrictionStrategy[ItemStateContext]):
-    def passes(self, context:RestrictionContext, specific:ItemStateContext) -> tuple[bool,ResponseString]:
+    def passes(self, context:RestrictionContext, specific:ItemStateContext) -> tuple[bool,Description]:
         if specific.state in specific.item.get_current_state():
             return True, None
-        return False, StaticResponse(specific.response)
+        return False, specific.response
 
 @dataclass
 class ItemPlacementContext:
     item     : Target
     location : Target
-    response : str
+    response : Description
 
 class ItemPlacementRestriction(RestrictionStrategy[ItemPlacementContext]):
-    def passes(self, context:RestrictionContext, specific:ItemPlacementContext) -> tuple[bool,ResponseString]:
+    def passes(self, context:RestrictionContext, specific:ItemPlacementContext) -> tuple[bool,Description]:
         if not specific.item.is_in(specific.location):
             return False, specific.response
         return True, None
@@ -54,10 +53,10 @@ class ItemPlacementRestriction(RestrictionStrategy[ItemPlacementContext]):
 @dataclass
 class CharacterAchievementContext:
     achievement : Achievement
-    response    : str
+    response    : Description
 
 class CharacterAchievementRestriciton(RestrictionStrategy[CharacterAchievementContext]):
-    def passes(self, context:RestrictionContext, specific:CharacterAchievementContext) -> tuple[bool,ResponseString]:
+    def passes(self, context:RestrictionContext, specific:CharacterAchievementContext) -> tuple[bool,Description]:
         if context.character.has_completed_achievement(specific.achievement):
             return True, None
         return False, specific.response

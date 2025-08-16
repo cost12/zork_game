@@ -1,6 +1,6 @@
 from typing import Any
 
-from readin.description_helpers import DescriptionStrategy, Description, DescriptionContext
+from readin.description_helpers import DescriptionStrategy, Description
 class NameInfo:
 
     def __init__(self, name:str, description_context:Any, description_strategy:DescriptionStrategy, *, name_id:str=None, aliases:list[str]=None):

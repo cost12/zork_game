@@ -1,12 +1,13 @@
-from typing import Any
+from abc import ABC, abstractmethod
 
 from models.named    import Action, Named
 from models.actors   import HasLocation, LocationDetail, Actor
 from controls.character_control import CharacterController
 from utils.relator   import NameFinder
-from utils.constants import *
+from utils.constants import DEBUG_INPUT
 
-class Node:
+class Node(ABC):
+    @abstractmethod
     def add_edge(self, edge:str, end:'TranslateNode') -> None:
         pass
 
@@ -19,6 +20,12 @@ class Node:
 class TranslateError(Node):
     def __init__(self, message:str):
         self.message = message
+
+    def add_edge(self, edge, end):
+        pass
+
+    def get_implied(self, context):
+        return None
 
 class TranslateNode(Node):
     def __init__(self, state:str, edges:dict[str,'TranslateNode'], *, implied:tuple[str,str]=None):
@@ -52,7 +59,7 @@ class TranslateNode(Node):
         elif not matched:
             return [('error', [TranslateError(f"Unexpected or unknown word: \"{tokens[0]}\".")], [tokens[0]], tokens[1:], None)]
         return matches
-    
+
 class TranslatePlacementNode(Node):
     def __init__(self, state:str, edges:dict[str,'TranslateNode']):
         self.state = state
@@ -85,14 +92,14 @@ class Translator:
         self.remove = list[str]() if remove is None else remove
         self.remove = [token.lower() for token in self.remove]
 
-    def __clean(self, input:str) -> list[str]:
-        cleaned = input.lower().split()
+    def __clean(self, input_str:str) -> list[str]:
+        cleaned = input_str.lower().split()
         cleaned = [token for token in cleaned if token not in self.remove]
         cleaned.append('\n')
         return cleaned
 
-    def interpret(self, input:str, name_space:NameFinder, character:Actor, controller:CharacterController) -> tuple[Action,tuple]:
-        tokens = self.__clean(input)
+    def interpret(self, input_str:str, name_space:NameFinder, character:Actor, controller:CharacterController) -> tuple[Action,tuple]:
+        tokens = self.__clean(input_str)
         translation = list[Named]()
         result = self.head.interpret(tokens, name_space)
         while len(result) > 0:
@@ -111,7 +118,6 @@ class Translator:
                     index = controller.decide([(translated_tokens,tokens_used) for _,translated_tokens,tokens_used,_,_ in result])
                     result = [result[index]]
                 if DEBUG_INPUT: print(result)
-                pass
             edge, translated_tokens, tokens_used, tokens_left, next_node = result[0]
             if translated_tokens is not None:
                 translation.extend(translated_tokens)
@@ -125,7 +131,7 @@ class Translator:
         if len(translation) == 0:
             return "error", TranslateError("Please say something")
         return translation[0], translation[1:]
-    
+
 def get_input_translator() -> Translator:
     action_leaf = TranslateNode('action', {})
     action_input_leaf = TranslateNode('action_input', {})
