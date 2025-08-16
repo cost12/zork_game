@@ -80,6 +80,7 @@ class PathInfo:
 class PathEndContext:
     character : 'Actor'
     inventory : 'ItemTree'
+    start     : 'Location'
 
 class Path(HasLocation):
     def __init__(self, name_info:NameInfo, path_info:PathInfo, *, visible_info:VisibleInfo, container_info:ContainerInfo):
@@ -95,6 +96,9 @@ class Path(HasLocation):
     def get_start(self) -> 'Location':
         return self.path_info.start
 
+    def list_starts(self) -> list[tuple['Location',Direction]]:
+        return [(self.path_info.start, self.path_info.direction)]
+
     def get_end(self, context:PathEndContext) -> 'Location'|None:
         return self.path_info.end
 
@@ -104,6 +108,19 @@ class Path(HasLocation):
             if not passes:
                 return passes, response
         return True, None
+
+class TwoWayPath(Path):
+    def __init__(self, name_info:NameInfo, path_info:PathInfo, reverse_direction:Direction, *, visible_info:VisibleInfo, container_info:ContainerInfo):
+        super().__init__(name_info, path_info, visible_info=visible_info, container_info=container_info)
+        self.reverse_direction = reverse_direction
+
+    def list_starts(self) -> list[tuple['Location',Direction]]:
+        return [(self.path_info.start,self.path_info.direction), (self.path_info.end,self.reverse_direction)]
+
+    def get_end(self, context:PathEndContext) -> 'Location'|None:
+        if context.start == self.path_info.start:
+            return self.path_info.end
+        return self.path_info.start
 
 class MultiPath(Path):
     def __init__(self, name_info:NameInfo, path_info:PathInfo, multi_end:dict['Target','Location'], *, visible_info:VisibleInfo, container_info:ContainerInfo):
@@ -385,9 +402,10 @@ class WorldMap:
     # initialization
 
     def add_path(self, path:Path):
-        if not path.get_start() in self.world_map:
-            self.world_map[path.get_start()] = dict[Direction,Path]()
-        self.world_map[path.get_start()][path.get_direction()] = path
+        for start,direction in path.list_starts():
+            if not start in self.world_map:
+                self.world_map[start] = dict[Direction,Path]()
+            self.world_map[start][direction] = path
 
     # utils
 
@@ -412,7 +430,7 @@ class World:
             return False, plain_text_description("Path does not exist.")
         can_pass, response = path.can_pass(RestrictionContext(character, self.item_locations.get_local_tree(character)))
         if can_pass:
-            end = path.get_end(PathEndContext(character, self.item_locations.get_local_tree(character)))
+            end = path.get_end(PathEndContext(character, self.item_locations.get_local_tree(character), room))
             if end: # end should never be None but just in case
                 self.item_locations.move(character, end)
                 return True, response
