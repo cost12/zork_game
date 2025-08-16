@@ -4,7 +4,6 @@ import networkx  as nx
 
 from models.state               import State, Skill, FullState, SkillSet, Achievement
 from models.named               import Named, Action, Direction, NameInfo
-import utils.constants          as constants
 from readin.restriction_helpers import Restriction, RestrictionContext
 from readin.description_helpers import Description, DescriptionContext, CombinationDescription, CombinationContext, plain_text_description
 
@@ -77,6 +76,11 @@ class PathInfo:
     exit_response        : Description       = None
     hidden_when_locked   : bool              = False
 
+@dataclass
+class PathEndContext:
+    character : 'Actor'
+    inventory : 'ItemTree'
+
 class Path(HasLocation):
     def __init__(self, name_info:NameInfo, path_info:PathInfo, *, visible_info:VisibleInfo, container_info:ContainerInfo):
         super().__init__(name_info, visible_info=visible_info, container_info=container_info)
@@ -91,12 +95,12 @@ class Path(HasLocation):
     def get_start(self) -> 'Location':
         return self.path_info.start
 
-    def get_end(self) -> 'Location':
+    def get_end(self, context:PathEndContext) -> 'Location'|None:
         return self.path_info.end
 
-    def can_pass(self, restriction_context:RestrictionContext) -> tuple[bool,Description]:
+    def can_pass(self, context:RestrictionContext) -> tuple[bool,Description]:
         for restriction in self.path_info.passing_restrictions:
-            passes, response = restriction.passes(restriction_context)
+            passes, response = restriction.passes(context)
             if not passes:
                 return passes, response
         return True, None
@@ -106,7 +110,28 @@ class MultiPath(Path):
         super().__init__(name_info, visible_info=visible_info, container_info=container_info, path_info=path_info)
         self.multi_end = multi_end
 
-# TARGETS
+    def can_pass(self, context:RestrictionContext) -> tuple[bool,Description]:
+        can_pass, response = super().can_pass(context)
+        if not can_pass:
+            return can_pass, response
+        inventory = context.inventory.get_inventory_contents(context.character)
+        overlap   = [item for item in inventory if item in self.multi_end]
+        if len(overlap) == 0:
+            if self.path_info.end:
+                return True, None
+            return False, plain_text_description("As far as you can see, this path has no end.")
+        if len(overlap) == 1:
+            return True, None
+        return False, plain_text_description("The path stretches ahead like a maze and you dare not step forward.")
+
+    def get_end(self, context:PathEndContext) -> 'Location'|None:
+        inventory = context.inventory.get_inventory_contents(context.character)
+        overlap   = [item for item in inventory if item in self.multi_end]
+        if len(overlap) == 0:
+            return self.path_info.end
+        if len(overlap) == 1:
+            return overlap[0]
+        return None
 
 @dataclass
 class TargetInfo:
@@ -132,15 +157,6 @@ class Target(HasLocation):
     def get_on(self) -> LocationDetail|None:
         return self.target_info.on
 
-    def get_weight(self):
-        return self.target_info.weight
-
-    def get_value(self) -> float:
-        return self.target_info.value
-
-    def get_size(self) -> float:
-        return self.target_info.size
-
     def get_current_state(self) -> list[State]:
         return self.target_info.states.get_current_states()
 
@@ -164,7 +180,6 @@ class Target(HasLocation):
         response = list[Description]()
         new_states = self.target_info.states.perform_action_as_target(action)
         for new_state in new_states:
-            if DEBUG_RESPONSE: print(f"Target: {self.get_name()} {action} {new_state} {self.target_info.state_responses}")
             if new_state in self.target_info.state_responses:
                 response.append(self.target_info.state_responses[new_state])
         return Description[CombinationContext](CombinationContext(response), CombinationDescription())
@@ -245,8 +260,6 @@ class Actor(Target):
     def complete_achievement(self, achievement:Achievement) -> None:
         self.actor_info.achievements.add(achievement)
 
-# LOCATIONS
-
 @dataclass
 class LocationInfo:
     is_start_location   : bool                           = False
@@ -270,20 +283,6 @@ class Location(HasLocation):
                     return False, response
         return True, None
 
-    def can_interact_with(self, character:Actor, item:Target) -> bool:
-        if character.contains_item(item):
-            return True
-        for child in self.children.get_from_name():
-            if DEBUG_TAKE: print(f"{child} has {item}?")
-            if child.contains_item_visible_to(item, character):
-                if DEBUG_TAKE: print("yes")
-                return True
-            if DEBUG_TAKE: print("no")
-        for path in self.paths.values():
-            if path.contains_item_visible_to(item, character):
-                return True
-        return False
-
     def is_start_location(self) -> bool:
         return self.location_info.is_start_location
 
@@ -298,7 +297,6 @@ class ItemTree:
 
     def __add_edge(self, child:HasLocation, parent:HasLocation):
         self.graph.add_edge(parent.get_id(), child.get_id(), relationship="child")
-        self.graph.add_edge(child.get_id(), parent.get_id(), relationship="parent")
 
     def add_location_detail(self, location_detail:LocationDetail, location:HasLocation):
         self.graph.add_node(location_detail.get_id(), obj=location_detail, type='location_detail')
@@ -336,11 +334,23 @@ class ItemTree:
 
     # utils
 
+    def get_inventory_contents(self, character:Actor) -> list[HasLocation]:
+        inventory = character.get_inventory()
+        contents  = self.get_children(inventory)
+        return contents
+
+    def get_local_tree(self, item:HasLocation) -> 'ItemTree':
+        ancestors   : set[str] = nx.ancestors(self.graph, item.get_id())
+        descendants : set[str] = nx.descendants(self.graph, item.get_id())
+        nodes                 = ancestors | {item.get_id()} | descendants
+        subgraph              = self.graph.subgraph(nodes).copy()
+        return subgraph
+
     def get_parents(self, item:HasLocation) -> list[HasLocation]:
-        return [self.graph.nodes[p]['obj'] for p in self.graph.successors(item.get_id()) if self.graph.edges[item.get_id(), p]['relationship'] == 'parent']
+        return [self.graph.nodes[p]['obj'] for p in self.graph.predecessors(item.get_id())]
 
     def get_children(self, item:HasLocation) -> list[HasLocation]:
-        return [self.graph.nodes[c]['obj'] for c in self.graph.successors(item.get_id()) if self.graph.edges[item.get_id(), c]['relationship'] == 'child']
+        return [self.graph.nodes[c]['obj'] for c in self.graph.successors(item.get_id())]
 
     def get_weight(self, item:HasLocation) -> float:
         children = self.get_children(item)
@@ -400,11 +410,12 @@ class World:
         path = self.get_path(room, direction)
         if path is None:
             return False, plain_text_description("Path does not exist.")
-        can_pass, response = path.can_pass(RestrictionContext(character))
+        can_pass, response = path.can_pass(RestrictionContext(character, self.item_locations.get_local_tree(character)))
         if can_pass:
-            end = path.get_end()
-            self.item_locations.move(character, end)
-            return True, response
+            end = path.get_end(PathEndContext(character, self.item_locations.get_local_tree(character)))
+            if end: # end should never be None but just in case
+                self.item_locations.move(character, end)
+                return True, response
         return False, response
 
     def move_item(self, item:HasLocation, new_spot:HasLocation) -> tuple[bool,Description]:

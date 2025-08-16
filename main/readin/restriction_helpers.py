@@ -3,7 +3,7 @@ from abc             import ABC, abstractmethod
 from typing          import TypeVar, Generic
 
 from models.state    import State, Achievement
-from models.actors   import Actor, Target
+from models.actors   import Actor, Target, ItemTree
 from models.response import ResponseString, StaticResponse
 
 T = TypeVar('T')
@@ -11,6 +11,7 @@ T = TypeVar('T')
 @dataclass
 class RestrictionContext:
     character : Actor
+    inventory : ItemTree
 
 class RestrictionStrategy(ABC, Generic[T]):
     @abstractmethod
@@ -49,7 +50,7 @@ class ItemPlacementRestriction(RestrictionStrategy[ItemPlacementContext]):
         if not specific.item.is_in(specific.location):
             return False, specific.response
         return True, None
-    
+
 @dataclass
 class CharacterAchievementContext:
     achievement : Achievement
