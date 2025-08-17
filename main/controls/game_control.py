@@ -437,7 +437,7 @@ class GameState:
         :rtype: tuple[Action,list]
         """
         return self.translator.interpret(user_input, self.name_space, character, controller)
-    
+
     ###########################################################################
     # Main driver
     ###########################################################################

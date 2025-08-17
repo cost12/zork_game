@@ -78,9 +78,8 @@ class PathInfo:
 
 @dataclass
 class PathEndContext:
-    character : 'Actor'
-    inventory : 'ItemTree'
-    start     : 'Location'
+    character      : 'Actor'
+    item_locations : 'ItemTree'
 
 class Path(HasLocation):
     def __init__(self, name_info:NameInfo, path_info:PathInfo, *, visible_info:VisibleInfo, container_info:ContainerInfo):
@@ -118,7 +117,7 @@ class TwoWayPath(Path):
         return [(self.path_info.start,self.path_info.direction), (self.path_info.end,self.reverse_direction)]
 
     def get_end(self, context:PathEndContext) -> 'Location'|None:
-        if context.start == self.path_info.start:
+        if context.item_locations.get_room(context.character) == self.path_info.start:
             return self.path_info.end
         return self.path_info.start
 
@@ -142,7 +141,7 @@ class MultiPath(Path):
         return False, plain_text_description("The path stretches ahead like a maze and you dare not step forward.")
 
     def get_end(self, context:PathEndContext) -> 'Location'|None:
-        inventory = context.inventory.get_inventory_contents(context.character)
+        inventory = context.item_locations.get_inventory_contents(context.character)
         overlap   = [item for item in inventory if item in self.multi_end]
         if len(overlap) == 0:
             return self.path_info.end
@@ -304,13 +303,16 @@ class Location(HasLocation):
         return self.location_info.is_start_location
 
 class ItemTree:
-    def __init__(self):
-        self.graph = nx.DiGraph()
+    def __init__(self, *, graph:nx.DiGraph=None):
+        self.graph = graph if graph else nx.DiGraph()
 
     # initialization
 
     def add_room(self, room:Location):
         self.graph.add_node(room.get_id(), obj=room, type="room")
+
+    def add_path(self, path:Path):
+        self.graph.add_node(path.get_id(), obj=path, type='path')
 
     def __add_edge(self, child:HasLocation, parent:HasLocation):
         self.graph.add_edge(parent.get_id(), child.get_id(), relationship="child")
@@ -359,9 +361,9 @@ class ItemTree:
     def get_local_tree(self, item:HasLocation) -> 'ItemTree':
         ancestors   : set[str] = nx.ancestors(self.graph, item.get_id())
         descendants : set[str] = nx.descendants(self.graph, item.get_id())
-        nodes                 = ancestors | {item.get_id()} | descendants
-        subgraph              = self.graph.subgraph(nodes).copy()
-        return subgraph
+        nodes                  = ancestors | {item.get_id()} | descendants
+        subgraph               = self.graph.subgraph(nodes).copy()
+        return ItemTree(graph=subgraph)
 
     def get_parents(self, item:HasLocation) -> list[HasLocation]:
         return [self.graph.nodes[p]['obj'] for p in self.graph.predecessors(item.get_id())]
@@ -430,7 +432,7 @@ class World:
             return False, plain_text_description("Path does not exist.")
         can_pass, response = path.can_pass(RestrictionContext(character, self.item_locations.get_local_tree(character)))
         if can_pass:
-            end = path.get_end(PathEndContext(character, self.item_locations.get_local_tree(character), room))
+            end = path.get_end(PathEndContext(character, self.item_locations.get_local_tree(character)))
             if end: # end should never be None but just in case
                 self.item_locations.move(character, end)
                 return True, response
