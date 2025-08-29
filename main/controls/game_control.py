@@ -1,4 +1,4 @@
-from typing import Any
+from typing                     import Any
 
 from models.actors              import Actor, Location, World
 from models.named               import Action

@@ -137,8 +137,8 @@ class TakeContext:
 
 class TakeAction(Action[TakeContext]):
 
-    def __init__(self, action:Action, inventory:str, cant_take_text:str, empty_take_text:str, full_pack_text:str, taken_text:str, not_taken_text:str):
-        super().__init__(action)
+    def __init__(self, name_info:NameInfo, inventory:str, cant_take_text:str, empty_take_text:str, full_pack_text:str, taken_text:str, not_taken_text:str):
+        super().__init__(name_info)
         self.inventory = inventory
         self.cant_take_text = cant_take_text
         self.empty_take_text = empty_take_text
@@ -201,8 +201,8 @@ class DropContext:
 
 class DropAction(Action[DropContext]):
 
-    def __init__(self, action:Action, inventory:str, cant_drop_text:str, empty_drop_text:str, dropped_text:str, no_drop_text:str):
-        super().__init__(action)
+    def __init__(self, name_info:NameInfo, inventory:str, cant_drop_text:str, empty_drop_text:str, dropped_text:str, no_drop_text:str):
+        super().__init__(name_info)
         self.inventory       = inventory
         self.cant_drop_text  = cant_drop_text
         self.empty_drop_text = empty_drop_text
@@ -262,8 +262,8 @@ class DropAction(Action[DropContext]):
 
 class CheckInventoryAction(Action[tuple]):
 
-    def __init__(self, action:Action, inventory:str, contains_text:str, empty_text:str):
-        super().__init__(action)
+    def __init__(self, name_info:NameInfo, inventory:str, contains_text:str, empty_text:str):
+        super().__init__(name_info)
         self.inventory = inventory
         self.contains_text = contains_text
         self.empty_text = empty_text
