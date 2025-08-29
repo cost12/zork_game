@@ -1,11 +1,12 @@
 from typing      import TypeVar
 from dataclasses import dataclass, field
 import networkx  as nx
+import random
 
 from models.state               import State, Skill, FullState, SkillSet, Achievement
 from models.named               import Named, Action, Direction, NameInfo
 from readin.restriction_helpers import Restriction, RestrictionContext
-from readin.description_helpers import Description, DescriptionContext, CombinationDescription, CombinationContext, plain_text_description
+from readin.description_helpers import Description, CombinationDescription, CombinationContext, plain_text_description, combine_descriptions, BackupDescription
 
 T = TypeVar('T')
 
@@ -49,6 +50,12 @@ class HasLocation(Named):
             if not passes:
                 return passes, response
         return False, None
+
+    def describe(self, context:RestrictionContext) -> Description|None:
+        visible, _ =  self.is_visible(context)
+        if visible:
+            return super().describe(context)
+        return None
 
     def get_weight(self) -> float:
         return self.container_info.weight
@@ -198,15 +205,15 @@ class Target(HasLocation):
         for new_state in new_states:
             if new_state in self.target_info.state_responses:
                 response.append(self.target_info.state_responses[new_state])
-        return Description[CombinationContext](CombinationContext(response), CombinationDescription())
+        return Description[CombinationContext](self, CombinationContext(response), CombinationDescription())
 
-    def perform_action_as_tool(self, action:Action) -> list[Description]:
+    def perform_action_as_tool(self, action:Action) -> Description:
         response = list[Description]()
         new_states = self.target_info.states.perform_action_as_tool(action)
         for new_state in new_states:
             if new_state in self.target_info.state_responses:
                 response.append(self.target_info.state_responses[new_state])
-        return CombinationDescription[CombinationContext](CombinationContext(response), CombinationContext)
+        return Description[CombinationContext](self, CombinationContext(response), CombinationContext)
 
 @dataclass
 class ActorInfo:
@@ -266,7 +273,7 @@ class Actor(Target):
         for new_state in new_states:
             if new_state in self.actor_info.actor_responses:
                 response.append(self.actor_info.actor_responses[new_state])
-        return Description[CombinationContext](CombinationContext(response), CombinationDescription())
+        return Description[CombinationContext](self, CombinationContext(response), CombinationDescription())
 
     # ACHIEVEMENTS
 
@@ -346,10 +353,8 @@ class ItemTree:
         if not (len(parents) == 1 and parents[0].get_id() == location.get_id()):
             raise RuntimeError("Wrong number of parents for item to be moved.")
         parent = parents[0]
-        self.graph.remove_edge(item.get_id(), parent.get_id())
         self.graph.remove_edge(parent.get_id(), item.get_id())
         self.graph.add_edge(location.get_id(), item.get_id(), relationship="child")
-        self.graph.add_edge(item.get_id(), location.get_id(), relationship="parent")
 
     # utils
 
@@ -392,10 +397,14 @@ class ItemTree:
     def get_value_of_contents(self, item:HasLocation) -> float:
         return self.get_value(item) - item.get_value()
 
-    def get_room(self, item:HasLocation) -> Location:
-        while not isinstance(self.graph[item]["is_in"], Location):
-            item = self.graph[item]["is_in"]
-        return self.graph[item]["is_in"]
+    def get_room(self, item:HasLocation) -> Location|Path:
+        top = item
+        parents = list(self.graph.predecessors(item))
+        while parents:
+            top = parents[0]
+            parents = list(self.graph.predecessors(parents[0]))
+        return top
+
 
 class WorldMap:
     def __init__(self):
@@ -411,10 +420,15 @@ class WorldMap:
 
     # utils
 
+    def are_adjacent(self, location:Location, path:Path) -> int:
+        return path in self.world_map[location].values()
+
     def get_paths(self, room:Location) -> list[Path]:
         return list(self.world_map[room].values())
 
     def get_path(self, room:Location, direction:Direction) -> Path|None:
+        if direction.get_name() == "random":
+            return random.choice(list(self.world_map[room].values()))
         return self.world_map[room].get(direction)
 
 class World:
@@ -429,7 +443,7 @@ class World:
         room = self.get_room(character)
         path = self.get_path(room, direction)
         if path is None:
-            return False, plain_text_description("Path does not exist.")
+            return False, plain_text_description(f"There is no path to the {direction.get_name()}.")
         can_pass, response = path.can_pass(RestrictionContext(character, self.item_locations.get_local_tree(character)))
         if can_pass:
             end = path.get_end(PathEndContext(character, self.item_locations.get_local_tree(character)))
@@ -454,18 +468,125 @@ class World:
     def get_path(self, room:Location, direction:Direction) -> Path|None:
         return self.world_map.get_path(room, direction)
 
+    def get_local_tree(self, item:HasLocation) -> ItemTree:
+        return self.item_locations.get_local_tree(item)
+
+    # ACTIONS
+
+    def can_interact(self, character:Actor, item:HasLocation) -> bool:
+        if not item.is_visible(RestrictionContext(character, self.item_locations.get_local_tree(character))):
+            return False
+        room = self.item_locations.get_room(character)
+        item_room = self.item_locations.get_room(item)
+        if not (room == item_room or self.world_map.are_adjacent(room, item_room)):
+            return False
+        return True
+
+    def can_act_on(self, character:Actor, target:Target, action:Action) -> tuple[bool,Description]:
+        # room
+        room = self.item_locations.get_room(character)
+        allowed, room_desc = room.action_allowed(RestrictionContext(character, self.item_locations.get_local_tree(character)))
+        if not allowed:
+            return False, room_desc
+        # access items
+        if not self.can_interact(character, target):
+            return False, plain_text_description(f"You can't see a {target.get_name()} here.")
+        # character
+        character_desc = character.get_actor_response(action)
+        if not action in character.get_actions_as_actor():
+            character_desc = Description[list[Description]](
+                character,
+                [
+                    character_desc,
+                    plain_text_description(f"Try as you might, you seem physically incapable of {action.get_name()}.")
+                ],
+                BackupDescription()
+            )
+            return False, combine_descriptions([room_desc, character_desc])
+        # items
+        target_desc = target.get_target_response(action)
+        if not action in target.get_actions_as_target():
+            target_desc = Description[list[Description]](
+                target,
+                [
+                    target_desc,
+                    plain_text_description(f"Unfortunately you can {action.get_name()} the {target.get_name()}.")
+                ],
+                BackupDescription()
+            )
+            return False, combine_descriptions([room_desc, character_desc, target_desc])
+        # success
+        return True, combine_descriptions([room_desc, character_desc, target_desc])
+
+    def can_use(self, character:Actor, tool:Target, action:Action) -> bool:
+        # room
+        room = self.item_locations.get_room(character)
+        allowed, room_desc = room.action_allowed(RestrictionContext(character, self.item_locations.get_local_tree(character)))
+        if not allowed:
+            return False, room_desc
+        # access items
+        if not self.can_interact(character, tool):
+            return False, plain_text_description(f"You can't see a {tool.get_name()} here.")
+        # character
+        character_desc = character.get_actor_response(action)
+        if not action in character.get_actions_as_actor():
+            character_desc = Description[list[Description]](
+                character,
+                [
+                    character_desc,
+                    plain_text_description(f"Try as you might, you seem physically incapable of {action.get_name()}.")
+                ],
+                BackupDescription()
+            )
+            return False, combine_descriptions([room_desc, character_desc])
+        # items
+        tool_desc = tool.get_tool_response(action)
+        if not action in tool.get_actions_as_tool():
+            tool_desc = Description[list[Description]](
+                tool,
+                [
+                    tool_desc,
+                    plain_text_description(f"Unfortunately you can {action.get_name()} with a {tool.get_name()}.")
+                ],
+                BackupDescription()
+            )
+            return False, combine_descriptions([room_desc, character_desc, tool_desc])
+        # success
+        return True, combine_descriptions([room_desc, character_desc, tool_desc])
+
+    def can_act(self, character:Actor, action:Action) -> bool:
+        # room
+        room = self.item_locations.get_room(character)
+        allowed, room_desc = room.action_allowed(RestrictionContext(character, self.item_locations.get_local_tree(character)))
+        if not allowed:
+            return False, room_desc
+        # character
+        character_desc = character.get_actor_response(action)
+        if not action in character.get_actions_as_actor():
+            character_desc = Description[list[Description]](
+                character,
+                [
+                    character_desc,
+                    plain_text_description(f"Try as you might, you seem physically incapable of {action.get_name()}.")
+                ],
+                BackupDescription()
+            )
+            return False, combine_descriptions([room_desc, character_desc])
+        # success
+        return True, combine_descriptions([room_desc, character_desc])
+
     # DESCRIPTIONS
 
-    def describe_room(self, room:Location, description_context:DescriptionContext, restriction_context:RestrictionContext) -> str:
-        responses = [plain_text_description(f"[{room.get_name()}]"), room.describe()]
+    def describe_room(self, room:Location, restriction_context:RestrictionContext) -> Description:
+        responses = [plain_text_description(f"[{room.get_name()}]"), room.describe(restriction_context)]
 
         for path in self.world_map.get_paths(room):
             if path.is_visible(restriction_context):
-                responses.append(path.describe(description_context))
+                responses.append(path.describe(restriction_context))
         for child in self.item_locations.get_children(room):
             if child.is_visible(restriction_context) and not child == RestrictionContext.character:
                 if isinstance(child, Target):
-                    responses.append(Description[CombinationContext](CombinationContext([plain_text_description("There is"), child.describe()], joiner=" "), CombinationDescription()))
+                    responses.append(combine_descriptions([plain_text_description("There is"), child.describe(restriction_context)], joiner=" "))
                 else:
-                    responses.append(child.describe())
-        return Description[CombinationContext](CombinationContext(responses), CombinationDescription())
+                    responses.append(child.describe(restriction_context))
+        return combine_descriptions(responses)

@@ -1,30 +1,22 @@
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 
 import views.string_views as views
 from models.named import Named
 from readin.description_helpers import Description, DescriptionContext
 
-#@dataclass(frozen=True)
+@dataclass(frozen=True)
 class Feedback:
-    """This is a dataclass.
-    Represents a response from the GameState to the CharacterController after an Action
-    """
-    def __init__(self, description:Description, context:DescriptionContext, moves:int=1, turns:int=1, score:int=0):
-        self.description = description
-        self.context = context
-        self.moves = moves
-        self.turns = turns
-        self.score = score
+    description : Description
+    context     : DescriptionContext
+    moves       : int = 1
+    turns       : int = 1
+    score       : int
 
     def get_success(self) -> bool:
         return self.context.success
 
     def as_string(self) -> str:
-        """A string representation of the Feedback to be output to the command line.
-
-        :return: A string representation of the Feedback
-        :rtype: str
-        """
         return self.description.describe(self.context)
 
 class CharacterController(ABC):

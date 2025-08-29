@@ -1,6 +1,17 @@
-from typing import Any
+from abc         import ABC, abstractmethod
+from typing      import Any, Generic, TypeVar, TYPE_CHECKING
+from dataclasses import dataclass
 
 from readin.description_helpers import DescriptionStrategy, Description
+from readin.restriction_helpers import RestrictionContext
+
+if TYPE_CHECKING:
+    from models.actors              import World, Actor
+    from controls.character_control import Feedback
+
+
+T = TypeVar("T")
+
 class NameInfo:
 
     def __init__(self, name:str, description_context:Any, description_strategy:DescriptionStrategy, *, name_id:str=None, aliases:list[str]=None):
@@ -36,26 +47,28 @@ class Named:
     def get_aliases(self) -> list[str]:
         return self.name_info.aliases
 
-    def describe(self) -> Description:
-        return Description(self.name_info.description_context, self.name_info.description_strategy)
+    def describe(self, context:RestrictionContext) -> Description:
+        return Description(self, self.name_info.description_context, self.name_info.description_strategy)
 
-class Action(Named):
-    """Base class for an Action that a Character can make
-    """
+@dataclass
+class ActionContext:
+    character : 'Actor'
+    actions   : dict[str,'Action']
 
-    def __init__(self, name_info:NameInfo, is_default:bool=False):
-        super().__init__(name_info)
-        self.is_default = is_default
+class Action(ABC, Named, Generic[T]):
 
     def __repr__(self):
         return f"<Action: {self.get_name()}>"
 
-    def use_default(self) -> bool:
-        return self.is_default
+    @abstractmethod
+    def check_inputs(self, inputs:tuple) -> tuple[bool,T,Description]:
+        pass
+
+    @abstractmethod
+    def take_action(self, current_state:'World', context:ActionContext, inputs:T) -> 'Feedback':
+        pass
 
 class Direction(Named):
-    """The Directions a Character can move to get from Room to Room.
-    """
 
     def __repr__(self):
         return f"<Direction {self.get_name()}>"
