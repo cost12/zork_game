@@ -1,7 +1,8 @@
 from dataclasses import dataclass
+from enum        import Enum
 
-from models.actors              import Target, HasLocation, World
-from models.named               import Action, Direction, ActionContext, Named, NameInfo
+from models.actors              import Target, NamedContainer, World
+from models.named               import Action, Direction, ActionContext, Named
 from controls.character_control import Feedback
 from readin.description_helpers import Description, DescriptionContext, ContentsContext, ContentsDescription, \
                                        plain_text_description, combine_descriptions, backup_description
@@ -9,7 +10,7 @@ from readin.restriction_helpers import RestrictionContext
 
 @dataclass
 class LookContext:
-    target : HasLocation|None = None
+    target : NamedContainer|None = None
 
 class LookAction(Action[LookContext]):
 
@@ -17,7 +18,7 @@ class LookAction(Action[LookContext]):
         if len(inputs) == 0:
             return True, LookContext(), None
         if len(inputs) == 1:
-            if isinstance(inputs[0], HasLocation):
+            if isinstance(inputs[0], NamedContainer):
                 return True, LookContext(inputs[0]), None
             return False, None, plain_text_description("You can't look at that.")
         return False, None, plain_text_description("Pick something to focus on.")
@@ -73,7 +74,7 @@ class WalkAction(Action[Direction]):
         direction = inputs
         response = list[Description]()
         can_walk, r = current_state.can_act(context.character, self)
-        look_action = LookAction(NameInfo("look",None,None))
+        look_action = LookAction("look")
         can_see, _ = current_state.can_act(context.character, action=look_action)
         success=False
         if not can_see:
@@ -135,16 +136,18 @@ class WaitAction(Action[tuple]):
 class TakeContext:
     targets : list[Target]
 
-class TakeAction(Action[TakeContext]):
+class InventoryType(Enum):
+    INVENTORY = 0
+    WEARING   = 1
 
-    def __init__(self, name_info:NameInfo, inventory:str, cant_take_text:str, empty_take_text:str, full_pack_text:str, taken_text:str, not_taken_text:str):
-        super().__init__(name_info)
-        self.inventory = inventory
-        self.cant_take_text = cant_take_text
-        self.empty_take_text = empty_take_text
-        self.full_pack_text = full_pack_text
-        self.taken_text = taken_text
-        self.not_taken_text = not_taken_text
+@dataclass
+class TakeAction(Action[TakeContext]):
+    inventory       : InventoryType = InventoryType.INVENTORY
+    cant_take_text  : str           = "You can't take that."
+    empty_take_text : str           = "Your inventory is empty."
+    full_pack_text  : str           = "Your inventory is full."
+    taken_text      : str           = "Taken."
+    not_taken_text  : str           = "No items were taken."
 
     def check_inputs(self, inputs:tuple[Named]) -> tuple[bool,TakeContext,Description]:
         for i in inputs:
@@ -163,9 +166,9 @@ class TakeAction(Action[TakeContext]):
             response.append(r)
             if can_be_taken:
                 match self.inventory:
-                    case "inventory":
+                    case InventoryType.INVENTORY:
                         inventory = context.character.get_inventory()
-                    case "wearing":
+                    case InventoryType.WEARING:
                         inventory = context.character.get_wearing()
                 added, r = current_state.move_item(target, inventory)
                 response.append(r)
@@ -197,17 +200,15 @@ class TakeAction(Action[TakeContext]):
 @dataclass
 class DropContext:
     targets   : list[Target]
-    placement : HasLocation|None = None
+    placement : NamedContainer|None = None
 
+@dataclass
 class DropAction(Action[DropContext]):
-
-    def __init__(self, name_info:NameInfo, inventory:str, cant_drop_text:str, empty_drop_text:str, dropped_text:str, no_drop_text:str):
-        super().__init__(name_info)
-        self.inventory       = inventory
-        self.cant_drop_text  = cant_drop_text
-        self.empty_drop_text = empty_drop_text
-        self.dropped_text    = dropped_text
-        self.no_drop_text    = no_drop_text
+    inventory       :InventoryType = InventoryType.INVENTORY
+    cant_drop_text  :str           = "You can't drop that."
+    empty_drop_text :str           = "You have nothing to drop."
+    dropped_text    :str           = "Dropped."
+    no_drop_text    :str           = "No items were dropped."
 
     def check_inputs(self, inputs:tuple[Named]) -> tuple[bool,DropContext,Description]:
         targets = []
@@ -252,7 +253,7 @@ class DropAction(Action[DropContext]):
                 action     =self,
                 success    =success,
                 character  =context.character,
-                target     =inputs.target,
+                target     =inputs.targets,
                 tool       =None
             ),
             moves=1,
@@ -260,13 +261,11 @@ class DropAction(Action[DropContext]):
             score=0
         )
 
+@dataclass
 class CheckInventoryAction(Action[tuple]):
-
-    def __init__(self, name_info:NameInfo, inventory:str, contains_text:str, empty_text:str):
-        super().__init__(name_info)
-        self.inventory = inventory
-        self.contains_text = contains_text
-        self.empty_text = empty_text
+    inventory     :InventoryType = InventoryType.INVENTORY
+    contains_text :str           = "Your inventory contains:"
+    empty_text    :str           = "Your inventory is empty."
 
     def check_inputs(self, inputs:tuple) -> tuple[bool,tuple,Description]:
         if len(inputs) == 0:
@@ -281,7 +280,6 @@ class CheckInventoryAction(Action[tuple]):
             response.append(Description[ContentsContext](
                 context.character,
                 ContentsContext(
-                    current_state.item_locations,
                     plain_text_description(f"{self.contains_text}:\n\t"),
                     plain_text_description(f"{self.empty_text}")
                 ),

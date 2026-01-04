@@ -1,4 +1,5 @@
 from typing import Optional
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
 from models.named import Action, Named
@@ -7,16 +8,16 @@ from models.named import Action, Named
 # To add update: class, factory, json, other classes
 
 class Effect(Named):
-    
-    def __init__(self, name:str, aliases:Optional[list[str]]=None, id:str=None):
-        super().__init__(name, aliases, id)
+
+    def __init__(self, name:str, aliases:Optional[list[str]]=None, name_id:str=None):
+        super().__init__(name, aliases, name_id)
 
     def __repr__(self):
         return f"[Effect {self.name}]"
-    
+
 class Achievement(Named):
-    def __init__(self, name:str, aliases:Optional[list[str]]=None, id:str=None):
-        super().__init__(name, aliases, id)
+    def __init__(self, name:str, aliases:Optional[list[str]]=None, name_id:str=None):
+        super().__init__(name, aliases, name_id)
 
     def __repr__(self):
         return f"[Achievement {self.name}]"
@@ -28,52 +29,54 @@ class State:
     actions_as_actor:frozenset[Action]
     actions_as_tool:frozenset[Action]
     aliases:tuple[str,...]=None
-    id:str=None
+    name_id:str=None
 
     def __repr__(self):
         return f"[State: {self.name}]\n\tTarget: {self.actions_as_target}\n\tActor: {self.actions_as_actor}"
 
     @staticmethod
-    def create_state(name:str, actions_as_target:list[Action], actions_as_actor:list[Action], actions_as_tool:list[Action], aliases:list[str]=None, id:str=None) -> 'State':
-        if aliases is None: aliases = []
+    def create_state(name:str, actions_as_target:list[Action], actions_as_actor:list[Action], actions_as_tool:list[Action], aliases:list[str]=None, name_id:str=None) -> 'State':
+        if aliases is None:
+            aliases = []
         aliases = [alias.lower() for alias in aliases]
         if name.lower() not in aliases:
             aliases.append(name.lower())
-        if id is None: id = name.lower()
-        id = id.lower()
-        return State(name, frozenset(actions_as_target), frozenset(actions_as_actor), frozenset(actions_as_tool), tuple(aliases), id)
+        if name_id is None:
+            name_id = name.lower()
+        name_id = name_id.lower()
+        return State(name, frozenset(actions_as_target), frozenset(actions_as_actor), frozenset(actions_as_tool), tuple(aliases), name_id)
 
     def get_name(self) -> str:
         return self.name
-    
+
     def get_id(self) -> str:
-        return self.id
-    
+        return self.name_id
+
     def get_aliases(self) -> list[str]:
         return list(self.aliases)
-    
+
     def get_actions_as_actor(self) -> list[Action]:
         return list(self.actions_as_actor)
-    
+
     def can_act_as_actor(self, action:Action) -> bool:
         return action in self.actions_as_actor
-    
+
     def get_actions_as_target(self) -> list[Action]:
         return list(self.actions_as_target)
-    
+
     def can_act_as_target(self, action:Action) -> bool:
         return action in self.actions_as_target
-    
+
     def get_actions_as_tool(self) -> list[Action]:
         return list(self.actions_as_tool)
-    
+
     def can_act_as_tool(self, action:Action) -> bool:
         return action in self.actions_as_tool
 
 class StateGroup(Named):
 
-    def __init__(self, name:str, states:list[State], aliases:Optional[list[str]]=None, id:str=None):
-        super().__init__(name, aliases, id)
+    def __init__(self, name:str, states:list[State], aliases:Optional[list[str]]=None, name_id:str=None):
+        super().__init__(name, aliases, name_id)
         self.states = states
 
     #def copy(self) -> 'StateGroup':
@@ -81,35 +84,35 @@ class StateGroup(Named):
 
     def __repr__(self):
         return f"[StateGroup {self.name}]\n\t{self.states}"
-    
+
     def get_states(self) -> list[State]:
         return self.states
-    
+
     def has_state(self, state:State) -> bool:
         return state in self.states
 
     def get_actions_as_actor(self) -> list[Action]:
         return [action for state in self.states for action in state.get_actions_as_actor()]
-    
+
     def can_act_as_actor(self, action:Action) -> bool:
         return any([state.can_act_as_actor(action) for state in self.states])
-    
+
     def get_actions_as_target(self) -> list[Action]:
         return [action for state in self.states for action in state.get_actions_as_target()]
-    
+
     def can_act_as_target(self, action:Action) -> bool:
         return any([state.can_act_as_target(action) for state in self.states])
-    
+
     def get_actions_as_tool(self) -> list[Action]:
         return [action for state in self.states for action in state.get_actions_as_tool()]
-    
+
     def can_act_as_tool(self, action:Action) -> bool:
         return any([state.can_act_as_tool(action) for state in self.states])
 
 class StateGraph(Named):
 
-    def __init__(self, name:str, current_state:StateGroup, target_graph:dict[StateGroup,dict[Action,StateGroup]]=None, tool_graph:dict[StateGroup,dict[Action,StateGroup]]=None, actor_graph:dict[StateGroup,dict[Action,StateGroup]]=None, time_graph:dict[StateGroup,tuple[int,StateGroup]]=None, aliases:Optional[list[str]]=None, id:str=None):
-        super().__init__(name, aliases, id)
+    def __init__(self, name:str, current_state:StateGroup, target_graph:dict[StateGroup,dict[Action,StateGroup]]=None, tool_graph:dict[StateGroup,dict[Action,StateGroup]]=None, actor_graph:dict[StateGroup,dict[Action,StateGroup]]=None, time_graph:dict[StateGroup,tuple[int,StateGroup]]=None, aliases:Optional[list[str]]=None, name_id:str=None):
+        super().__init__(name, aliases, name_id)
         self.current_state = current_state
         self.time_in_state = 0
         self.target_graph = dict[StateGroup,dict[Action,StateGroup]]() if target_graph is None else target_graph
@@ -125,16 +128,16 @@ class StateGraph(Named):
 
     def has_state(self, state:State) -> bool:
         return self.current_state.has_state(state)
-    
+
     def get_current_states(self) -> list[State]:
         return self.current_state.get_states()
 
     def get_available_actions_as_actor(self) -> list[Action]:
         return self.current_state.get_actions_as_actor()
-    
+
     def get_available_actions_as_target(self) -> list[Action]:
         return self.current_state.get_actions_as_target()
-    
+
     def get_available_actions_as_tool(self) -> list[Action]:
         return self.current_state.get_actions_as_tool()
 
@@ -153,9 +156,9 @@ class StateGraph(Named):
                 old_state = self.current_state
                 self.current_state = self.target_graph[self.current_state][action]
                 self.time_in_state = 0
-                return [state for state in self.current_state.get_states() if not old_state.has_state(state)]                    
+                return [state for state in self.current_state.get_states() if not old_state.has_state(state)]
         return []
-    
+
     def perform_action_as_tool(self, action:Action) -> list[State]:
         if self.current_state in self.tool_graph:
             if action in self.tool_graph[self.current_state]:
@@ -164,7 +167,7 @@ class StateGraph(Named):
                 self.time_in_state = 0
                 return [state for state in self.current_state.get_states() if not old_state.has_state(state)]
         return []
-    
+
     def time_passes(self, time:int=1) -> list[State]:
         self.time_in_state += time
         if self.current_state in self.time_graph:
@@ -175,54 +178,68 @@ class StateGraph(Named):
                 return [state for state in self.current_state.get_states() if not old_state.has_state(state)]
         return []
 
-class FullState(Named):
+class FullState(ABC, Named):
 
+    @abstractmethod
     def time_passes(self, time:int) -> list[tuple[bool,State]]:
         pass
 
+    @abstractmethod
     def get_current_states(self) -> list[State]:
         pass
 
+    @abstractmethod
     def get_current_effects(self) -> list[Effect]:
         pass
 
+    @abstractmethod
     def has_state(self, state:State) -> bool:
         pass
 
+    @abstractmethod
     def has_effect(self, effect:Effect) -> bool:
         pass
 
+    @abstractmethod
     def get_available_actions_as_target(self) -> list[Action]:
         pass
 
+    @abstractmethod
     def get_available_actions_as_actor(self) -> list[Action]:
         pass
 
+    @abstractmethod
     def get_available_actions_as_tool(self) -> list[Action]:
         pass
 
+    @abstractmethod
     def can_act_as_target(self, action:Action) -> bool:
         pass
-    
+
+    @abstractmethod
     def can_act_as_actor(self, action:Action) -> bool:
         pass
 
+    @abstractmethod
     def can_act_as_tool(self, action:Action) -> bool:
         pass
 
+    @abstractmethod
     def perform_action_as_target(self, action:Action) -> list[tuple[bool,State]]:
         pass
 
+    @abstractmethod
     def perform_action_as_actor(self, action:Action) -> list[tuple[bool,State]]:
         pass
 
+    @abstractmethod
     def perform_action_as_tool(self, action:Action) -> list[tuple[bool,State]]:
         pass
 
 class StateDisconnectedGraph(FullState):
 
-    def __init__(self, name:str, state_graphs:list[StateGraph], aliases:Optional[list[str]]=None, id:str=None):
-        super().__init__(name, aliases, id)
+    def __init__(self, name:str, state_graphs:list[StateGraph], aliases:Optional[list[str]]=None, name_id:str=None):
+        super().__init__(name, aliases, name_id)
         self.state_graphs = state_graphs
 
     def __repr__(self):
@@ -239,7 +256,7 @@ class StateDisconnectedGraph(FullState):
 
     def get_current_states(self) -> list[State]:
         return [state for graph in self.state_graphs for state in graph.get_current_states()]
-    
+
     def get_current_effects(self) -> list[Effect]:
         pass
 
@@ -248,37 +265,37 @@ class StateDisconnectedGraph(FullState):
 
     def has_effect(self, effect:Effect) -> bool:
         pass
-    
+
     def get_available_actions_as_actor(self) -> list[Action]:
         return [action for graph in self.state_graphs for action in graph.get_available_actions_as_actor()]
-    
+
     def get_available_actions_as_target(self) -> list[Action]:
         return [action for graph in self.state_graphs for action in graph.get_available_actions_as_target()]
-    
+
     def get_available_actions_as_tool(self) -> list[Action]:
         return [action for graph in self.state_graphs for action in graph.get_available_actions_as_tool()]
 
     def perform_action_as_actor(self, action:Action) -> list[State]:
-        return [state for graph in self.state_graphs for state in graph.perform_action_as_actor(action)] 
+        return [state for graph in self.state_graphs for state in graph.perform_action_as_actor(action)]
 
     def perform_action_as_target(self, action:Action) -> list[tuple[bool,State]]:
         return [state for graph in self.state_graphs for state in graph.perform_action_as_target(action)]
-    
+
     def perform_action_as_tool(self, action:Action) -> list[tuple[bool,State]]:
         return [state for graph in self.state_graphs for state in graph.perform_action_as_tool(action)]
 
 class Skill(Named):
-    
-    def __init__(self, name:str, aliases:Optional[list[str]]=None, id:str=None):
-        super().__init__(name, aliases, id)
+
+    def __init__(self, name:str, aliases:Optional[list[str]]=None, name_id:str=None):
+        super().__init__(name, aliases, name_id)
 
     def __repr__(self):
         return f"[Skill {self.name}]"
 
 class SkillSet(Named):
 
-    def __init__(self, name:str, skills:Optional[dict[Skill,int]]=None, default_proficiency:int=0, aliases:Optional[list[str]]=None, id:str=None):
-        super().__init__(name, aliases, id)
+    def __init__(self, name:str, skills:Optional[dict[Skill,int]]=None, default_proficiency:int=0, aliases:Optional[list[str]]=None, name_id:str=None):
+        super().__init__(name, aliases, name_id)
         self.skills = dict[Skill,int]() if skills is None else skills
         self.default_proficiency = default_proficiency
 

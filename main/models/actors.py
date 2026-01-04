@@ -1,16 +1,17 @@
-from typing      import TypeVar
+from typing      import TypeVar, Any
 from dataclasses import dataclass, field
-import networkx  as nx
 import random
 
+import networkx  as nx
+
 from models.state               import State, Skill, FullState, SkillSet, Achievement
-from models.named               import Named, Action, Direction, NameInfo
+from models.named               import Named, Action, Direction
 from readin.restriction_helpers import Restriction, RestrictionContext
-from readin.description_helpers import Description, CombinationDescription, CombinationContext, plain_text_description, combine_descriptions, BackupDescription
+from readin.description_helpers import Description, DescriptionStrategy, CombinationDescription, CombinationContext, plain_text_description, combine_descriptions, BackupDescription, PlainTextContext, PlainTextDescription
 
 T = TypeVar('T')
 
-def can_fit(item:'HasLocation', container:'HasLocation', item_tree:'ItemTree') -> bool:
+def can_fit(item:'Container', container:'Container', item_tree:'ItemTree') -> bool:
     limit = container.get_item_limit()
     if     (limit.weight_limit is None or item_tree.get_weight(item) + item_tree.get_weight_of_contents(container) <= limit.weight_limit) \
         or (limit.size_limit   is None or item_tree.get_size(item)   + item_tree.get_size_of_contents(container)   <= limit.size_limit) \
@@ -25,51 +26,50 @@ class ItemLimit:
     value_limit  : float|None = None
 
 @dataclass
-class VisibleInfo:
-    hidden               : bool              = False
-    visible_restrictions : list[Restriction] = field(default_factory=list[Restriction])
-
-@dataclass
-class ContainerInfo:
-    item_limit     : ItemLimit               = field(default_factory=ItemLimit)
-    item_responses : dict['HasLocation',str] = field(default_factory=dict['HasLocation',str])
-    weight         : float                   = 1.0
-    size           : float                   = 1.0
-    value          : float                   = 0.0
-
-class HasLocation(Named):
-
-    def __init__(self, name_info:NameInfo, *, visible_info:VisibleInfo, container_info:ContainerInfo):
-        super().__init__(name_info)
-        self.visible_info = visible_info
-        self.container_info = container_info
+class Visible:
+    description_context  : Any                 = PlainTextContext("No description")
+    description_strategy : DescriptionStrategy = PlainTextDescription()
+    hidden               : bool                = False
+    visible_restrictions : list[Restriction]   = field(default_factory=list[Restriction])
 
     def is_visible(self, context:RestrictionContext) -> tuple[bool,Description]:
-        for visible_restriction in self.visible_info.visible_restrictions:
+        for visible_restriction in self.visible_restrictions:
             passes, response = visible_restriction.passes(context)
             if not passes:
                 return passes, response
         return False, None
 
     def describe(self, context:RestrictionContext) -> Description|None:
-        visible, _ =  self.is_visible(context)
+        visible, desc =  self.is_visible(context)
         if visible:
-            return super().describe(context)
-        return None
+            return Description(self, self.description_strategy, self.description_context)
+        return desc
+
+@dataclass
+class Container(Visible):
+    item_limit     : ItemLimit               = field(default_factory=ItemLimit)
+    item_responses : dict['Container',str]   = field(default_factory=dict['Container',str])
+    weight         : float                   = 1.0
+    size           : float                   = 1.0
+    value          : float                   = 0.0
 
     def get_weight(self) -> float:
-        return self.container_info.weight
+        return self.weight
 
     def get_value(self) -> float:
-        return self.container_info.value
+        return self.value
 
     def get_size(self) -> float:
-        return self.container_info.size
+        return self.size
 
     def get_item_limit(self) -> ItemLimit:
-        return self.container_info.item_limit
+        return self.item_limit
 
-class LocationDetail(HasLocation):
+@dataclass
+class NamedContainer(Named, Container):
+    pass
+
+class LocationDetail(NamedContainer):
 
     def __repr__(self):
         return f"<LocationDetail {self.get_name()}>"
@@ -88,10 +88,9 @@ class PathEndContext:
     character      : 'Actor'
     item_locations : 'ItemTree'
 
-class Path(HasLocation):
-    def __init__(self, name_info:NameInfo, path_info:PathInfo, *, visible_info:VisibleInfo, container_info:ContainerInfo):
-        super().__init__(name_info, visible_info=visible_info, container_info=container_info)
-        self.path_info = path_info
+@dataclass
+class Path(NamedContainer):
+    path_info : PathInfo
 
     def __repr__(self):
         return f"<Path {self.get_name()}>"
@@ -115,10 +114,9 @@ class Path(HasLocation):
                 return passes, response
         return True, None
 
+@dataclass
 class TwoWayPath(Path):
-    def __init__(self, name_info:NameInfo, path_info:PathInfo, reverse_direction:Direction, *, visible_info:VisibleInfo, container_info:ContainerInfo):
-        super().__init__(name_info, path_info, visible_info=visible_info, container_info=container_info)
-        self.reverse_direction = reverse_direction
+    reverse_direction : Direction
 
     def list_starts(self) -> list[tuple['Location',Direction]]:
         return [(self.path_info.start,self.path_info.direction), (self.path_info.end,self.reverse_direction)]
@@ -129,9 +127,7 @@ class TwoWayPath(Path):
         return self.path_info.start
 
 class MultiPath(Path):
-    def __init__(self, name_info:NameInfo, path_info:PathInfo, multi_end:dict['Target','Location'], *, visible_info:VisibleInfo, container_info:ContainerInfo):
-        super().__init__(name_info, visible_info=visible_info, container_info=container_info, path_info=path_info)
-        self.multi_end = multi_end
+    multi_end : dict['Target','Location']
 
     def can_pass(self, context:RestrictionContext) -> tuple[bool,Description]:
         can_pass, response = super().can_pass(context)
@@ -165,11 +161,9 @@ class TargetInfo:
     inside           : LocationDetail|None      = None
     on               : LocationDetail|None      = None
 
-class Target(HasLocation):
-
-    def __init__(self, name_info:NameInfo, target_info:TargetInfo, *, container_info:ContainerInfo, visible_info:VisibleInfo):
-        super().__init__(name_info, visible_info=visible_info, container_info=container_info)
-        self.target_info = target_info
+@dataclass
+class Target(NamedContainer):
+    target_info:TargetInfo
 
     def __repr__(self):
         return f"<Target {self.get_name()}>"
@@ -224,11 +218,9 @@ class ActorInfo:
     actor_responses : dict[Action,Description] = field(default_factory=dict)
     actor_type      : str                      = 'Standard'
 
+@dataclass
 class Actor(Target):
-
-    def __init__(self, name_info:NameInfo, target_info:TargetInfo, actor_info:ActorInfo, *, container_info:ContainerInfo, visible_info:VisibleInfo):
-        super().__init__(name_info, target_info, container_info=container_info, visible_info=visible_info)
-        self.actor_info = actor_info
+    actor_info : ActorInfo
 
     def __repr__(self):
         return f"<Actor {self.get_name()}>"
@@ -289,11 +281,9 @@ class LocationInfo:
     action_restrictions : dict[Action,list[Restriction]] = field(default_factory=dict)
     direction_responses : dict[Direction,Description]    = field(default_factory=dict)
 
-class Location(HasLocation):
-
-    def __init__(self, name_info:NameInfo, location_info:LocationInfo, container_info:ContainerInfo, visible_info:VisibleInfo):
-        super().__init__(name_info, visible_info=visible_info, container_info=container_info)
-        self.location_info = location_info
+@dataclass
+class Location(NamedContainer):
+    location_info : LocationInfo
 
     def __repr__(self):
         return f"<Location {self.get_name()}>"
@@ -321,14 +311,14 @@ class ItemTree:
     def add_path(self, path:Path):
         self.graph.add_node(path.get_id(), obj=path, type='path')
 
-    def __add_edge(self, child:HasLocation, parent:HasLocation):
+    def __add_edge(self, child:NamedContainer, parent:NamedContainer):
         self.graph.add_edge(parent.get_id(), child.get_id(), relationship="child")
 
-    def add_location_detail(self, location_detail:LocationDetail, location:HasLocation):
+    def add_location_detail(self, location_detail:LocationDetail, location:NamedContainer):
         self.graph.add_node(location_detail.get_id(), obj=location_detail, type='location_detail')
         self.__add_edge(location_detail, location)
 
-    def add_item(self, item:Target, location:HasLocation):
+    def add_item(self, item:Target, location:NamedContainer):
         self.graph.add_node(item.get_id(), obj=item, type='item')
         self.__add_edge(item, location)
         if item.get_inside():
@@ -336,7 +326,7 @@ class ItemTree:
         if item.get_on():
             self.add_location_detail(item.get_on(), item)
 
-    def add_character(self, character:Actor, location:HasLocation):
+    def add_character(self, character:Actor, location:NamedContainer):
         self.graph.add_node(character.get_id(), obj=character, type='character')
         self.__add_edge(character, location)
         if character.get_inside():
@@ -348,7 +338,7 @@ class ItemTree:
 
     # mutators
 
-    def move(self, item:HasLocation, location:HasLocation):
+    def move(self, item:NamedContainer, location:NamedContainer):
         parents = self.get_parents(item)
         if not (len(parents) == 1 and parents[0].get_id() == location.get_id()):
             raise RuntimeError("Wrong number of parents for item to be moved.")
@@ -358,53 +348,52 @@ class ItemTree:
 
     # utils
 
-    def get_inventory_contents(self, character:Actor) -> list[HasLocation]:
+    def get_inventory_contents(self, character:Actor) -> list[NamedContainer]:
         inventory = character.get_inventory()
         contents  = self.get_children(inventory)
         return contents
 
-    def get_local_tree(self, item:HasLocation) -> 'ItemTree':
+    def get_local_tree(self, item:NamedContainer) -> 'ItemTree':
         ancestors   : set[str] = nx.ancestors(self.graph, item.get_id())
         descendants : set[str] = nx.descendants(self.graph, item.get_id())
         nodes                  = ancestors | {item.get_id()} | descendants
         subgraph               = self.graph.subgraph(nodes).copy()
         return ItemTree(graph=subgraph)
 
-    def get_parents(self, item:HasLocation) -> list[HasLocation]:
+    def get_parents(self, item:NamedContainer) -> list[NamedContainer]:
         return [self.graph.nodes[p]['obj'] for p in self.graph.predecessors(item.get_id())]
 
-    def get_children(self, item:HasLocation) -> list[HasLocation]:
+    def get_children(self, item:NamedContainer) -> list[NamedContainer]:
         return [self.graph.nodes[c]['obj'] for c in self.graph.successors(item.get_id())]
 
-    def get_weight(self, item:HasLocation) -> float:
+    def get_weight(self, item:NamedContainer) -> float:
         children = self.get_children(item)
         return sum(self.get_weight(child) for child in children) + item.get_weight()
 
-    def get_size(self, item:HasLocation) -> float:
+    def get_size(self, item:NamedContainer) -> float:
         children = self.get_children(item)
         return sum(self.get_size(child) for child in children) + item.get_size()
 
-    def get_value(self, item:HasLocation) -> float:
+    def get_value(self, item:NamedContainer) -> float:
         children = self.get_children(item)
         return sum(self.get_value(child) for child in children) + item.get_value()
 
-    def get_weight_of_contents(self, item:HasLocation) -> float:
+    def get_weight_of_contents(self, item:NamedContainer) -> float:
         return self.get_weight(item) - item.get_weight()
 
-    def get_size_of_contents(self, item:HasLocation) -> float:
+    def get_size_of_contents(self, item:NamedContainer) -> float:
         return self.get_size(item) - item.get_size()
 
-    def get_value_of_contents(self, item:HasLocation) -> float:
+    def get_value_of_contents(self, item:NamedContainer) -> float:
         return self.get_value(item) - item.get_value()
 
-    def get_room(self, item:HasLocation) -> Location|Path:
+    def get_room(self, item:NamedContainer) -> Location|Path:
         top = item
         parents = list(self.graph.predecessors(item))
         while parents:
             top = parents[0]
             parents = list(self.graph.predecessors(parents[0]))
         return top
-
 
 class WorldMap:
     def __init__(self):
@@ -452,7 +441,7 @@ class World:
                 return True, response
         return False, response
 
-    def move_item(self, item:HasLocation, new_spot:HasLocation) -> tuple[bool,Description]:
+    def move_item(self, item:NamedContainer, new_spot:NamedContainer) -> tuple[bool,Description]:
         if not self.get_room(item) == self.get_room(new_spot):
             return False, plain_text_description(f"{item.get_name()} is not in the same room as {new_spot.get_name()}")
         if can_fit(item, new_spot, self):
@@ -462,18 +451,18 @@ class World:
 
     # UTILS
 
-    def get_room(self, item:HasLocation) -> Location:
+    def get_room(self, item:NamedContainer) -> Location:
         return self.item_locations.get_room(item)
 
     def get_path(self, room:Location, direction:Direction) -> Path|None:
         return self.world_map.get_path(room, direction)
 
-    def get_local_tree(self, item:HasLocation) -> ItemTree:
+    def get_local_tree(self, item:NamedContainer) -> ItemTree:
         return self.item_locations.get_local_tree(item)
 
     # ACTIONS
 
-    def can_interact(self, character:Actor, item:HasLocation) -> bool:
+    def can_interact(self, character:Actor, item:NamedContainer) -> bool:
         if not item.is_visible(RestrictionContext(character, self.item_locations.get_local_tree(character))):
             return False
         room = self.item_locations.get_room(character)

@@ -1,11 +1,16 @@
+from models.named  import NameInfo
+from models.actors import Actor, LocationDetail, ItemLimit, ContainerInfo, VisibleInfo
 from models.state  import State, StateGroup, StateGraph, StateDisconnectedGraph
 from utils.relator import NameFinder
+
+from readin.restriction_helpers import Restriction, RestrictionStrategy, RestrictionContext
+from readin.description_helpers import Description, ContentsContext, ContentsDescription
 
 def sdg_from_parts(name_space:NameFinder, state_graphs:list[StateGraph]=None, unbreakable_states:list[State]=None, breakable_states:list[State]=None):
     if state_graphs       is None: state_graphs       = []
     if unbreakable_states is None: unbreakable_states = []
     if breakable_states   is None: breakable_states   = []
-    
+
     broken_state = name_space.get_from_id("broken", "state")
     break_action = name_space.get_from_id("break", "action")
     broken_group = StateGroup(name="Broken", states=[broken_state])
@@ -19,4 +24,26 @@ def sdg_from_parts(name_space:NameFinder, state_graphs:list[StateGraph]=None, un
     return StateDisconnectedGraph(
         name="sdg",
         state_graphs=state_graphs
+    )
+
+class CharacterRestriction(RestrictionStrategy[Actor]):
+    def passes(self, context:RestrictionContext, specific:Actor) -> tuple[bool,Description]:
+        return context.character == specific
+
+def get_inventory(character:Actor, item_limit:ItemLimit) -> LocationDetail:
+    return LocationDetail(
+        NameInfo(
+            name="inventory",
+            description_context=ContentsContext("Your inventory contains:", "Your inventory is empty."),
+            description_strategy=ContentsDescription(),
+            name_id=f"{character.get_name()} inventory",
+            aliases=[f"{character.get_name()} inventory"]
+        ),
+        visible_info=VisibleInfo(
+            visible_restrictions=[Restriction[Actor](character, CharacterRestriction())]
+        ),
+        container_info=ContainerInfo(
+            item_limit=item_limit,
+            size=0
+        )
     )

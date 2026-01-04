@@ -77,6 +77,9 @@ class NPCController(CharacterController):
         :type feedback: Feedback
         """
 
+    def decide(self, options):
+        return 0
+
 class CommandLineController(CharacterController):
     """Inherits from CharacterController.
     Controller for a user controlled Character. Stores moves, turns, and score. 

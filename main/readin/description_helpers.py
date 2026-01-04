@@ -6,7 +6,7 @@ from typing        import TypeVar, Generic, TYPE_CHECKING
 
 from models.named  import Action
 from models.state  import State
-from models.actors import Actor, Target, HasLocation
+from models.actors import Actor, Target, NamedContainer
 from utils.utils   import list_to_str
 
 if TYPE_CHECKING:
@@ -26,12 +26,12 @@ class DescriptionContext:
 
 class DescriptionStrategy(ABC, Generic[T]):
     @abstractmethod
-    def describe(self, described:HasLocation, context:DescriptionContext, specific:T) -> str:
+    def describe(self, described:NamedContainer, context:DescriptionContext, specific:T) -> str:
         pass
 
 @dataclass
 class Description(Generic[T]):
-    described : HasLocation
+    described : NamedContainer
     specific  : T
     strategy  : DescriptionStrategy
 
@@ -43,7 +43,7 @@ class PlainTextContext:
     text : str
 
 class PlainTextDescription(DescriptionStrategy[PlainTextContext]):
-    def describe(self, described:HasLocation, context:DescriptionContext, specific:PlainTextContext) -> str:
+    def describe(self, described:NamedContainer, context:DescriptionContext, specific:PlainTextContext) -> str:
         return specific.text
 
 def plain_text_description(description:str) -> Description[PlainTextContext]:
@@ -51,12 +51,11 @@ def plain_text_description(description:str) -> Description[PlainTextContext]:
 
 @dataclass
 class ContentsContext:
-    item_tree  : 'ItemTree'
     full_text  : str
     empty_text : str
 
 class ContentsDescription(DescriptionStrategy[ContentsContext]):
-    def describe(self, described:HasLocation, context:DescriptionContext, specific:ContentsContext) -> str:
+    def describe(self, described:NamedContainer, context:DescriptionContext, specific:ContentsContext) -> str:
         contents = context.placements.get_children(described)
         if len(contents) == 0:
             return specific.empty_text
@@ -65,7 +64,7 @@ class ContentsDescription(DescriptionStrategy[ContentsContext]):
             f"{list_to_str([
                 (
                     item
-                    .describe(RestrictionContext(context.character, specific.item_tree))
+                    .describe(RestrictionContext(context.character, context.placements))
                     .describe(context.character)
                     for item in contents
                 )
@@ -90,7 +89,7 @@ class CombinationContext:
     joiner       : str = '\n'
 
 class CombinationDescription(DescriptionStrategy[CombinationContext]):
-    def describe(self, described:HasLocation, context:DescriptionContext, specific:CombinationContext) -> str:
+    def describe(self, described:NamedContainer, context:DescriptionContext, specific:CombinationContext) -> str:
         return specific.joiner.join([description.describe(context) for description in specific.descriptions])
 
 def combine_descriptions(descriptions:list[Description], *, joiner:str='\n') -> Description[CombinationContext]:
@@ -105,7 +104,7 @@ def combine_descriptions(descriptions:list[Description], *, joiner:str='\n') -> 
 
 
 class BackupDescription(DescriptionStrategy[list[Description]]):
-    def describe(self, described:HasLocation, context:DescriptionContext, specific:list[Description]):
+    def describe(self, described:NamedContainer, context:DescriptionContext, specific:list[Description]):
         for description in specific:
             desc_str = description.describe(context)
             if desc_str:

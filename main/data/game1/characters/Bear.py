@@ -1,8 +1,8 @@
 from utils.relator              import NameFinder
-from models.actors              import Actor, LocationDetail, ItemLimit
-from models.response            import StaticResponse
-from readin.description_helpers import plain_text
-from readin.utils               import sdg_from_parts
+from models.named               import NameInfo
+from models.actors              import Actor, ItemLimit, TargetInfo, ActorInfo, ContainerInfo, VisibleInfo
+from readin.description_helpers import plain_text_description
+from readin.utils               import sdg_from_parts, get_inventory
 
 def add_to_name_space(name_space:NameFinder) -> None:
     sdg = sdg_from_parts(
@@ -10,14 +10,32 @@ def add_to_name_space(name_space:NameFinder) -> None:
         state_graphs=[name_space.get_from_id("standard_character")]
     )
 
-    inventory = LocationDetail(
-        name="inventory",
-        id="bear inventory",
-        item_limit=ItemLimit(200, 100)
-    )
+    inventory = get_inventory(bear, ItemLimit(200, 100))
 
     bear = Actor(
-        name="Bear",
+        name_info=NameInfo(
+            name="Bear",
+            description_context="",
+            description_strategy="",
+            aliases=[]
+        ),
+        target_info=TargetInfo(
+
+        ),
+        actor_info=ActorInfo(
+
+        ),
+        container_info=ContainerInfo(
+
+        ),
+        visible_info=VisibleInfo(
+            
+        )
+    )
+    
+    
+    (
+        
         type="bear",
         description=(plain_text, "a bear."),
         states=sdg,
