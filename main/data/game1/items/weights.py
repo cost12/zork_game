@@ -1,7 +1,6 @@
 from utils.relator import NameFinder
-from models.actors import Target
-from models.response import StaticResponse
-from readin.description_helpers import Description, PlainTextDescription, PlainTextContext
+from models.actors import Target, TargetInfo
+from readin.description_helpers import PlainTextDescription, PlainTextContext, plain_text_description
 from readin.utils import sdg_from_parts
 
 def add_to_name_space(name_space:NameFinder) -> None:
@@ -15,18 +14,21 @@ def add_to_name_space(name_space:NameFinder) -> None:
     weights = Target(
         name="weights",
         aliases=["weight", "dumbell"],
-        description=Description[PlainTextContext](PlainTextContext("a lone rusty dumbell"), PlainTextDescription()),
-        states=sdg,
+        description_context=PlainTextContext("a lone rusty dumbell"),
+        description_strategy=PlainTextDescription(),
         weight=25,
         value=10,
         size=1,
-        target_responses={
-            name_space.get_from_id("lift",  "action") : StaticResponse("Nice rep. Your form isn't perfect but you feel a bit stronger for having done it."),
-            name_space.get_from_id("break", "action") : StaticResponse("Ha! Even Arnold couldn't break this.")
-        },
-        state_responses={
-            name_space.get_from_id("held",   "state") : StaticResponse("You take the weights, they are heavy.")
-        }
+        target_info=TargetInfo(
+            states=sdg,
+            target_responses={
+                name_space.get_from_id("lift",  "action") : plain_text_description("Nice rep. Your form isn't perfect but you feel a bit stronger for having done it."),
+                name_space.get_from_id("break", "action") : plain_text_description("Ha! Even Arnold couldn't break this.")
+            },
+            state_responses={
+                name_space.get_from_id("held",   "state") : plain_text_description("You take the weights, they are heavy.")
+            }
+        )
     )
 
     name_space.add(weights)

@@ -66,7 +66,7 @@ class Container(Visible):
         return self.item_limit
 
 @dataclass
-class NamedContainer(Named, Container):
+class NamedContainer(Container, Named):
     pass
 
 class LocationDetail(NamedContainer):
@@ -126,6 +126,7 @@ class TwoWayPath(Path):
             return self.path_info.end
         return self.path_info.start
 
+@dataclass
 class MultiPath(Path):
     multi_end : dict['Target','Location']
 
@@ -163,7 +164,7 @@ class TargetInfo:
 
 @dataclass
 class Target(NamedContainer):
-    target_info:TargetInfo
+    target_info : TargetInfo = field(kw_only=True)
 
     def __repr__(self):
         return f"<Target {self.get_name()}>"

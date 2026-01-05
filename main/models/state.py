@@ -258,13 +258,13 @@ class StateDisconnectedGraph(FullState):
         return [state for graph in self.state_graphs for state in graph.get_current_states()]
 
     def get_current_effects(self) -> list[Effect]:
-        pass
+        raise RuntimeError("Unimplemented")
 
     def has_state(self, state:State) -> bool:
         return any([graph.has_state(state) for graph in self.state_graphs])
 
     def has_effect(self, effect:Effect) -> bool:
-        pass
+        raise RuntimeError("Unimplemented")
 
     def get_available_actions_as_actor(self) -> list[Action]:
         return [action for graph in self.state_graphs for action in graph.get_available_actions_as_actor()]
@@ -283,6 +283,15 @@ class StateDisconnectedGraph(FullState):
 
     def perform_action_as_tool(self, action:Action) -> list[tuple[bool,State]]:
         return [state for graph in self.state_graphs for state in graph.perform_action_as_tool(action)]
+
+    def can_act_as_target(self, action:Action) -> bool:
+        raise RuntimeError("Unimplemented")
+
+    def can_act_as_actor(self, action:Action) -> bool:
+        raise RuntimeError("Unimplemented")
+
+    def can_act_as_tool(self, action:Action) -> bool:
+        raise RuntimeError("Unimplemented")
 
 class Skill(Named):
 

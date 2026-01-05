@@ -1,6 +1,6 @@
 from utils.relator              import NameFinder
-from models.actors              import Target
-from readin.description_helpers import Description, PlainTextContext, PlainTextDescription
+from models.actors              import Target, TargetInfo
+from readin.description_helpers import PlainTextContext, PlainTextDescription
 from readin.utils               import sdg_from_parts
 
 def add_to_name_space(name_space:NameFinder) -> None:
@@ -13,8 +13,11 @@ def add_to_name_space(name_space:NameFinder) -> None:
 
     bongo = Target(
         name="Bongo",
-        description=Description[PlainTextContext](PlainTextContext("a bongo"), PlainTextDescription()),
-        states=sdg,
+        description_context=PlainTextContext("a bongo"),
+        description_strategy=PlainTextDescription(),
+        target_info=TargetInfo(
+            states=sdg,
+        ),
         weight=5,
         value=3,
         size=1

@@ -1,6 +1,6 @@
 from utils.relator import NameFinder
-from models.actors import Target
-from readin.description_helpers import Description, PlainTextDescription, PlainTextContext
+from models.actors import Target, TargetInfo
+from readin.description_helpers import PlainTextDescription, PlainTextContext
 from readin.utils import sdg_from_parts
 
 def add_to_name_space(name_space:NameFinder) -> None:
@@ -13,8 +13,11 @@ def add_to_name_space(name_space:NameFinder) -> None:
     puzzle = Target(
         name="puzzle",
         aliases=["jigsaw puzzle"],
-        description=Description[PlainTextContext](PlainTextContext("an imcomplete jigsaw puzzle"), PlainTextDescription()),
-        states=sdg,
+        description_context=PlainTextContext("an imcomplete jigsaw puzzle"),
+        description_strategy=PlainTextDescription(),
+        target_info=TargetInfo(
+            states=sdg,
+        ),
         weight=5,
         value=3,
         size=1,

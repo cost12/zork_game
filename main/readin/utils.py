@@ -1,5 +1,4 @@
-from models.named  import NameInfo
-from models.actors import Actor, LocationDetail, ItemLimit, ContainerInfo, VisibleInfo
+from models.actors import Actor, LocationDetail, ItemLimit
 from models.state  import State, StateGroup, StateGraph, StateDisconnectedGraph
 from utils.relator import NameFinder
 
@@ -32,18 +31,12 @@ class CharacterRestriction(RestrictionStrategy[Actor]):
 
 def get_inventory(character:Actor, item_limit:ItemLimit) -> LocationDetail:
     return LocationDetail(
-        NameInfo(
-            name="inventory",
-            description_context=ContentsContext("Your inventory contains:", "Your inventory is empty."),
-            description_strategy=ContentsDescription(),
-            name_id=f"{character.get_name()} inventory",
-            aliases=[f"{character.get_name()} inventory"]
-        ),
-        visible_info=VisibleInfo(
-            visible_restrictions=[Restriction[Actor](character, CharacterRestriction())]
-        ),
-        container_info=ContainerInfo(
-            item_limit=item_limit,
-            size=0
-        )
+        name="inventory",
+        description_context=ContentsContext("Your inventory contains:", "Your inventory is empty."),
+        description_strategy=ContentsDescription(),
+        name_id=f"{character.get_name()} inventory",
+        aliases=[f"{character.get_name()} inventory"],
+        visible_restrictions=[Restriction[Actor](character, CharacterRestriction())],
+        item_limit=item_limit,
+        size=0,
     )

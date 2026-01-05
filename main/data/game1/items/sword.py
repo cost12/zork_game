@@ -1,7 +1,6 @@
 from utils.relator import NameFinder
-from models.actors import Target
-from models.response import StaticResponse
-from readin.description_helpers import Description, PlainTextDescription, PlainTextContext
+from models.actors import Target, TargetInfo
+from readin.description_helpers import PlainTextDescription, PlainTextContext, plain_text_description
 from readin.utils import sdg_from_parts
 
 def add_to_name_space(name_space:NameFinder) -> None:
@@ -14,17 +13,20 @@ def add_to_name_space(name_space:NameFinder) -> None:
 
     sword = Target(
         name="sword",
-        description=Description[PlainTextContext](PlainTextContext("a classic yet deadly-looking sword, glinting, as if mocking its slain enemies"), PlainTextDescription()),
-        states=sdg,
+        description_context=PlainTextContext("a classic yet deadly-looking sword, glinting, as if mocking its slain enemies"),
+        description_strategy=PlainTextDescription(),
         weight=3,
         value=3,
         size=5,
-        target_responses={
-            name_space.get_from_id("break", "action") : StaticResponse("A blade of this making cannot be broken by one such as you. HA!")
-        },
-        state_responses={
-            name_space.get_from_id("held",   "state") : StaticResponse("The sword is well-balanced. Its maker speaks to you through it, warning you of the deathly power it holds, expressing himself through sheer emotion, lest words sully the message's import."),
-        }
+        target_info=TargetInfo(
+            states=sdg,
+            target_responses={
+                name_space.get_from_id("break", "action") : plain_text_description("A blade of this making cannot be broken by one such as you. HA!")
+            },
+            state_responses={
+                name_space.get_from_id("held",   "state") : plain_text_description("The sword is well-balanced. Its maker speaks to you through it, warning you of the deathly power it holds, expressing himself through sheer emotion, lest words sully the message's import."),
+            }
+        )
     )
 
     name_space.add(sword)

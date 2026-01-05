@@ -1,7 +1,6 @@
 from utils.relator              import NameFinder
-from models.actors              import Target
-from models.response            import StaticResponse
-from readin.description_helpers import Description, PlainTextDescription, PlainTextContext
+from models.actors              import Target, TargetInfo
+from readin.description_helpers import PlainTextDescription, PlainTextContext, plain_text_description
 from readin.utils               import sdg_from_parts
 
 def add_to_name_space(name_space:NameFinder) -> None:
@@ -14,15 +13,18 @@ def add_to_name_space(name_space:NameFinder) -> None:
     door = Target(
         name="trunk door",
         aliases=["door"],
-        description=Description[PlainTextContext](PlainTextContext("a trunk door"), PlainTextDescription()),
-        states=sdg,
+        description_context=PlainTextContext("a trunk door"),
+        description_strategy=PlainTextDescription(),
         weight=3,
         value=3,
         size=5,
-        target_responses={
-            name_space.get_from_id("take",  "action") : StaticResponse("???"),
-            name_space.get_from_id("break", "action") : StaticResponse("You can't seem to break it.")
-        }
+        target_info=TargetInfo(
+            states=sdg,
+            target_responses={
+                name_space.get_from_id("take",  "action") : plain_text_description("???"),
+                name_space.get_from_id("break", "action") : plain_text_description("You can't seem to break it.")
+            }
+        )
     )
 
     name_space.add(door)

@@ -1,7 +1,6 @@
 from utils.relator import NameFinder
-from models.actors import Target
-from models.response import StaticResponse
-from readin.description_helpers import Description, PlainTextDescription, PlainTextContext
+from models.actors import Target, TargetInfo
+from readin.description_helpers import PlainTextDescription, PlainTextContext, plain_text_description
 from readin.utils import sdg_from_parts
 
 def add_to_name_space(name_space:NameFinder) -> None:
@@ -16,18 +15,21 @@ def add_to_name_space(name_space:NameFinder) -> None:
     herbs = Target(
         name="dried herbs",
         aliases=["herbs"],
-        description=Description[PlainTextContext](PlainTextContext("a small, tightly packed bundle of herbs bound by a short length of hemp twine"), PlainTextDescription()),
-        states=sdg,
+        description_context=PlainTextContext("a small, tightly packed bundle of herbs bound by a short length of hemp twine"),
+        description_strategy=PlainTextDescription(),
         weight=1,
         value=1,
         size=1,
-        target_responses={
-            name_space.get_from_id("burn",  "action") : StaticResponse("With what?"),
-            name_space.get_from_id("untie", "action") : StaticResponse("You untie the bundle. The hempen twine disintigrates at your touch, and the herbacious leaves fall to the ground, scattered. You cannot gather them.")
-        },
-        state_responses={
-            name_space.get_from_id("broken", "state") : StaticResponse("You scatter the desicated leaves to the ground")
-        }
+        target_info=TargetInfo(
+            states=sdg,
+            target_responses={
+                name_space.get_from_id("burn",  "action") : plain_text_description("With what?"),
+                name_space.get_from_id("untie", "action") : plain_text_description("You untie the bundle. The hempen twine disintigrates at your touch, and the herbacious leaves fall to the ground, scattered. You cannot gather them.")
+            },
+            state_responses={
+                name_space.get_from_id("broken", "state") : plain_text_description("You scatter the desicated leaves to the ground")
+            }
+        )
     )
 
     name_space.add(herbs)

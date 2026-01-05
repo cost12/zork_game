@@ -1,7 +1,6 @@
 from utils.relator import NameFinder
-from models.actors import Target
-from models.response import StaticResponse
-from readin.description_helpers import Description, PlainTextDescription, PlainTextContext
+from models.actors import Target, TargetInfo
+from readin.description_helpers import PlainTextDescription, PlainTextContext, plain_text_description
 from readin.utils import sdg_from_parts
 
 def add_to_name_space(name_space:NameFinder) -> None:
@@ -14,19 +13,22 @@ def add_to_name_space(name_space:NameFinder) -> None:
     sink = Target(
         name="kitchen sink",
         aliases=["sink"],
-        description=Description[PlainTextContext](PlainTextContext("a stained metal sink"), PlainTextDescription()),
-        states=sdg,
-        weight=50, 
+        description_context=PlainTextContext("a stained metal sink"),
+        description_strategy=PlainTextDescription(),
+        weight=50,
         value=5,
         size=30,
-        target_responses={
-            name_space.get_from_id("take", "action")  : StaticResponse("And do what with it? Nice try.")
-        },
-        state_responses={
-            name_space.get_from_id("on",     "state") : StaticResponse("The sink's tap turns, buy only a sad gurgling sound emerges."),
-            name_space.get_from_id("off",    "state") : StaticResponse("The sink's tap is off."),
-            name_space.get_from_id("broken", "state") : StaticResponse("What are you, part of a demolition crew? The sink is dented.")
-        }
+        target_info=TargetInfo(
+            states=sdg,
+            target_responses={
+                name_space.get_from_id("take", "action")  : plain_text_description("And do what with it? Nice try.")
+            },
+            state_responses={
+                name_space.get_from_id("on",     "state") : plain_text_description("The sink's tap turns, buy only a sad gurgling sound emerges."),
+                name_space.get_from_id("off",    "state") : plain_text_description("The sink's tap is off."),
+                name_space.get_from_id("broken", "state") : plain_text_description("What are you, part of a demolition crew? The sink is dented.")
+            }
+        )
     )
 
     name_space.add(sink)

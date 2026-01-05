@@ -1,7 +1,6 @@
 from utils.relator import NameFinder
-from models.actors import Target
-from models.response import StaticResponse
-from readin.description_helpers import Description, PlainTextDescription, PlainTextContext
+from models.actors import Target, TargetInfo
+from readin.description_helpers import PlainTextDescription, PlainTextContext, plain_text_description
 from readin.utils import sdg_from_parts
 
 def add_to_name_space(name_space:NameFinder) -> None:
@@ -14,18 +13,21 @@ def add_to_name_space(name_space:NameFinder) -> None:
 
     meal = Target(
         name="meal",
-        description=Description[PlainTextContext](PlainTextContext("a decadent, steaming meal"), PlainTextDescription()),
-        states=sdg,
+        description_context=PlainTextContext("a decadent, steaming meal"),
+        description_strategy=PlainTextDescription(),
         weight=3,
         value=3,
         size=2,
-        target_responses={
-            name_space.get_from_id("eat",   "action") : StaticResponse("Yum! That was quite filling!")
-        },
-        state_responses={
-            name_space.get_from_id("held",   "state") : StaticResponse("It's a bit messy to be taking with you..."),
-            name_space.get_from_id("broken", "state") : StaticResponse("Now that's just gratuitous!")
-        }
+        target_info=TargetInfo(
+            states=sdg,
+            target_responses={
+                name_space.get_from_id("eat",   "action") : plain_text_description("Yum! That was quite filling!")
+            },
+            state_responses={
+                name_space.get_from_id("held",   "state") : plain_text_description("It's a bit messy to be taking with you..."),
+                name_space.get_from_id("broken", "state") : plain_text_description("Now that's just gratuitous!")
+            }
+        )
     )
 
     name_space.add(meal)

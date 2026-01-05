@@ -1,7 +1,6 @@
 from utils.relator import NameFinder
-from models.actors import Target
-from models.response import StaticResponse
-from readin.description_helpers import Description, PlainTextDescription, PlainTextContext
+from models.actors import Target, TargetInfo
+from readin.description_helpers import PlainTextDescription, PlainTextContext, plain_text_description
 from readin.utils import sdg_from_parts
 
 def add_to_name_space(name_space:NameFinder) -> None:
@@ -14,15 +13,18 @@ def add_to_name_space(name_space:NameFinder) -> None:
 
     pitchfork = Target(
         name="pitchfork",
-        description=Description[PlainTextContext](PlainTextContext("a long-handled pitchfork with three sharp tines"), PlainTextDescription()),
-        states=sdg,
+        description_context=PlainTextContext("a long-handled pitchfork with three sharp tines"),
+        description_strategy=PlainTextDescription(),
         weight=3,
         value=3,
         size=5,
-        state_responses={
-            name_space.get_from_id("held",   "state") : StaticResponse("You feel many hours of farm work in the wooden handle's grain"),
-            name_space.get_from_id("broken", "state") : StaticResponse("Seems odd. You break the handle in two.")
-        }
+        target_info=TargetInfo(
+            states=sdg,
+            state_responses={
+                name_space.get_from_id("held",   "state") : plain_text_description("You feel many hours of farm work in the wooden handle's grain"),
+                name_space.get_from_id("broken", "state") : plain_text_description("Seems odd. You break the handle in two.")
+            }
+        )
     )
 
     name_space.add(pitchfork)

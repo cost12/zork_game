@@ -1,7 +1,6 @@
 from utils.relator              import NameFinder
-from models.actors              import Target, LocationDetail, ItemLimit
-from models.response            import StaticResponse
-from readin.description_helpers import Description, PlainTextDescription, PlainTextContext
+from models.actors              import Target, LocationDetail, ItemLimit, TargetInfo
+from readin.description_helpers import PlainTextDescription, PlainTextContext, plain_text_description
 from readin.utils               import sdg_from_parts
 from readin.stand_in            import StandIn
 
@@ -15,32 +14,33 @@ def add_to_name_space(name_space:NameFinder) -> None:
 
     inside = LocationDetail(
         name="in",
-        id="in pepper jar",
+        name_id="in pepper jar",
         item_limit=ItemLimit(1, 1),
-        children=[StandIn("peppers", "target")]
+        # children=[StandIn("peppers", "target")] TODO
     )
 
     jar = Target(
         name="pepper jar",
         aliases=["jar"],
-        description=Description[PlainTextContext](PlainTextContext("a jar of hot peppers pickling in brine"), PlainTextDescription()),
-        states=sdg,
-        children=[
-            inside
-        ],
+        description_context=PlainTextContext("a jar of hot peppers pickling in brine"),
+        description_strategy=PlainTextDescription(),
+        #children=[inside], TODO
         weight=3,
         value=3,
         size=2,
-        state_responses={
-            name_space.get_from_id("held",          "state") : StaticResponse("The jar is cool to the touch."),
-            name_space.get_from_id("full",          "state") : StaticResponse("The jar is full."),
-            name_space.get_from_id("empty (state)", "state") : StaticResponse("The jar is empty."),
-            name_space.get_from_id("broken",        "state") : StaticResponse("The jar shatters, rendering itself unusable. Nice going."),
-        },
+        target_info=TargetInfo(
+            states=sdg,
+            state_responses={
+                name_space.get_from_id("held",          "state") : plain_text_description("The jar is cool to the touch."),
+                name_space.get_from_id("full",          "state") : plain_text_description("The jar is full."),
+                name_space.get_from_id("empty (state)", "state") : plain_text_description("The jar is empty."),
+                name_space.get_from_id("broken",        "state") : plain_text_description("The jar shatters, rendering itself unusable. Nice going."),
+            },
+        ),
         item_responses={
-            StandIn("honey",   "target") : StaticResponse("The jar is full of honey."),
-            StandIn("water",   "target") : StaticResponse("The jar is full of water."),
-            StandIn("peppers", "target") : StaticResponse("The jar is full of peppers.")
+            StandIn("honey",   "target") : plain_text_description("The jar is full of honey."),
+            StandIn("water",   "target") : plain_text_description("The jar is full of water."),
+            StandIn("peppers", "target") : plain_text_description("The jar is full of peppers.")
         }
     )
 

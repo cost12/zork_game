@@ -1,7 +1,6 @@
 from utils.relator              import NameFinder
-from models.actors              import Target
-from models.response            import StaticResponse
-from readin.description_helpers import Description, PlainTextDescription, PlainTextContext
+from models.actors              import Target, TargetInfo
+from readin.description_helpers import PlainTextDescription, PlainTextContext, plain_text_description
 from readin.utils               import sdg_from_parts
 
 def add_to_name_space(name_space:NameFinder) -> None:
@@ -14,18 +13,21 @@ def add_to_name_space(name_space:NameFinder) -> None:
 
     triangle = Target(
         name="triangle",
-        description=Description[PlainTextContext](PlainTextContext("a small metal triangle"), PlainTextDescription()),
-        states=sdg,
+        description_context=PlainTextContext("a small metal triangle"),
+        description_strategy=PlainTextDescription(),
         weight=2,
         value=10,
         size=1,
-        target_responses={
-            name_space.get_from_id("play",  "action") : StaticResponse("It doesn't take much to be good at the triangle, and man are you a prodigy. Its high note rings out."),
-            name_space.get_from_id("break", "action") : StaticResponse("The triangle is a slippery little bugger and you fuund yourself unable to destroy it.")
-        },
-        state_responses={
-            name_space.get_from_id("held",   "state") : StaticResponse("The metal is cool to the touch.")
-        }
+        target_info=TargetInfo(
+            states=sdg,
+            target_responses={
+                name_space.get_from_id("play",  "action") : plain_text_description("It doesn't take much to be good at the triangle, and man are you a prodigy. Its high note rings out."),
+                name_space.get_from_id("break", "action") : plain_text_description("The triangle is a slippery little bugger and you fuund yourself unable to destroy it.")
+            },
+            state_responses={
+                name_space.get_from_id("held",   "state") : plain_text_description("The metal is cool to the touch.")
+            }
+        )
     )
 
     name_space.add(triangle)

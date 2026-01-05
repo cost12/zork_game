@@ -1,6 +1,6 @@
 from utils.relator import NameFinder
-from models.actors import Target
-from readin.description_helpers import Description, PlainTextDescription, PlainTextContext
+from models.actors import Target, TargetInfo
+from readin.description_helpers import PlainTextDescription, PlainTextContext
 from readin.utils import sdg_from_parts
 
 def add_to_name_space(name_space:NameFinder) -> None:
@@ -13,8 +13,11 @@ def add_to_name_space(name_space:NameFinder) -> None:
 
     honey = Target(
         name="honey",
-        description=Description[PlainTextContext](PlainTextContext("a bit of honey"), PlainTextDescription()),
-        states=sdg,
+        description_context=PlainTextContext("a bit of honey"),
+        description_strategy=PlainTextDescription(),
+        target_info=TargetInfo(
+            states=sdg,
+        ),
         weight=1,
         value=1,
         size=1,

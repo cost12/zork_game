@@ -22,4 +22,3 @@ def add_to_name_space(name_space:NameFinder) -> None:
     directions = [Direction(**inputs) for inputs in direction_inputs]
 
     name_space.add_many(directions)
-

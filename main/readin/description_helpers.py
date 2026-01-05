@@ -72,6 +72,24 @@ class ContentsDescription(DescriptionStrategy[ContentsContext]):
         )
 
 @dataclass
+class ContentsWithStateContext:
+    state_responses : dict[State,str]
+    default         : str|None = None
+
+class ContentsWithStateDescription(DescriptionStrategy[ContentsWithStateContext]):
+    def describe(self, described:NamedContainer, context:DescriptionContext, specific:ContentsWithStateContext) -> str:
+        contents = context.placements.get_children(described)
+        r = ""
+        for item in contents:
+            if isinstance(item, Target):
+                for state in item.get_current_state():
+                    if state in specific.state_responses:
+                        r += specific.state_responses[state] + " "
+        if r:
+            return r
+        return specific.default
+
+@dataclass
 class StateContext:
     state_responses : dict[State,str]
 
