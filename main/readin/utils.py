@@ -40,3 +40,14 @@ def get_inventory(character:Actor, item_limit:ItemLimit) -> LocationDetail:
         item_limit=item_limit,
         size=0,
     )
+
+def get_wearing(character: Actor, item_limit: ItemLimit) -> LocationDetail:
+    return LocationDetail(
+        name="wearing",
+        description_context=ContentsContext("You are wearing:", "You are wearing nothing of note."),
+        description_strategy=ContentsDescription(),
+        name_id=f"{character.get_name()} wearing",
+        aliases=[f"{character.get_name()} wearing"],
+        item_limit=item_limit,
+        size=0,
+    )

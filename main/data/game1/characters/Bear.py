@@ -1,8 +1,8 @@
 from utils.relator              import NameFinder
-from models.named               import NameInfo
-from models.actors              import Actor, ItemLimit, TargetInfo, ActorInfo, ContainerInfo, VisibleInfo
-from readin.description_helpers import plain_text_description
-from readin.utils               import sdg_from_parts, get_inventory
+from models.actors              import Actor, ItemLimit, TargetInfo, ActorInfo
+from readin.description_helpers import PlainTextContext, PlainTextDescription, plain_text_description
+from readin.utils               import sdg_from_parts, get_inventory, get_wearing
+from readin.stand_in            import StandIn
 
 def add_to_name_space(name_space:NameFinder) -> None:
     sdg = sdg_from_parts(
@@ -10,44 +10,28 @@ def add_to_name_space(name_space:NameFinder) -> None:
         state_graphs=[name_space.get_from_id("standard_character")]
     )
 
-    inventory = get_inventory(bear, ItemLimit(200, 100))
+    inventory = get_inventory(StandIn('bear', 'actor'), ItemLimit(200, 100))
+    wearing   = get_wearing(  StandIn('bear', 'actor'), ItemLimit(15, 15))
 
     bear = Actor(
-        name_info=NameInfo(
-            name="Bear",
-            description_context="",
-            description_strategy="",
-            aliases=[]
-        ),
+        name="Bear",
+        description_context=PlainTextContext("a bear."),
+        description_strategy=PlainTextDescription(),
         target_info=TargetInfo(
-
+            states=sdg,
+            target_responses={
+                name_space.get_from_id("look",   "action") : plain_text_description("You see a bear"),
+                name_space.get_from_id("take",   "action") : plain_text_description("A foolish endeavor."),
+                name_space.get_from_id("attack", "action") : plain_text_description("With what?"),
+                name_space.get_from_id("hug",    "action") : plain_text_description("This merely confuses and angers the Bear"),
+                name_space.get_from_id("kiss",   "action") : plain_text_description("The Bear thinks you are cute and kisses you back. With gusto!")
+            }
         ),
         actor_info=ActorInfo(
-
+            inventory=inventory,
+            wearing=wearing,
+            skills=name_space.get_from_id('standard'),
         ),
-        container_info=ContainerInfo(
-
-        ),
-        visible_info=VisibleInfo(
-            
-        )
-    )
-    
-    
-    (
-        
-        type="bear",
-        description=(plain_text, "a bear."),
-        states=sdg,
-        skills=name_space.get_from_id("standard"),
-        children=[inventory],
-        target_responses={
-            name_space.get_from_id("look",   "action") : StaticResponse("You see a bear"),
-            name_space.get_from_id("take",   "action") : StaticResponse("A foolish endeavor."),
-            name_space.get_from_id("attack", "action") : StaticResponse("With what?"),
-            name_space.get_from_id("hug",    "action") : StaticResponse("This merely confuses and angers the Bear"),
-            name_space.get_from_id("kiss",   "action") : StaticResponse("The Bear thinks you are cute and kisses you back. With gusto!")
-        }
     )
 
-    name_space.add_many([bear,inventory])
+    name_space.add_many([bear,inventory,wearing])

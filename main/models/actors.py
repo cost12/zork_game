@@ -221,7 +221,7 @@ class ActorInfo:
 
 @dataclass
 class Actor(Target):
-    actor_info : ActorInfo
+    actor_info : ActorInfo = field(kw_only=True)
 
     def __repr__(self):
         return f"<Actor {self.get_name()}>"
