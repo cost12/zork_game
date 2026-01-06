@@ -7,7 +7,6 @@ def add_to_name_space(name_space:NameFinder) -> None:
         name="cushion",
         description_context=ContentsContext("On a velvet cushion rests", "A velvet cushion sits on a pedestal, notably missing the precious item it seems to be meant to hold."),
 		description_strategy=ContentsDescription(),
-        #children=[name_space.get_from_id("wallet", "target")] TODO
     )
 
     location = Location(
@@ -15,7 +14,6 @@ def add_to_name_space(name_space:NameFinder) -> None:
         description_context=PlainTextContext("You enter a small, dark room with a luxurious velvet carpet."),
 		description_strategy=PlainTextDescription(),
         location_info=LocationInfo(),
-        #children=[child], TODO
     )
 
     name_space.add_many([child, location])

@@ -5,17 +5,15 @@ from readin.restriction_helpers import Restriction, ItemStateRestriction, ItemSt
 
 def add_to_name_space(name_space:NameFinder) -> None:
     child = LocationDetail(
-        name="toilet",
+        name="beehive",
         description_context=ContentsContext("Dripping from a large, intricate beehive is", "A large beehive buzzes with busy energy."),
 		description_strategy=ContentsDescription(),
-        #children=[StandIn("honey", "target")] TODO
     )
 
     location = Location(
         name="Beehive Room",
         description_context=PlainTextContext("You enter an odd, hexagonal room and immediately hear a loud buzzing sound. Bees fill the room, their hive in a corner to the east, dripping with honey. Passages are placed on each of the six gray concrete walls."),
 		description_strategy=PlainTextDescription(),
-        #children=[child, name_space.get_from_id("bear", "target")], TODO
         location_info=LocationInfo(
             action_restrictions={
                 name_space.get_from_id("look", "action") : [

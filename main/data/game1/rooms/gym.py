@@ -6,16 +6,15 @@ from readin.restriction_helpers import Restriction, ItemPlacementContext, ItemPl
 def add_to_name_space(name_space:NameFinder) -> None:
     child = LocationDetail(
         name="rack",
+        name_id='rack2',
         description_context=ContentsContext("Sitting on a simple and sturdy rack is", "A small pyramid-shamed weight rack stands empty before the poster of Arnold."),
 		description_strategy=ContentsDescription(),
-        #children=[name_space.get_from_id("weights", "target")] TODO
     )
 
     location = Location(
         name="Gym",
         description_context=PlainTextContext("You are standing in a vintage-feeling gymnasium that feels strangely familiar. On one end is a basketball hoop and a weight rack at the opposite end. Behind the weight rack is a poster of Arnold Schwarzeneger holding up three fingers."),
 		description_strategy=PlainTextDescription(),
-        #children=[child], TODO
         location_info=LocationInfo(
             action_restrictions={
                 name_space.get_from_id("look", "action") : [

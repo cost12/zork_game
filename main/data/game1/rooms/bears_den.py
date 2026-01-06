@@ -8,7 +8,6 @@ def add_to_name_space(name_space:NameFinder) -> None:
         name="Bear's Den",
         description_context=PlainTextContext("You are standing in a round, earthen den, reeking sickly sweet. A huge, hulking bear blocks a passageway to the North. In an alcove in the Eastern wall is a pile of large, empty jars decorated with what looks like simple depictions of bees."),
         description_strategy=PlainTextDescription(),
-        #children=[name_space.get_from_id("bear", "target")], TODO
         location_info=LocationInfo(
             action_restrictions={
                 name_space.get_from_id("look", "action") : [

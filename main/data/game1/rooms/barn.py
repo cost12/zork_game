@@ -10,7 +10,6 @@ def add_to_name_space(name_space:NameFinder) -> None:
         item_responses={
             name_space.get_from_id("spear", "target") : "A poof of smoke appears."
         },
-        #children=[StandIn("rubber ducky", "target")] TODO
     )
 
     child2 = LocationDetail(
@@ -20,7 +19,6 @@ def add_to_name_space(name_space:NameFinder) -> None:
         item_responses={
             name_space.get_from_id("pitchfork", "target") : "A poof of smoke appears."
         },
-        #children=[StandIn("warm boots", "target")] TODO
     )
 
     location = Location(
@@ -28,6 +26,5 @@ def add_to_name_space(name_space:NameFinder) -> None:
         description_context=PlainTextContext("You are in a large empty barn dominated by what seem to be abandoned stables. Cobwebs cover most surfaces. On the west wall, opposite the door, ancient tools are rusted to their racks, with a single holder missing something like a rake or staff."),
         description_strategy=PlainTextDescription(),
         location_info=LocationInfo(),
-        #children=[child, child2] TODO
     )
     name_space.add_many([child, child2, location])

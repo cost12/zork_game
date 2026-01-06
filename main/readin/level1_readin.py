@@ -5,7 +5,8 @@ import json
 
 import data.game1 # pylint: disable=unused-import
 from data.game1.character_control.character_control import get_character_control
-from models.actors                                  import World
+from data.game1.item_tree                           import get_item_tree
+from models.actors                                  import World, WorldMap
 from factories.factories                            import CharacterControlFactory
 from utils.relator                                  import NameFinder
 from readin.stand_in                                import replace_standins
@@ -41,6 +42,11 @@ def get_level1() -> tuple[World, NameFinder, CharacterControlFactory, dict[str,A
             raise e
 
     replace_standins(name_space)
+    world_map = WorldMap()
+    for path in name_space.get_from_name(category='path'):
+        world_map.add_path(path)
+    world.item_locations = get_item_tree(name_space)
+    world.world_map = world_map
     controllers = get_character_control(name_space)
     game_details = read_in_game_details('game1')
     game_details['playable_characters'] = controllers.playable_characters()

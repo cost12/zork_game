@@ -7,7 +7,6 @@ def add_to_name_space(name_space:NameFinder) -> None:
         name="wall",
         description_context=ContentsContext("Hanging from a peg in the wall is", None),
 		description_strategy=ContentsDescription(),
-        #children=[name_space.get_from_id("dried herbs", "target")] TODO
     )
 
     location = Location(
@@ -15,7 +14,6 @@ def add_to_name_space(name_space:NameFinder) -> None:
         description_context=PlainTextContext("You stand in the middle of a large, deserted greenhouse. Any plants that grew here are long dead."),
 		description_strategy=PlainTextDescription(),
         location_info=LocationInfo(),
-        #children=[child] TODO
     )
 
     name_space.add_many([child, location])

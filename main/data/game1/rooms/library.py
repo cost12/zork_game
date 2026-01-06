@@ -62,7 +62,6 @@ def add_to_name_space(name_space:NameFinder) -> None:
                 ]
             },
         ),
-        #children=[shelf3, shelf4, shelf5, shelf6, shelf7, shelf8, shelf9] TODO
     )
 
     name_space.add_many([shelf3, shelf4, shelf5, shelf6, shelf7, shelf8, shelf9, location])

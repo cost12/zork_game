@@ -8,7 +8,6 @@ def add_to_name_space(name_space:NameFinder) -> None:
         name="Cold Room",
         description_context=PlainTextContext("You enter what feels like a blast chiller. Frost covers the walls and floor. Your breath forms a thick cloud in front of your face and you shiver violently. Embedded in the floor in front of the passage opposite your entrance it is a vent that must be the source of the cold."),
 		description_strategy=PlainTextDescription(),
-        #children=[name_space.get_from_id("trunk", "target")], TODO
         location_info=LocationInfo(
             action_restrictions={
                 name_space.get_from_id("look", "action") : [

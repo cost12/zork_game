@@ -8,14 +8,12 @@ def add_to_name_space(name_space:NameFinder) -> None:
         name="rack",
         description_context=ContentsContext("Hanging on a well-worn wooden rack is", "An empty weapons rack hangs on the wall."),
         description_strategy=ContentsDescription(),
-        #children=[StandIn("spear", "target"), StandIn("pitchfork", "target"), StandIn("sword", "target")] TODO
     )
 
     armory = Location(
         name="Armory",
         description_context=PlainTextContext("You stand in an old armory that once held many armaments and much armor. All that remains are a few neglected weapons. On the floor is a mosaic resembling an hourglass with both glass canisters cracked."),
         description_strategy=PlainTextDescription(),
-        #children=[rack], TODO
         location_info=LocationInfo(
             action_restrictions={
                 name_space.get_from_id("take", "action") : Restriction[ItemStateContext](

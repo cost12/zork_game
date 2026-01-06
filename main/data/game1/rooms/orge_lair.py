@@ -8,7 +8,6 @@ def add_to_name_space(name_space:NameFinder) -> None:
         name="Orge Lair",
         description_context=PlainTextContext("You are standing in a smelly, humid room that smells like a well-used locker room, rancid and almost spicy. Roots poke through the ceiling and crude pornographic etchings cover the walls."),
 		description_strategy=PlainTextDescription(),
-        #children=[name_space.get_from_id("orge", "actor")], TODO
         location_info=LocationInfo(
             action_restrictions={
                 name_space.get_from_id("look", "action") : [

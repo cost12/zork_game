@@ -9,14 +9,12 @@ def add_to_name_space(name_space:NameFinder) -> None:
         name_id="puzzle room table",
         description_context=ContentsContext("On a spindly table you find", "There is a spindly table in the middle of the room, holding nothing"),
 		description_strategy=ContentsDescription(),
-        #children=[name_space.get_from_id("puzzle", "target")] TODO
     )
 
     location = Location(
         name="Puzzle Room",
         description_context=PlainTextContext("You are standing in a homey room. On a carpet stands a table."),
 		description_strategy=PlainTextDescription(),
-        #children=[child], TODO
         location_info=LocationInfo(
             action_restrictions={
                 name_space.get_from_id("look", "action") : [

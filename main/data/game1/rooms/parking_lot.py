@@ -8,7 +8,6 @@ def add_to_name_space(name_space:NameFinder) -> None:
         name="in trunk",
         description_context=ContentsContext("Nestled in the corner of the trunk is", "The trunk is dissapointingly empty"),
 		description_strategy=ContentsDescription(),
-        #children=[name_space.get_from_id("fuzzy jacket", "target")], TODO
         visible_restrictions=[
             Restriction[ItemStateContext](ItemStateContext(name_space.get_from_id("trunk door", "target"), name_space.get_from_id("opened", "state"), "You can't see into the trunk."), ItemStateRestriction())
         ]
@@ -18,7 +17,6 @@ def add_to_name_space(name_space:NameFinder) -> None:
         name="Parking Lot",
         description_context=PlainTextContext("You are standing in a large underground parking lot dotted with square concrete columns. A single car is parked, lonesomely covered in a layer of dust."),
 		description_strategy=PlainTextDescription(),
-        #children=[child, name_space.get_from_id("orge", "actor")], TODO
         location_info=LocationInfo(
             action_restrictions={
                 name_space.get_from_id("look", "action") : [

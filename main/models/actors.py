@@ -94,6 +94,15 @@ class Path(NamedContainer):
 
     def __repr__(self):
         return f"<Path {self.get_name()}>"
+    
+    def is_visible(self, context):
+        hidden, response = super().is_visible(context)
+        if hidden:
+            return hidden, response
+        can_pass, pass_response = self.can_pass(context)
+        if self.path_info.hidden_when_locked and not can_pass:
+            return False, pass_response
+        return hidden, response
 
     def get_direction(self) -> Direction:
         return self.path_info.direction
@@ -121,6 +130,14 @@ class TwoWayPath(Path):
     reverse_description_strategy : DescriptionStrategy = field(kw_only=True)
     reverse_passing_restrictions : list[Restriction] = field(kw_only=True, default_factory=list)
 
+    def describe(self, context):
+        if context.inventory.get_room(context.character) == self.path_info.start:
+            return super().describe(context)
+        visible, desc = self.is_visible(context)
+        if visible:
+            return Description(self, self.reverse_description_strategy, self.reverse_description_context)
+        return desc
+
     def list_starts(self) -> list[tuple['Location',Direction]]:
         return [(self.path_info.start,self.path_info.direction), (self.path_info.end,self.reverse_direction)]
 
@@ -128,6 +145,15 @@ class TwoWayPath(Path):
         if context.item_locations.get_room(context.character) == self.path_info.start:
             return self.path_info.end
         return self.path_info.start
+
+    def can_pass(self, context:RestrictionContext) -> tuple[bool,Description]:
+        if context.inventory.get_room(context.character) == self.path_info.start:
+            return super().can_pass(context)
+        for restriction in self.reverse_passing_restrictions:
+            passes, response = restriction.passes(context)
+            if not passes:
+                return passes, response
+        return True, None
 
 @dataclass
 class MultiPath(Path):

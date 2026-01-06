@@ -261,7 +261,7 @@ class StateDisconnectedGraph(FullState):
         raise RuntimeError("Unimplemented")
 
     def has_state(self, state:State) -> bool:
-        return any([graph.has_state(state) for graph in self.state_graphs])
+        return any(graph.has_state(state) for graph in self.state_graphs)
 
     def has_effect(self, effect:Effect) -> bool:
         raise RuntimeError("Unimplemented")
