@@ -4,7 +4,7 @@ from typing          import TypeVar, Generic
 
 from models.state    import State, Achievement
 from models.actors   import Actor, Target, ItemTree
-from readin.description_helpers import Description
+from readin.description_helpers import Description, PlainTextContext, PlainTextDescription
 T = TypeVar('T')
 
 @dataclass
@@ -60,3 +60,14 @@ class CharacterAchievementRestriciton(RestrictionStrategy[CharacterAchievementCo
         if context.character.has_completed_achievement(specific.achievement):
             return True, None
         return False, specific.response
+
+@dataclass
+class CharacterWearingContext:
+    item     : Target
+    response : str
+
+class CharacterWearingRestriciton(RestrictionStrategy[CharacterWearingContext]):
+    def passes(self, context:RestrictionContext, specific:CharacterWearingContext) -> tuple[bool,Description]:
+        if context.inventory.is_wearing(context.character, specific.item):
+            return True, None
+        return False, Description[PlainTextContext](None, PlainTextContext(specific.response), PlainTextDescription())

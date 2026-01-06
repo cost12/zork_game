@@ -1,38 +1,18 @@
-from models.actors              import Location, SingleEndPath, Actor, Target
-from models.named               import Direction
-from models.response            import Response
-from readin.description_helpers import Description, PlainTextContext, PlainTextDescription
-from readin.stand_in            import StandIn
+from models.actors              import Location, LocationInfo
+from readin.description_helpers import PlainTextContext, PlainTextDescription
+from readin.restriction_helpers import Restriction, CharacterWearingRestriciton, CharacterWearingContext
 from utils.relator              import NameFinder
 
 def add_to_name_space(name_space:NameFinder) -> None:
-    northeast_path = SingleEndPath(
-        name        = "Bright Room Northeast Exit",
-        description = Description[PlainTextContext](PlainTextContext("A passage exists, but you cannot tell in which direction, for you are nearly blinded by the light."), PlainTextDescription()),
-        end         = StandIn[Location]("Orge Lair", "location")
-    )
-
-    southwest_path = SingleEndPath(
-        name        = "Bright Room Southwest Exit",
-        description = Description[PlainTextContext](PlainTextContext("Somewhere in your field of vision is a passage, but you are disoriented by the brightness and cannot tell in which direction it lies."), PlainTextDescription()),
-        end         = StandIn[Location]("Theatre Entrance", "location")
-    )
-
-    def look_restriction(character:Actor, sunglasses:Target) -> tuple[bool, Response]:
-        if character.is_wearing(sunglasses):
-            return True, None
-        return False, "[Bright Room]\nUpon entering the room, a shockingly bright light strikes your eyes, forcing you to shut them tight. You simply cannot bear to open them."
-
     bright_room = Location(
-        name        = "Bright Room",
-        description = Description[PlainTextContext](PlainTextContext("The room is possessed by an overwhelmingly bright light. By squinting hard, you can just barely make out an eerily smooth room."), PlainTextDescription()),
-        paths       = {
-            StandIn[Direction]("Northeast", "direction"): northeast_path,
-            StandIn[Direction]("Southwest", "direction"): southwest_path
-        },
-        action_restrictions = {
-            "look" : (look_restriction, StandIn[Target]("Sunglasses", "location"))
-        }
+        name="Bright Room",
+        description_context=PlainTextContext("The room is possessed by an overwhelmingly bright light. By squinting hard, you can just barely make out an eerily smooth room."),
+		description_strategy=PlainTextDescription(),
+        location_info=LocationInfo(
+            action_restrictions = {
+                name_space.get_from_id("look", 'action') : [Restriction[CharacterWearingContext](CharacterWearingContext(name_space.get_from_id("Sunglasses", "location"), "[Bright Room]\nUpon entering the room, a shockingly bright light strikes your eyes, forcing you to shut them tight. You simply cannot bear to open them."), CharacterWearingRestriciton())]
+            }
+        ),
     )
 
-    name_space.add_many([northeast_path, southwest_path, bright_room])
+    name_space.add_many([bright_room])

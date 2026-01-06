@@ -3,7 +3,7 @@ from typing    import Any
 import pkgutil
 import json
 
-import data.game1
+import data.game1 # pylint: disable=unused-import
 from data.game1.character_control.character_control import get_character_control
 from models.actors                                  import World
 from factories.factories                            import CharacterControlFactory
@@ -23,7 +23,7 @@ def get_level1() -> tuple[World, NameFinder, CharacterControlFactory, dict[str,A
     name_space = NameFinder()
     world      = World()
 
-    modules = ['directions', 'actions', 'achievements', 'states', 'state_graphs', 'items', 'skills', 'skill_sets', 'characters', 'rooms']
+    modules = ['directions', 'actions', 'achievements', 'states', 'state_graphs', 'items', 'skills', 'skill_sets', 'characters', 'rooms', 'paths']
     for module in modules:
         try:
             imported_module = import_module(f'data.game1.{module}')

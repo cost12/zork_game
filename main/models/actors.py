@@ -7,7 +7,7 @@ import networkx  as nx
 from models.state               import State, Skill, FullState, SkillSet, Achievement
 from models.named               import Named, Action, Direction
 from readin.restriction_helpers import Restriction, RestrictionContext
-from readin.description_helpers import Description, DescriptionStrategy, CombinationDescription, CombinationContext, plain_text_description, combine_descriptions, BackupDescription, PlainTextContext, PlainTextDescription
+from readin.description_helpers import Description, DescriptionStrategy, DescriptionContext, CombinationDescription, CombinationContext, plain_text_description, combine_descriptions, BackupDescription, PlainTextContext, PlainTextDescription
 
 T = TypeVar('T')
 
@@ -90,7 +90,7 @@ class PathEndContext:
 
 @dataclass
 class Path(NamedContainer):
-    path_info : PathInfo
+    path_info : PathInfo = field(kw_only=True)
 
     def __repr__(self):
         return f"<Path {self.get_name()}>"
@@ -116,7 +116,10 @@ class Path(NamedContainer):
 
 @dataclass
 class TwoWayPath(Path):
-    reverse_direction : Direction
+    reverse_direction : Direction = field(kw_only=True)
+    reverse_description_context : DescriptionContext = field(kw_only=True)
+    reverse_description_strategy : DescriptionStrategy = field(kw_only=True)
+    reverse_passing_restrictions : list[Restriction] = field(kw_only=True, default_factory=list)
 
     def list_starts(self) -> list[tuple['Location',Direction]]:
         return [(self.path_info.start,self.path_info.direction), (self.path_info.end,self.reverse_direction)]
@@ -128,7 +131,7 @@ class TwoWayPath(Path):
 
 @dataclass
 class MultiPath(Path):
-    multi_end : dict['Target','Location']
+    multi_end : dict['Target','Location'] = field(kw_only=True)
 
     def can_pass(self, context:RestrictionContext) -> tuple[bool,Description]:
         can_pass, response = super().can_pass(context)
@@ -284,7 +287,7 @@ class LocationInfo:
 
 @dataclass
 class Location(NamedContainer):
-    location_info : LocationInfo
+    location_info : LocationInfo = field(kw_only=True)
 
     def __repr__(self):
         return f"<Location {self.get_name()}>"
@@ -354,6 +357,12 @@ class ItemTree:
         contents  = self.get_children(inventory)
         return contents
 
+    def is_wearing(self, character:Actor, item:Target) -> bool:
+        return item in self.get_children(character.get_wearing())
+
+    def is_holding(self, character:Actor, item:Target) -> bool:
+        return item in self.get_children(character.get_inventory())
+
     def get_local_tree(self, item:NamedContainer) -> 'ItemTree':
         ancestors   : set[str] = nx.ancestors(self.graph, item.get_id())
         descendants : set[str] = nx.descendants(self.graph, item.get_id())
@@ -405,7 +414,7 @@ class WorldMap:
     def add_path(self, path:Path):
         for start,direction in path.list_starts():
             if not start in self.world_map:
-                self.world_map[start] = dict[Direction,Path]()
+                self.world_map[start]  = {} # dict[Direction,Path]
             self.world_map[start][direction] = path
 
     # utils
