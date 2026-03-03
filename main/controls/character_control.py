@@ -9,9 +9,9 @@ from readin.description_helpers import Description, DescriptionContext
 class Feedback:
     description : Description
     context     : DescriptionContext
+    score       : int
     moves       : int = 1
     turns       : int = 1
-    score       : int
 
     def get_success(self) -> bool:
         return self.context.success

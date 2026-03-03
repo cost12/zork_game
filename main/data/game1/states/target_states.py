@@ -33,7 +33,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
         {"name": "untied",      "actions_as_target" : ["tie"]},
         {"name": "tied",        "actions_as_target" : ["untie"]},
         {"name": "flippable",   "actions_as_target" : ["toggle"]},
-        {"name": "empty",       "actions_as_target" : ["fill"], "id": "empty (state)"},
+        {"name": "empty",       "actions_as_target" : ["fill"], "name_id": "empty (state)"},
         {"name": "full",        "actions_as_target" : ["empty"]},
         {"name": "hangable",    "actions_as_target" : ["hang"]},
         {"name": "rideable",    "actions_as_tool"   : ["ride"]},

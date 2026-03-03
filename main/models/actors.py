@@ -3,6 +3,7 @@ from dataclasses import dataclass, field
 import random
 
 import networkx  as nx
+from frozendict import frozendict
 
 from models.state               import State, Skill, FullState, SkillSet, Achievement
 from models.named               import Named, Action, Direction
@@ -19,18 +20,22 @@ def can_fit(item:'Container', container:'Container', item_tree:'ItemTree') -> bo
         return all(can_fit(item, c, item_tree) for c in item_tree.get_parents(container))
     return False
 
-@dataclass
+@dataclass(frozen=True)
 class ItemLimit:
     size_limit   : float|None = None
     weight_limit : float|None = None
     value_limit  : float|None = None
 
-@dataclass
+@dataclass(frozen=True)
 class Visible:
-    description_context  : Any                 = PlainTextContext("No description")
-    description_strategy : DescriptionStrategy = PlainTextDescription()
-    hidden               : bool                = False
-    visible_restrictions : list[Restriction]   = field(default_factory=list[Restriction])
+    description_context  : Any                    = field(default_factory=lambda: PlainTextContext("No description"))
+    description_strategy : DescriptionStrategy    = field(default_factory=PlainTextDescription)
+    hidden               : bool                   = False
+    visible_restrictions : tuple[Restriction,...] = field(default_factory=tuple)
+
+    def __post_init__(self):
+        if not isinstance(self.visible_restrictions, tuple):
+            object.__setattr__(self, 'visible_restrictions', tuple(self.visible_restrictions))
 
     def is_visible(self, context:RestrictionContext) -> tuple[bool,Description]:
         for visible_restriction in self.visible_restrictions:
@@ -45,13 +50,18 @@ class Visible:
             return Description(self, self.description_strategy, self.description_context)
         return desc
 
-@dataclass
+@dataclass(frozen=True)
 class Container(Visible):
-    item_limit     : ItemLimit               = field(default_factory=ItemLimit)
-    item_responses : dict['Container',str]   = field(default_factory=dict['Container',str])
-    weight         : float                   = 1.0
-    size           : float                   = 1.0
-    value          : float                   = 0.0
+    item_limit     : ItemLimit                   = field(default_factory=ItemLimit)
+    item_responses : frozendict['Container',str] = field(default_factory=frozendict)
+    weight         : float                       = 1.0
+    size           : float                       = 1.0
+    value          : float                       = 0.0
+
+    def __post_init__(self):
+        super().__post_init__()
+        if not isinstance(self.item_responses, frozendict):
+            object.__setattr__(self, 'item_responses', frozendict(self.item_responses))
 
     def get_weight(self) -> float:
         return self.weight
@@ -65,36 +75,42 @@ class Container(Visible):
     def get_item_limit(self) -> ItemLimit:
         return self.item_limit
 
-@dataclass
+@dataclass(frozen=True)
 class NamedContainer(Container, Named):
-    pass
+    def __post_init__(self):
+        Named.__post_init__(self)
+        Container.__post_init__(self)
 
 class LocationDetail(NamedContainer):
 
     def __repr__(self):
         return f"<LocationDetail {self.get_name()}>"
 
-@dataclass
+@dataclass(frozen=True)
 class PathInfo:
     start                : 'Location'
     end                  : 'Location'
     direction            : Direction
-    passing_restrictions : list[Restriction] = field(default_factory=list[Restriction])
+    passing_restrictions : tuple[Restriction] = field(default_factory=tuple)
     exit_response        : Description       = None
     hidden_when_locked   : bool              = False
 
-@dataclass
+    def __post_init__(self):
+        if not isinstance(self.passing_restrictions, tuple):
+            object.__setattr__(self, 'passing_restrictions', tuple(self.passing_restrictions))
+
+@dataclass(frozen=True)
 class PathEndContext:
     character      : 'Actor'
     item_locations : 'ItemTree'
 
-@dataclass
+@dataclass(frozen=True)
 class Path(NamedContainer):
     path_info : PathInfo = field(kw_only=True)
 
     def __repr__(self):
         return f"<Path {self.get_name()}>"
-    
+
     def is_visible(self, context):
         hidden, response = super().is_visible(context)
         if hidden:
@@ -113,7 +129,7 @@ class Path(NamedContainer):
     def list_starts(self) -> list[tuple['Location',Direction]]:
         return [(self.path_info.start, self.path_info.direction)]
 
-    def get_end(self, context:PathEndContext) -> 'Location'|None:
+    def get_end(self, context:PathEndContext) -> 'Location|None':
         return self.path_info.end
 
     def can_pass(self, context:RestrictionContext) -> tuple[bool,Description]:
@@ -123,12 +139,17 @@ class Path(NamedContainer):
                 return passes, response
         return True, None
 
-@dataclass
+@dataclass(frozen=True)
 class TwoWayPath(Path):
     reverse_direction : Direction = field(kw_only=True)
     reverse_description_context : DescriptionContext = field(kw_only=True)
     reverse_description_strategy : DescriptionStrategy = field(kw_only=True)
-    reverse_passing_restrictions : list[Restriction] = field(kw_only=True, default_factory=list)
+    reverse_passing_restrictions : tuple[Restriction] = field(kw_only=True, default_factory=tuple)
+
+    def __post_init__(self):
+        super().__post_init__()
+        if not isinstance(self.reverse_passing_restrictions, tuple):
+            object.__setattr__(self, 'reverse_passing_restrictions', tuple(self.reverse_passing_restrictions))
 
     def describe(self, context):
         if context.inventory.get_room(context.character) == self.path_info.start:
@@ -141,7 +162,7 @@ class TwoWayPath(Path):
     def list_starts(self) -> list[tuple['Location',Direction]]:
         return [(self.path_info.start,self.path_info.direction), (self.path_info.end,self.reverse_direction)]
 
-    def get_end(self, context:PathEndContext) -> 'Location'|None:
+    def get_end(self, context:PathEndContext) -> 'Location|None':
         if context.item_locations.get_room(context.character) == self.path_info.start:
             return self.path_info.end
         return self.path_info.start
@@ -155,9 +176,14 @@ class TwoWayPath(Path):
                 return passes, response
         return True, None
 
-@dataclass
+@dataclass(frozen=True)
 class MultiPath(Path):
-    multi_end : dict['Target','Location'] = field(kw_only=True)
+    multi_end : frozendict['Target','Location'] = field(kw_only=True)
+
+    def __post_init__(self):
+        super().__post_init__()
+        if not isinstance(self.multi_end, frozendict):
+            object.__setattr__(self, 'multi_end', frozendict(self.multi_end))
 
     def can_pass(self, context:RestrictionContext) -> tuple[bool,Description]:
         can_pass, response = super().can_pass(context)
@@ -173,7 +199,7 @@ class MultiPath(Path):
             return True, None
         return False, plain_text_description("The path stretches ahead like a maze and you dare not step forward.")
 
-    def get_end(self, context:PathEndContext) -> 'Location'|None:
+    def get_end(self, context:PathEndContext) -> 'Location|None':
         inventory = context.item_locations.get_inventory_contents(context.character)
         overlap   = [item for item in inventory if item in self.multi_end]
         if len(overlap) == 0:
@@ -182,16 +208,24 @@ class MultiPath(Path):
             return overlap[0]
         return None
 
-@dataclass
+@dataclass(frozen=True)
 class TargetInfo:
     states           : FullState
-    target_responses : dict[Action,Description] = field(default_factory=dict)
-    tool_responses   : dict[Action,Description] = field(default_factory=dict)
-    state_responses  : dict[State, Description] = field(default_factory=dict)
+    target_responses : frozendict[Action,Description] = field(default_factory=frozendict)
+    tool_responses   : frozendict[Action,Description] = field(default_factory=frozendict)
+    state_responses  : frozendict[State, Description] = field(default_factory=frozendict)
     inside           : LocationDetail|None      = None
     on               : LocationDetail|None      = None
 
-@dataclass
+    def __post_init__(self):
+        if not isinstance(self.target_responses, frozendict):
+            object.__setattr__(self, 'target_responses', frozendict(self.target_responses))
+        if not isinstance(self.tool_responses, frozendict):
+            object.__setattr__(self, 'tool_responses', frozendict(self.tool_responses))
+        if not isinstance(self.state_responses, frozendict):
+            object.__setattr__(self, 'state_responses', frozendict(self.state_responses))
+
+@dataclass(frozen=True)
 class Target(NamedContainer):
     target_info : TargetInfo = field(kw_only=True)
 
@@ -239,21 +273,32 @@ class Target(NamedContainer):
                 response.append(self.target_info.state_responses[new_state])
         return Description[CombinationContext](self, CombinationContext(response), CombinationContext)
 
-@dataclass
+@dataclass(frozen=True)
 class ActorInfo:
     skills          : SkillSet
     inventory       : LocationDetail
     wearing         : LocationDetail
-    achievements    : set[Achievement]         = field(default_factory=list)
-    actor_responses : dict[Action,Description] = field(default_factory=dict)
-    actor_type      : str                      = 'Standard'
+    achievements    : frozenset[Achievement]         = field(default_factory=frozenset)
+    actor_responses : frozendict[Action,Description] = field(default_factory=frozendict)
+    actor_type      : str                            = 'Standard'
 
-@dataclass
+    def __post_init__(self):
+        if not isinstance(self.achievements, frozenset):
+            object.__setattr__(self, 'achievements', frozenset(self.achievements))
+        if not isinstance(self.actor_responses, frozendict):
+            object.__setattr__(self, 'actor_responses', frozendict(self.actor_responses))
+
+@dataclass(frozen=True)
 class Actor(Target):
     actor_info : ActorInfo = field(kw_only=True)
 
     def __repr__(self):
         return f"<Actor {self.get_name()}>"
+
+    # initializers
+
+    def _set_inventory(self, inventory: LocationDetail):
+        object.__setattr__(self.actor_info, 'inventory', inventory)
 
     # GETTERS
 
@@ -305,13 +350,19 @@ class Actor(Target):
     def complete_achievement(self, achievement:Achievement) -> None:
         self.actor_info.achievements.add(achievement)
 
-@dataclass
+@dataclass(frozen=True)
 class LocationInfo:
     is_start_location   : bool                           = False
-    action_restrictions : dict[Action,list[Restriction]] = field(default_factory=dict)
-    direction_responses : dict[Direction,Description]    = field(default_factory=dict)
+    action_restrictions : frozendict[Action,list[Restriction]] = field(default_factory=frozendict)
+    direction_responses : frozendict[Direction,Description]    = field(default_factory=frozendict)
 
-@dataclass
+    def __post_init__(self):
+        if not isinstance(self.action_restrictions, frozendict):
+            object.__setattr__(self, 'action_restrictions', frozendict(self.action_restrictions))
+        if not isinstance(self.direction_responses, frozendict):
+            object.__setattr__(self, 'direction_responses', frozendict(self.direction_responses))
+
+@dataclass(frozen=True)
 class Location(NamedContainer):
     location_info : LocationInfo = field(kw_only=True)
 
@@ -329,52 +380,73 @@ class Location(NamedContainer):
     def is_start_location(self) -> bool:
         return self.location_info.is_start_location
 
+# TODO: state tracker for targets/actors - some sort of dict[Target,State] so targets remain immutable but can have state updates
+# TODO: probably similar skill/achievement trackers for actors - dict[Actor, Skill] / dict[Actor, Achievement]
+# TODO: inventory/wearing size should be stored in Actor - create inventory automatically in ItemTree
+# TODO: figure out a way around StandIn
+# TODO: there are still items left to be placed in other items - scan data/items to find
+
 class ItemTree:
     def __init__(self, *, graph:nx.DiGraph=None):
-        self.graph = graph if graph else nx.DiGraph()
+        self.__graph = graph if graph else nx.DiGraph()
 
     # initialization
 
-    def add_room(self, room:Location):
-        self.graph.add_node(room.get_id(), obj=room, type="room")
+    def add_room(self, room:Location) -> 'ItemTree':
+        new_graph = self.__graph.copy()
+        new_graph.add_node(room.get_id(), obj=room, type="room")
+        return ItemTree(graph=new_graph)
 
-    def add_path(self, path:Path):
-        self.graph.add_node(path.get_id(), obj=path, type='path')
+    def add_path(self, path:Path) -> 'ItemTree':
+        new_graph = self.__graph.copy()
+        new_graph.add_node(path.get_id(), obj=path, type='path')
+        return ItemTree(graph=new_graph)
 
-    def __add_edge(self, child:NamedContainer, parent:NamedContainer):
-        self.graph.add_edge(parent.get_id(), child.get_id(), relationship="child")
+    def __add_edge(self, graph: nx.DiGraph, child:NamedContainer, parent:NamedContainer):
+        graph.add_edge(parent.get_id(), child.get_id(), relationship="child")
 
-    def add_location_detail(self, location_detail:LocationDetail, location:NamedContainer):
-        self.graph.add_node(location_detail.get_id(), obj=location_detail, type='location_detail')
-        self.__add_edge(location_detail, location)
+    def __add_location_detail(self, graph: nx.DiGraph, location_detail:LocationDetail, location:NamedContainer):
+        graph.add_node(location_detail.get_id(), obj=location_detail, type='location_detail')
+        self.__add_edge(graph, location_detail, location)
 
-    def add_item(self, item:Target, location:NamedContainer):
-        self.graph.add_node(item.get_id(), obj=item, type='item')
-        self.__add_edge(item, location)
+    def add_location_detail(self, location_detail:LocationDetail, location:NamedContainer) -> 'ItemTree':
+        new_graph = self.__graph.copy()
+        self.__add_location_detail(new_graph, location_detail, location)
+        return ItemTree(graph=new_graph)
+
+    def add_item(self, item:Target, location:NamedContainer) -> 'ItemTree':
+        new_graph = self.__graph.copy()
+        new_graph.add_node(item.get_id(), obj=item, type='item')
+        self.__add_edge(new_graph, item, location)
         if item.get_inside():
-            self.add_location_detail(item.get_inside(), item)
+            self.__add_location_detail(new_graph, item.get_inside(), item)
         if item.get_on():
-            self.add_location_detail(item.get_on(), item)
+            self.__add_location_detail(new_graph, item.get_on(), item)
+        return ItemTree(graph=new_graph)
 
-    def add_character(self, character:Actor, location:NamedContainer):
-        self.graph.add_node(character.get_id(), obj=character, type='character')
-        self.__add_edge(character, location)
+    def add_character(self, character:Actor, location:NamedContainer) -> 'ItemTree':
+        new_graph = self.__graph.copy()
+        new_graph.add_node(character.get_id(), obj=character, type='character')
+        self.__add_edge(new_graph, character, location)
         if character.get_inside():
-            self.add_location_detail(character.get_inside(), character)
+            self.__add_location_detail(new_graph, character.get_inside(), character)
         if character.get_on():
-            self.add_location_detail(character.get_on(), character)
-        self.add_location_detail(character.get_inventory(), character)
-        self.add_location_detail(character.get_wearing(), character)
+            self.__add_location_detail(new_graph, character.get_on(), character)
+        self.__add_location_detail(new_graph, character.get_inventory(), character)
+        self.__add_location_detail(new_graph, character.get_wearing(), character)
+        return ItemTree(graph=new_graph)
 
     # mutators
 
-    def move(self, item:NamedContainer, location:NamedContainer):
+    def move(self, item:NamedContainer, location:NamedContainer) -> 'ItemTree':
+        new_graph = self.__graph.copy()
         parents = self.get_parents(item)
         if not (len(parents) == 1 and parents[0].get_id() == location.get_id()):
             raise RuntimeError("Wrong number of parents for item to be moved.")
         parent = parents[0]
-        self.graph.remove_edge(parent.get_id(), item.get_id())
-        self.graph.add_edge(location.get_id(), item.get_id(), relationship="child")
+        new_graph.remove_edge(parent.get_id(), item.get_id())
+        new_graph.add_edge(location.get_id(), item.get_id(), relationship="child")
+        return ItemTree(graph=new_graph)
 
     # utils
 
@@ -390,17 +462,17 @@ class ItemTree:
         return item in self.get_children(character.get_inventory())
 
     def get_local_tree(self, item:NamedContainer) -> 'ItemTree':
-        ancestors   : set[str] = nx.ancestors(self.graph, item.get_id())
-        descendants : set[str] = nx.descendants(self.graph, item.get_id())
+        ancestors   : set[str] = nx.ancestors(self.__graph, item.get_id())
+        descendants : set[str] = nx.descendants(self.__graph, item.get_id())
         nodes                  = ancestors | {item.get_id()} | descendants
-        subgraph               = self.graph.subgraph(nodes).copy()
+        subgraph               = self.__graph.subgraph(nodes).copy()
         return ItemTree(graph=subgraph)
 
     def get_parents(self, item:NamedContainer) -> list[NamedContainer]:
-        return [self.graph.nodes[p]['obj'] for p in self.graph.predecessors(item.get_id())]
+        return [self.__graph.nodes[p]['obj'] for p in self.__graph.predecessors(item.get_id())]
 
     def get_children(self, item:NamedContainer) -> list[NamedContainer]:
-        return [self.graph.nodes[c]['obj'] for c in self.graph.successors(item.get_id())]
+        return [self.__graph.nodes[c]['obj'] for c in self.__graph.successors(item.get_id())]
 
     def get_weight(self, item:NamedContainer) -> float:
         children = self.get_children(item)
@@ -425,92 +497,102 @@ class ItemTree:
 
     def get_room(self, item:NamedContainer) -> Location|Path:
         top = item
-        parents = list(self.graph.predecessors(item))
+        parents = list(self.__graph.predecessors(item))
         while parents:
             top = parents[0]
-            parents = list(self.graph.predecessors(parents[0]))
+            parents = list(self.__graph.predecessors(parents[0]))
         return top
 
 class WorldMap:
-    def __init__(self):
-        self.world_map = dict[Location,dict[Direction,Path]]()
+    def __init__(self, *, init_map: frozendict[Location,frozendict[Direction,Path]]|None=None):
+        self.__world_map : frozendict[Location,frozendict[Direction,Path]] = init_map if init_map is not None else frozendict()
 
     # initialization
 
-    def add_path(self, path:Path):
-        for start,direction in path.list_starts():
-            if not start in self.world_map:
-                self.world_map[start]  = {} # dict[Direction,Path]
-            self.world_map[start][direction] = path
+    def add_path(self, path:Path) -> 'WorldMap':
+        new_map = {key:dict(val) for key, val in self.__world_map.items()}
+        for start, direction in path.list_starts():
+            if not start in new_map:
+                new_map[start] = {}
+            new_map[start][direction] = path
+        return WorldMap(init_map=frozendict({key:frozendict(val) for key, val in new_map.items()}))
 
     # utils
 
     def are_adjacent(self, location:Location, path:Path) -> int:
-        return path in self.world_map[location].values()
+        return path in self.__world_map[location].values()
 
     def get_paths(self, room:Location) -> list[Path]:
-        return list(self.world_map[room].values())
+        return list(self.__world_map[room].values())
 
     def get_path(self, room:Location, direction:Direction) -> Path|None:
         if direction.get_name() == "random":
-            return random.choice(list(self.world_map[room].values()))
-        return self.world_map[room].get(direction)
+            return random.choice(list(self.__world_map[room].values()))
+        return self.__world_map[room].get(direction)
 
 class World:
 
-    def __init__(self):
-        self.item_locations = ItemTree()
-        self.world_map      = WorldMap()
+    def __init__(self, *, init_locations: ItemTree|None=None, init_map: WorldMap|None=None):
+        self.__item_locations = ItemTree() if init_locations is None else init_locations
+        self.__world_map      = WorldMap() if init_map       is None else init_map
+
+    # init
+    def add_character(self, character: Actor, location: Location) -> 'World':
+        new_locations = self.__item_locations.add_character(character, location)
+        return World(init_locations=new_locations, init_map=self.__world_map)
 
     # MOVEMENT
 
-    def walk(self, character:Actor, direction:Direction) -> tuple[bool,Description]:
+    def walk(self, character:Actor, direction:Direction) -> tuple['World',bool,Description]:
         room = self.get_room(character)
         path = self.get_path(room, direction)
         if path is None:
             return False, plain_text_description(f"There is no path to the {direction.get_name()}.")
-        can_pass, response = path.can_pass(RestrictionContext(character, self.item_locations.get_local_tree(character)))
+        can_pass, response = path.can_pass(RestrictionContext(character, self.__item_locations.get_local_tree(character)))
         if can_pass:
-            end = path.get_end(PathEndContext(character, self.item_locations.get_local_tree(character)))
+            end = path.get_end(PathEndContext(character, self.__item_locations.get_local_tree(character)))
             if end: # end should never be None but just in case
-                self.item_locations.move(character, end)
-                return True, response
-        return False, response
+                new_locations = self.__item_locations.move(character, end)
+                return World(init_locations=new_locations, init_map=self.__world_map), True, response
+        return self, False, response
 
-    def move_item(self, item:NamedContainer, new_spot:NamedContainer) -> tuple[bool,Description]:
+    def move_item(self, item:NamedContainer, new_spot:NamedContainer) -> tuple['World',bool,Description]:
         if not self.get_room(item) == self.get_room(new_spot):
             return False, plain_text_description(f"{item.get_name()} is not in the same room as {new_spot.get_name()}")
         if can_fit(item, new_spot, self):
-            self.item_locations.move(item, new_spot)
-            return True, None
-        return False, plain_text_description(f"There is no room in {new_spot.get_name()} for {item.get_name()}")
+            new_locations = self.__item_locations.move(item, new_spot)
+            return World(init_locations=new_locations, init_map=self.__world_map), True, None
+        return self, False, plain_text_description(f"There is no room in {new_spot.get_name()} for {item.get_name()}")
 
     # UTILS
 
     def get_room(self, item:NamedContainer) -> Location:
-        return self.item_locations.get_room(item)
+        return self.__item_locations.get_room(item)
 
     def get_path(self, room:Location, direction:Direction) -> Path|None:
-        return self.world_map.get_path(room, direction)
+        return self.__world_map.get_path(room, direction)
 
     def get_local_tree(self, item:NamedContainer) -> ItemTree:
-        return self.item_locations.get_local_tree(item)
+        return self.__item_locations.get_local_tree(item)
+
+    def get_locations(self) -> ItemTree:
+        return self.__item_locations
 
     # ACTIONS
 
     def can_interact(self, character:Actor, item:NamedContainer) -> bool:
-        if not item.is_visible(RestrictionContext(character, self.item_locations.get_local_tree(character))):
+        if not item.is_visible(RestrictionContext(character, self.__item_locations.get_local_tree(character))):
             return False
-        room = self.item_locations.get_room(character)
-        item_room = self.item_locations.get_room(item)
-        if not (room == item_room or self.world_map.are_adjacent(room, item_room)):
+        room = self.__item_locations.get_room(character)
+        item_room = self.__item_locations.get_room(item)
+        if not (room == item_room or self.__world_map.are_adjacent(room, item_room)):
             return False
         return True
 
     def can_act_on(self, character:Actor, target:Target, action:Action) -> tuple[bool,Description]:
         # room
-        room = self.item_locations.get_room(character)
-        allowed, room_desc = room.action_allowed(RestrictionContext(character, self.item_locations.get_local_tree(character)))
+        room = self.__item_locations.get_room(character)
+        allowed, room_desc = room.action_allowed(RestrictionContext(character, self.__item_locations.get_local_tree(character)))
         if not allowed:
             return False, room_desc
         # access items
@@ -545,8 +627,8 @@ class World:
 
     def can_use(self, character:Actor, tool:Target, action:Action) -> bool:
         # room
-        room = self.item_locations.get_room(character)
-        allowed, room_desc = room.action_allowed(RestrictionContext(character, self.item_locations.get_local_tree(character)))
+        room = self.__item_locations.get_room(character)
+        allowed, room_desc = room.action_allowed(RestrictionContext(character, self.__item_locations.get_local_tree(character)))
         if not allowed:
             return False, room_desc
         # access items
@@ -581,8 +663,8 @@ class World:
 
     def can_act(self, character:Actor, action:Action) -> bool:
         # room
-        room = self.item_locations.get_room(character)
-        allowed, room_desc = room.action_allowed(RestrictionContext(character, self.item_locations.get_local_tree(character)))
+        room = self.__item_locations.get_room(character)
+        allowed, room_desc = room.action_allowed(RestrictionContext(character, self.__item_locations.get_local_tree(character)))
         if not allowed:
             return False, room_desc
         # character
@@ -605,10 +687,10 @@ class World:
     def describe_room(self, room:Location, restriction_context:RestrictionContext) -> Description:
         responses = [plain_text_description(f"[{room.get_name()}]"), room.describe(restriction_context)]
 
-        for path in self.world_map.get_paths(room):
+        for path in self.__world_map.get_paths(room):
             if path.is_visible(restriction_context):
                 responses.append(path.describe(restriction_context))
-        for child in self.item_locations.get_children(room):
+        for child in self.__item_locations.get_children(room):
             if child.is_visible(restriction_context) and not child == RestrictionContext.character:
                 if isinstance(child, Target):
                     responses.append(combine_descriptions([plain_text_description("There is"), child.describe(restriction_context)], joiner=" "))

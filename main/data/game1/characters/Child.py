@@ -2,23 +2,21 @@ from utils.relator              import NameFinder
 from models.actors              import Actor, ItemLimit, TargetInfo, ActorInfo
 from readin.description_helpers import PlainTextDescription, PlainTextContext, plain_text_description
 from readin.utils               import sdg_from_parts, get_inventory, get_wearing
-from readin.stand_in            import StandIn
 
 def add_to_name_space(name_space:NameFinder) -> None:
     sdg = sdg_from_parts(
         name_space=name_space,
-        state_graphs=[name_space.get_from_id("standard_character")]
+        state_graphs=[name_space.get_from_id("standard_character sg")]
     )
 
-    inventory = get_inventory(StandIn('child', 'actor'), item_limit=ItemLimit(20, 100))
-    wearing   = get_wearing  (StandIn('child', 'actor'), item_limit=ItemLimit(10, 10))
+    wearing   = get_wearing('child', item_limit=ItemLimit(10, 10))
 
-    bear = Actor(
+    child = Actor(
         name="Child",
         description_context=PlainTextContext("a small child with a face reflecting acquired ugliness"),
         description_strategy=PlainTextDescription(),
         actor_info=ActorInfo(
-            inventory=inventory,
+            inventory=None,
             wearing=wearing,
             skills=name_space.get_from_id("standard"),
         ),
@@ -34,4 +32,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
         )
     )
 
-    name_space.add_many([bear,inventory,wearing])
+    inventory = get_inventory(child, item_limit=ItemLimit(20, 100))
+    child._set_inventory(inventory)
+
+    name_space.add_many([child,inventory,wearing])

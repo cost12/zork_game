@@ -7,7 +7,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
     sdg = sdg_from_parts(
         unbreakable_states=[name_space.get_from_id("visible",  "state"),
                             name_space.get_from_id("musical",  "state")],
-        state_graphs      =[name_space.get_from_id("takeable", "stategraph")],
+        state_graphs      =[name_space.get_from_id("takeable sg", "stategraph")],
         name_space        =name_space
     )
 

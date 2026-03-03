@@ -1,23 +1,26 @@
 from dataclasses     import dataclass
 from abc             import ABC, abstractmethod
-from typing          import TypeVar, Generic
+from typing          import TypeVar, Generic, TYPE_CHECKING
 
 from models.state    import State, Achievement
-from models.actors   import Actor, Target, ItemTree
 from readin.description_helpers import Description, PlainTextContext, PlainTextDescription
+
+if TYPE_CHECKING:
+    from models.actors   import Actor, Target, ItemTree
+
 T = TypeVar('T')
 
-@dataclass
+@dataclass(frozen=True)
 class RestrictionContext:
-    character : Actor
-    inventory : ItemTree
+    character : 'Actor'
+    inventory : 'ItemTree'
 
 class RestrictionStrategy(ABC, Generic[T]):
     @abstractmethod
     def passes(self, context:RestrictionContext, specific:T) -> tuple[bool,Description]:
         pass
 
-@dataclass
+@dataclass(frozen=True)
 class Restriction(Generic[T]):
     specific : T
     strategy : RestrictionStrategy[T]
@@ -26,9 +29,9 @@ class Restriction(Generic[T]):
         return self.strategy.passes(context, self.specific)
 
 
-@dataclass
+@dataclass(frozen=True)
 class ItemStateContext:
-    item     : Target
+    item     : 'Target'
     state    : State
     response : Description
 
@@ -38,10 +41,10 @@ class ItemStateRestriction(RestrictionStrategy[ItemStateContext]):
             return True, None
         return False, specific.response
 
-@dataclass
+@dataclass(frozen=True)
 class ItemPlacementContext:
-    item     : Target
-    location : Target
+    item     : 'Target'
+    location : 'Target'
     response : Description
 
 class ItemPlacementRestriction(RestrictionStrategy[ItemPlacementContext]):
@@ -50,7 +53,7 @@ class ItemPlacementRestriction(RestrictionStrategy[ItemPlacementContext]):
             return False, specific.response
         return True, None
 
-@dataclass
+@dataclass(frozen=True)
 class CharacterAchievementContext:
     achievement : Achievement
     response    : Description
@@ -61,9 +64,9 @@ class CharacterAchievementRestriciton(RestrictionStrategy[CharacterAchievementCo
             return True, None
         return False, specific.response
 
-@dataclass
+@dataclass(frozen=True)
 class CharacterWearingContext:
-    item     : Target
+    item     : 'Target'
     response : str
 
 class CharacterWearingRestriciton(RestrictionStrategy[CharacterWearingContext]):

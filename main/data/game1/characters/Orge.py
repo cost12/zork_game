@@ -2,16 +2,14 @@ from utils.relator              import NameFinder
 from models.actors              import Actor, ItemLimit, TargetInfo, ActorInfo
 from readin.description_helpers import PlainTextDescription, PlainTextContext, plain_text_description
 from readin.utils               import sdg_from_parts, get_inventory, get_wearing
-from readin.stand_in            import StandIn
 
 def add_to_name_space(name_space:NameFinder) -> None:
     sdg = sdg_from_parts(
         name_space=name_space,
-        state_graphs=[name_space.get_from_id("standard_character")]
+        state_graphs=[name_space.get_from_id("standard_character sg")]
     )
 
-    inventory = get_inventory(StandIn('orge', 'actor'), item_limit=ItemLimit(200, 100))
-    wearing   = get_wearing  (StandIn('orge', 'actor'), item_limit=ItemLimit(10, 10))
+    wearing = get_wearing('orge', item_limit=ItemLimit(10, 10))
 
     orge = Actor(
         name="Orge",
@@ -19,7 +17,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
         description_strategy=PlainTextDescription(),
         actor_info=ActorInfo(
             skills=name_space.get_from_id("standard"),
-            inventory=inventory,
+            inventory=None,
             wearing=wearing,
         ),
         target_info=TargetInfo(
@@ -33,5 +31,8 @@ def add_to_name_space(name_space:NameFinder) -> None:
             }
         )
     )
+
+    inventory = get_inventory(orge, item_limit=ItemLimit(200, 100))
+    orge._set_inventory(inventory)
 
     name_space.add_many([orge,inventory,wearing])

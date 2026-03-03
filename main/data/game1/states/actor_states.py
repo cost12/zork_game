@@ -5,7 +5,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
     state_inputs = [
         {
             "name"             : "normal_character",
-            "actions_as_actor" : [
+            "actions_as_actor" : frozenset([
                 "look",
                 "take",
                 "drop",
@@ -53,8 +53,8 @@ def add_to_name_space(name_space:NameFinder) -> None:
                 "hug",
                 "kiss",
                 "compliment"
-            ],
-            "actions_as_target": ["look", "attack", "arm wrestle"]
+            ]),
+            "actions_as_target": frozenset(["look", "attack", "arm wrestle"])
         },
         {
             "name" : "guarding"

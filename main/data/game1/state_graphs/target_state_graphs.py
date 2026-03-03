@@ -3,24 +3,24 @@ from models.state import StateGraph, StateGroup
 
 def add_to_name_space(name_space:NameFinder) -> None:
     state_group_inputs = [
-        {"name": "breakable",       "states": ["breakable"], "id":"breakable (group)"},
+        {"name": "breakable",       "states": ["breakable"], "name_id":"breakable (group)"},
         {"name": "broken",          "states": ["broken"]},
         {"name": "held",            "states": ["held"]},
         {"name": "held_wearable",   "states": ["held", "wearable"]},
-        {"name": "takeable",        "states": ["takeable"], "id": "takeable (group)"},
+        {"name": "takeable",        "states": ["takeable"], "name_id": "takeable (group)"},
         {"name": "off",             "states": ["off", "breakable"]},
         {"name": "broken_off",      "states": ["off", "broken"]},
         {"name": "on",              "states": ["on", "breakable"]},
-        {"name": "flammable",       "states": ["flammable"], "id": "flammable (group)"},
+        {"name": "flammable",       "states": ["flammable"], "name_id": "flammable (group)"},
         {"name": "on fire",         "states": ["on fire"]},
         {"name": "burned",          "states": ["burned"]},
         {"name": "opened",          "states": ["opened"]},
         {"name": "closed",          "states": ["closed"]},
         {"name": "broken_open",     "states": ["opened", "broken"]},
-        {"name": "locked",          "states": ["locked", "closed"], "id": "locked (group)"},
+        {"name": "locked",          "states": ["locked", "closed"], "name_id": "locked (group)"},
         {"name": "unlocked_closed", "states": ["unlocked", "closed"]},
         {"name": "unlocked_open",   "states": ["unlocked", "opened"]},
-        {"name": "wearable",        "states": ["wearable", "takeable"], "id": "wearable (group)"},
+        {"name": "wearable",        "states": ["wearable", "takeable"], "name_id": "wearable (group)"},
         {"name": "worn",            "states": ["worn", "takeable"]},
         {"name": "tied",            "states": ["tied"]},
         {"name": "untied",          "states": ["untied"]},
@@ -31,12 +31,12 @@ def add_to_name_space(name_space:NameFinder) -> None:
 
     for inputs in state_group_inputs: # being lazy - replacing states ids with objects
         inputs['states'] = [name_space.get_from_id(state, "state") for state in inputs['states']]
-    
-    state_groups = {inputs['name']: StateGroup(**inputs) for inputs in state_group_inputs}
+
+    state_groups = {inputs.get('name_id', inputs['name']): StateGroup(**inputs) for inputs in state_group_inputs}
 
     state_graph_inputs = [
         {
-            "name"            : "container",
+            "name"            : "container sg",
             "current_state"   : "empty",
             "target_graph"    : {
                 "empty"       : {
@@ -50,7 +50,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
             }
         },
         {
-            "name"            : "fragile_untie",
+            "name"            : "fragile_untie sg",
             "current_state"   : "tied",
             "target_graph"    : {
                 "tied"        : {
@@ -59,7 +59,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
             }
         },
         {
-            "name"            : "wearable",
+            "name"            : "wearable sg",
             "current_state"   : "wearable (group)",
             "target_graph"    : {
                 "wearable (group)" : {
@@ -85,7 +85,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
             }
         },
         {
-            "name"            : "locked",
+            "name"            : "locked sg",
             "current_state"   : "locked (group)",
             "target_graph"    : {
                 "locked (group)"      : {
@@ -105,7 +105,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
             }
         },
         {
-            "name"            : "open_close",
+            "name"            : "open_close sg",
             "current_state"   : "closed",
             "target_graph"    : {
                 "opened"      : {
@@ -119,7 +119,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
             }
         },
         {
-            "name"            : "lightable",
+            "name"            : "lightable sg",
             "current_state"   : "flammable (group)",
             "target_graph"    : {
                 "flammable (group)"   : {
@@ -131,7 +131,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
             }
         },
         {
-            "name"            : "flammable",
+            "name"            : "flammable sg",
             "current_state"   : "flammable (group)",
             "target_graph"    : {
                 "flammable (group)"   : {
@@ -146,7 +146,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
             }
         },
         {
-            "name"            : "breakable",
+            "name"            : "breakable sg",
             "current_state"   : "breakable (group)",
             "target_graph"    : {
                 "breakable (group)"   : {
@@ -155,7 +155,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
             }
         },
         {
-            "name"            : "takeable",
+            "name"            : "takeable sg",
             "current_state"   : "takeable (group)",
             "target_graph"    : {
                 "takeable (group)"    : {
@@ -167,7 +167,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
             }
         },
         {
-            "name"            : "switch",
+            "name"            : "switch sg",
             "current_state"   : "off",
             "target_graph"    : {
                 "off"         : {
@@ -189,12 +189,12 @@ def add_to_name_space(name_space:NameFinder) -> None:
         if 'target_graph' in inputs:
             inputs['target_graph'] = {
                 state_groups[state_group] : {
-                    name_space.get_from_id(action, "action") : state_groups[state_group2] for action, state_group2 in state_dict
-                } for state_group, state_dict in inputs['target_graph']
+                    name_space.get_from_id(action, "action") : state_groups[state_group2] for action, state_group2 in state_dict.items()
+                } for state_group, state_dict in inputs['target_graph'].items()
             }
         if 'time_graph' in inputs:
             inputs['time_graph'] = {
-                state_groups[state_group] : [time_state[0], state_groups[time_state[1]]] for state_group, time_state in inputs['target_graph']
+                state_groups[state_group] : [time_state[0], state_groups[time_state[1]]] for state_group, time_state in inputs['time_graph'].items()
             }
 
     state_graphs = [StateGraph(**inputs) for inputs in state_graph_inputs]

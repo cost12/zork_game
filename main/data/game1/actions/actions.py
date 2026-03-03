@@ -52,4 +52,4 @@ def add_to_name_space(name_space:NameFinder) -> None:
 		DefaultAction(name = "compliment",  aliases = ["compliment"]),
     ]
 
-    name_space.add_many(actions)
+    name_space.add_many(actions, category='action')

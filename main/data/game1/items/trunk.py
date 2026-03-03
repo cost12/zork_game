@@ -8,8 +8,8 @@ from readin.restriction_helpers import Restriction, ItemStateContext, ItemStateR
 def add_to_name_space(name_space:NameFinder) -> None:
     sdg = sdg_from_parts(
         unbreakable_states=[name_space.get_from_id("visible",   "state")],
-        state_graphs      =[name_space.get_from_id("locked", "stategraph"),
-                            name_space.get_from_id("container",  "stategraph")],
+        state_graphs      =[name_space.get_from_id("locked sg", "stategraph"),
+                            name_space.get_from_id("container sg", "stategraph")],
         name_space        =name_space
     )
 
@@ -17,7 +17,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
         name="in",
         name_id="in trunk",
         item_limit=ItemLimit(30, 100),
-        visible_restrictions=Restriction[ItemStateContext](ItemStateContext(StandIn("trunk", "target"), name_space.get_from_id("opened", "state"), "The trunk is closed."), ItemStateRestriction()),
+        visible_restrictions=[Restriction[ItemStateContext](ItemStateContext(StandIn("trunk", "target"), name_space.get_from_id("opened", "state"), "The trunk is closed."), ItemStateRestriction())],
         #children=[name_space.get_from_id("basketball", "target"), name_space.get_from_id("skateboard", "target")] TODO
     )
 

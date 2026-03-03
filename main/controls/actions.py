@@ -8,7 +8,7 @@ from readin.description_helpers import Description, DescriptionContext, Contents
                                        plain_text_description, combine_descriptions, backup_description
 from readin.restriction_helpers import RestrictionContext
 
-@dataclass
+@dataclass(frozen=True)
 class LookContext:
     target : NamedContainer|None = None
 
@@ -31,7 +31,7 @@ class LookAction(Action[LookContext]):
                 response.append(context.character.perform_action_as_actor(self))
                 if isinstance(inputs.target, Target):
                     response.append(inputs.target.perform_action_as_target(self))
-                response.append(inputs.target.describe(RestrictionContext(context.character, current_state.item_locations)))
+                response.append(inputs.target.describe(RestrictionContext(context.character, current_state.get_locations())))
         else:
             can_look, r = current_state.can_act(context.character, self)
             response = [r]
@@ -132,7 +132,7 @@ class WaitAction(Action[tuple]):
             score=0
         )
 
-@dataclass
+@dataclass(frozen=True)
 class TakeContext:
     targets : list[Target]
 
@@ -140,7 +140,7 @@ class InventoryType(Enum):
     INVENTORY = 0
     WEARING   = 1
 
-@dataclass
+@dataclass(frozen=True)
 class TakeAction(Action[TakeContext]):
     inventory       : InventoryType = InventoryType.INVENTORY
     cant_take_text  : str           = "You can't take that."
@@ -197,12 +197,12 @@ class TakeAction(Action[TakeContext]):
             score=0
         )
 
-@dataclass
+@dataclass(frozen=True)
 class DropContext:
     targets   : list[Target]
     placement : NamedContainer|None = None
 
-@dataclass
+@dataclass(frozen=True)
 class DropAction(Action[DropContext]):
     inventory       :InventoryType = InventoryType.INVENTORY
     cant_drop_text  :str           = "You can't drop that."
@@ -261,7 +261,7 @@ class DropAction(Action[DropContext]):
             score=0
         )
 
-@dataclass
+@dataclass(frozen=True)
 class CheckInventoryAction(Action[tuple]):
     inventory     :InventoryType = InventoryType.INVENTORY
     contains_text :str           = "Your inventory contains:"

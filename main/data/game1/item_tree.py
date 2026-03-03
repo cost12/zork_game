@@ -98,18 +98,18 @@ def get_item_tree(name_space:NameFinder):
     ]
 
     for room in name_space.get_from_name(category='location'):
-        item_tree.add_room(room)
+        item_tree = item_tree.add_room(room)
     for path in name_space.get_from_name(category='path'):
-        item_tree.add_path(path)
+        item_tree = item_tree.add_path(path)
 
     for item in items:
         match item[1]:
             case 'locationdetail':
-                item_tree.add_location_detail(name_space.get_from_id(item[0], item[1]), name_space.get_from_id(item[2], item[3]))
+                item_tree = item_tree.add_location_detail(name_space.get_from_id(item[0], item[1]), name_space.get_from_id(item[2], item[3]))
             case 'target':
-                item_tree.add_item(name_space.get_from_id(item[0], item[1]), name_space.get_from_id(item[2], item[3]))
+                item_tree = item_tree.add_item(name_space.get_from_id(item[0], item[1]), name_space.get_from_id(item[2], item[3]))
             case 'actor':
-                item_tree.add_character(name_space.get_from_id(item[0], item[1]), name_space.get_from_id(item[2], item[3]))
+                item_tree = item_tree.add_character(name_space.get_from_id(item[0], item[1]), name_space.get_from_id(item[2], item[3]))
             case _:
                 logger.debug('Unknown item type %s in building ItemTree', item[1])
 

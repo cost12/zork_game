@@ -4,6 +4,9 @@ from utils.visualize_game   import visualize_game
 from controls.game_control  import GameState
 from models.actors          import Actor
 from readin.level1_readin   import get_level1
+from logging_config         import setup_logging
+
+setup_logging()
 
 def main(args:list[str]):
     if len(args) > 0:

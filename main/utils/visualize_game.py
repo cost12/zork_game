@@ -1,11 +1,11 @@
-from pyvis.network import Network
 from collections import deque
 import math
+
+from pyvis.network import Network
 
 from models.named           import Action
 from models.actors          import Location
 from models.state           import StateGroup, StateGraph, StateDisconnectedGraph
-from factories.data_read_in import read_in_game
 from utils.relator          import NameFinder
 
 class NodeInfo:

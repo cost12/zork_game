@@ -29,7 +29,7 @@ class GameState:
         for character in extra_characters:
             start_room = start_rooms[i%len(start_rooms)]
             controllers.create_character(character, CommandLineController())
-            world.item_locations.add_character(character, start_room)
+            world = world.add_character(character, start_room)
             i += 1
 
     ##########################################################################
@@ -107,7 +107,7 @@ class GameState:
         if action == 'error':
             feedback = Feedback(
                 plain_text_description(inputs.message),
-                DescriptionContext(self.world.item_locations, action, False, character, None, None),
+                DescriptionContext(self.world.get_locations(), action, False, character, None, None),
                 turns=0,
                 moves=1,
                 score=0
@@ -118,7 +118,7 @@ class GameState:
         else:
             feedback = Feedback(
                 response,
-                DescriptionContext(self.world.item_locations, action, False, character, None, None),
+                DescriptionContext(self.world.get_locations(), action, False, character, None, None),
                 turns=0,
                 moves=1,
                 score=0

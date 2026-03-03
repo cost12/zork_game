@@ -1,8 +1,11 @@
+import logging
 from typing import TYPE_CHECKING, TypeVar
 
 if TYPE_CHECKING:
-    from models.actors import HasLocation
+    from models.actors import NamedContainer
     from models.named  import Named
+
+logger = logging.getLogger(__name__)
 
 class WordTree[T]:
 
@@ -21,7 +24,8 @@ class WordTree[T]:
 
     def remove(self, words:list[str]=None, value:T=None) -> None:
         if words is None:
-            if value is None: return
+            if value is None:
+                return
             for sub_tree in self.tree.values():
                 sub_tree.remove(value=value)
             self.value.remove(value)
@@ -59,10 +63,10 @@ class WordTree[T]:
         if words[0] in self.tree:
             current.extend(self.tree[words[0]].get_possible(words[1:], used_words+[words[0]]))
         return current
-        
+
     def all(self) -> list[T]:
         result = list(self.value)
-        for word, child in self.tree.items():
+        for child in self.tree.values():
             result.extend(child.all())
         return result
 
@@ -79,23 +83,30 @@ class NameFinder[T]:
         self.by_id   = dict[str,T]()
 
     def _category(self, named:T) -> str:
-        return str(type(named)).lower().split(".")[-1][:-2]
+        cat = str(type(named)).lower().rsplit(".", maxsplit=1)[-1][:-2]
+        if 'action' in cat:
+            return 'action'
+        return cat
 
-    def add(self, named:'T|Named') -> bool:
+    def add(self, named:'T|Named', *, category:str|None=None) -> bool:
         if named.get_id() in self.by_id:
+            logger.debug('%s %s already exists', self._category(named), named.get_id())
             return False
         self.by_id[named.get_id()] = named
-        category = self._category(named)
+        if not category:
+            category = self._category(named)
+        logger.debug('%s %s', category, named.get_id())
         if category not in self.by_name:
+            logger.debug('New category: %s', category)
             self.by_name[category] = WordTree[T]()
         for name in named.get_aliases():
             name = name.lower().split(" ")
             self.by_name[category].add(name, named)
         return True
-    
-    def add_many(self, to_add:list[T]) -> list[bool]:
-        return [self.add(named) for named in to_add]
-    
+
+    def add_many(self, to_add:list[T], *, category:str|None=None) -> list[bool]:
+        return [self.add(named, category=category) for named in to_add]
+
     def remove(self, named:'T|Named') -> bool:
         if named.get_id() in self.by_id:
             del self.by_id[named.get_id()]
@@ -108,7 +119,7 @@ class NameFinder[T]:
                 self.by_name[category].remove(name, named)
         return True
 
-    def get_from_name(self, name:str=None, category:str|list[str]=None, location:'HasLocation'=None) -> list[T]:
+    def get_from_name(self, name:str=None, category:str|list[str]=None, location:'NamedContainer'=None) -> list[T]:
         matches = set[T]()
         if isinstance(category, str):
             category = category.lower()
@@ -128,35 +139,35 @@ class NameFinder[T]:
                         name = name.lower().split(" ")
                         matches.update(set(self.by_name[cat].get_exactly(name)))
         else: # category is None
-            for cat in self.by_name.keys():
+            for cat, cat_vals in self.by_name.items():
                 if name is None:
-                    matches.update(set(self.by_name[cat].all()))
+                    matches.update(set(cat_vals.all()))
                 else:
                     name = name.lower().split(" ")
-                    matches.update(set(self.by_name[cat].get_exactly(name)))
+                    matches.update(set(cat_vals.get_exactly(name)))
         matches = list[T](matches)
         if location is not None:
-            matches = [match for match in matches if isinstance(match, HasLocation) and match.is_in(location)]
+            matches = [match for match in matches if isinstance(match, NamedContainer) and match.is_in(location)]
         return matches
-    
-    def get_from_id(self, id:str, category:str|list[str]=None) -> T:
-        id = id.lower()
-        if id in self.by_id:
+
+    def get_from_id(self, name_id:str, category:str|list[str]=None) -> T:
+        name_id = name_id.lower()
+        if name_id in self.by_id:
             if category is None or \
-            (isinstance(category, str)  and self._category(self.by_id[id]) == category.lower()) or \
-            (isinstance(category, list) and self._category(self.by_id[id]) in [cat.lower() for cat in category]):
-                return self.by_id[id]
-        raise ValueError(f"\"{id}\" not found in category {category}")
-    
+            (isinstance(category, str)  and self._category(self.by_id[name_id]) == category.lower()) or \
+            (isinstance(category, list) and self._category(self.by_id[name_id]) in [cat.lower() for cat in category]):
+                return self.by_id[name_id]
+        raise ValueError(f"\"{name_id}\" not found in category {category}")
+
     def contains(self, named:'T|Named') -> bool:
         return named.get_id() in self.by_id
-    
-    def get_from_input(self, inputs:list[str], category:str|list[str]=None, location:'HasLocation'=None) -> list[tuple[T,list[str],list[str]]]:
+
+    def get_from_input(self, inputs:list[str], category:str|list[str]=None, location:'NamedContainer'=None) -> list[tuple[T,list[str],list[str]]]:
         matches = list[tuple[T,list[str],list[str]]]()
         inputs = [input.lower() for input in inputs]
         if category is None:
-            for cat in self.by_name.keys():
-                matches.extend(self.by_name[cat].get_possible(inputs))
+            for cat, cat_vals in self.by_name.items():
+                matches.extend(cat_vals.get_possible(inputs))
         elif isinstance(category, str):
             category = category.lower()
             if category in self.by_name:
@@ -168,5 +179,5 @@ class NameFinder[T]:
         else:
             raise RuntimeError()
         if location is not None:
-            matches = [(match,used,leftover) for match,used,leftover in matches if isinstance(match, HasLocation) and match.is_in(location)]
+            matches = [(match,used,leftover) for match,used,leftover in matches if isinstance(match, NamedContainer) and match.is_in(location)]
         return matches

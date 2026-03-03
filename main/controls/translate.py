@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 from models.named    import Action, Named
-from models.actors   import HasLocation, LocationDetail, Actor
+from models.actors   import NamedContainer, LocationDetail, Actor
 from controls.character_control import CharacterController
 from utils.relator   import NameFinder
 from utils.constants import DEBUG_INPUT
@@ -75,7 +75,7 @@ class TranslatePlacementNode(Node):
         for edge in self.edges:
             edge_matches = context.get_from_input(tokens, category=edge)
             for match,tokens_used,tokens_left in edge_matches:
-                assert isinstance(match, HasLocation)
+                assert isinstance(match, NamedContainer)
                 if not isinstance(match, LocationDetail):
                     match = match.get_special_child(self.state)
                 if match is not None:

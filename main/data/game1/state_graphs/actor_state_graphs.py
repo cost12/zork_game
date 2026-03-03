@@ -13,7 +13,7 @@ def add_to_name_space(name_space:NameFinder) -> None:
 
     state_graph_inputs = [
         {
-            "name"          : "standard_character",
+            "name"          : "standard_character sg",
             "current_state" : state_groups["normal"]
         }
     ]
