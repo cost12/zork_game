@@ -75,6 +75,10 @@ class Path(Container):
     def list_starts(self, names: 'NameFinder') -> list[tuple[Container, Named]]:
         pass
 
+    @abstractmethod
+    def list_possible_ends(self, names: 'NameFinder', start: Container) -> list[Container]:
+        pass
+
 def _category(named: Named) -> str:
     cat = str(type(named)).lower().rsplit(".", maxsplit=1)[-1][:-2]
     if 'action' in cat:
@@ -84,6 +88,9 @@ def _category(named: Named) -> str:
 class ItemTree:
     def __init__(self, *, graph:nx.DiGraph=None):
         self.__graph = graph if graph else nx.DiGraph()
+
+    def __repr__(self) -> str:
+        return str(self.__graph.edges)
 
     # initialization
 
@@ -179,6 +186,15 @@ class WorldMap:
     def __init__(self, *, init_map: frozendict[str,frozendict[str,str]]|None=None):
         self.__world_map : frozendict[str,frozendict[str,str]] = init_map if init_map is not None else frozendict()
 
+    def get_rep(self, names: 'NameFinder') -> str:
+        edges = []
+        for room, directions in self.__world_map.items():
+            for direction, path_id in directions.items():
+                path : Path = names.get_from_id(path_id)
+                for possible_end in path.list_possible_ends(names, names.get_from_id(room)):
+                    edges.append((room, direction, possible_end.get_id()))
+        return str(edges)
+
     # initialization
 
     def add_path(self, names: 'NameFinder', path: Path) -> 'WorldMap':
@@ -206,6 +222,12 @@ class WordTreeNode:
     def __init__(self, value: frozenset[str]|None = None, branches: frozendict[str, 'WordTreeNode']|None = None):
         self.__value : frozenset[str] = value if value is not None else frozenset()
         self.__children : frozendict[str, 'WordTreeNode'] = branches if branches is not None else frozendict()
+
+    def get_rep(self, previous: str) -> str:
+        rep = f"{previous}: {set(self.__value)}"
+        for word, child in self.__children.items():
+            rep += f"\n{child.get_rep(previous+ " " + word)}"
+        return rep
 
     def add(self, words: list[str], value: Named) -> 'WordTreeNode':
         if len(words) == 0:
@@ -240,6 +262,12 @@ class NameFinder:
     def __init__(self, by_name: frozendict[str, WordTreeNode]|None = None, by_id: frozendict[str, Named]|None = None):
         self.__by_name : frozendict[str, WordTreeNode] = by_name if by_name is not None else frozendict()
         self.__by_id : frozendict[str, Named] = by_id if by_id is not None else frozendict()
+
+    def __repr__(self) -> str:
+        rep = ""
+        for category, tree in self.__by_name.items():
+            rep += f"\n{category}:\n{tree.get_rep("\t")}"
+        return rep
 
     def add(self, named: Named, *, category: str|None = None) -> tuple[bool, 'NameFinder']:
         if named.get_id() in self.__by_id:

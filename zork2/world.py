@@ -89,12 +89,21 @@ class PathWay(NamedBase, Path):
             (names.get_from_id(room), names.get_from_id(direction)) for room, direction in self.starts
         ]
 
+    def list_possible_ends(self, names: NameFinder, start: Container) -> list[Container]:
+        return [names.get_from_id(self.end_id)]
+
 class World:
 
     def __init__(self, *, init_locations: ItemTree|None=None, init_map: WorldMap|None=None, init_names: NameFinder|None = None):
         self.__item_locations = ItemTree()   if init_locations is None else init_locations
         self.__world_map      = WorldMap()   if init_map       is None else init_map
         self.__names          = NameFinder() if init_names     is None else init_names
+
+    def __repr__(self) -> str:
+        rep = f"\nItems: {self.__item_locations}\n"
+        rep += f"Map: {self.__world_map.get_rep(self.__names)}\n"
+        rep += f"Names: {self.__names}"
+        return rep
 
     # init
     def add_character(self, character: Character, location: Room) -> 'World':
