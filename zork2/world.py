@@ -1,12 +1,23 @@
 import dataclasses
 import re
 import logging
+from abc import abstractmethod
+from typing import Callable
 
 from frozendict import frozendict
 
 from .utils import ItemTree, WorldMap, NameFinder, ItemLimit, Named, HasInventory, HasWearing, Container, Path, HasLocation
 
 logger = logging.getLogger(__name__)
+
+class Visible(Named):
+    @abstractmethod
+    def can_interact_with(self, rules: 'WorldRules', world: 'World', character_id: str, action_id: str, inform: Callable[[str],None]) -> bool:
+        pass
+
+    @abstractmethod
+    def describe(self, rules: 'WorldRules', world: 'World', character_id: str, inform: Callable[[str],None]) -> None:
+        pass
 
 @dataclasses.dataclass(frozen=True)
 class NamedBase(Named):
@@ -34,11 +45,22 @@ class NamedBase(Named):
     def get_aliases(self) -> list[str]:
         return list(self.aliases)
 
-dataclasses.dataclass(frozen=True)
-class Item(NamedBase, HasLocation):
-    weight : float = 1.0
-    size : float = 1.0
-    value : float = 0.0
+@dataclasses.dataclass(frozen=True)
+class VisibleBase(NamedBase, Visible):
+    descriptor : Callable[[str,'WorldRules','World',str,Callable[[str],None]],None]
+    interactor : Callable[[str,'WorldRules','World',str,str,Callable[[str],None]],bool]
+
+    def can_interact_with(self, rules: 'WorldRules', world: 'World', character_id: str, action_id: str, inform: Callable[[str],None]) -> bool:
+        return self.interactor(self.get_id(), rules, world, character_id, action_id, inform)
+
+    def describe(self, rules: 'WorldRules', world: 'World', character_id: str, inform: Callable[[str],None]) -> None:
+        return self.descriptor(self.get_id(), rules, world, character_id, inform)
+
+@dataclasses.dataclass(frozen=True)
+class Item(VisibleBase, HasLocation):
+    weight : float = dataclasses.field(kw_only=True, default=1.0)
+    size : float = dataclasses.field(kw_only=True, default=1.0)
+    value : float = dataclasses.field(kw_only=True, default=0.0)
 
     def get_weight(self) -> float:
         return self.weight
@@ -71,14 +93,14 @@ class Character(Item, HasInventory, HasWearing):
         return names.get_from_id(self.wearing_id)
 
 @dataclasses.dataclass(frozen=True)
-class Room(NamedBase, Container):
+class Room(VisibleBase, Container):
     item_limit : ItemLimit = ItemLimit()
 
     def get_limit(self) -> ItemLimit:
         return self.item_limit
 
 @dataclasses.dataclass(frozen=True)
-class PathWay(NamedBase, Path):
+class PathWay(VisibleBase, Path):
     starts : tuple[tuple[str, str]]
     end_id : str
     item_limit : ItemLimit = ItemLimit()
@@ -105,7 +127,7 @@ class ActionEdge:
     def __repr__(self) -> str:
         return f"<{self.category} ({self.form})>"
 
-    def find_match(self, character: Character, world: 'World', input_str: str) -> tuple[bool, tuple[str, Named], str]:
+    def find_match(self, character: Character, world: 'World', input_str: str) -> tuple[bool, tuple[str, str], str]:
         match self.category:
             case 'literal':
                 if len(input_str) >= len(self.form) and input_str[:len(self.form)]==self.form:
@@ -119,7 +141,7 @@ class ActionEdge:
                 if self.form:
                     matches = [m for m in matches if isinstance(m[1], Named) and m[1].get_id() == self.form]
                 if len(matches) > 0:
-                    return True, (matches[0][:2]), matches[0][2]
+                    return True, (matches[0][0], matches[0][1].get_id()), matches[0][2]
         return False, ("", ""), input_str
 
 @dataclasses.dataclass(frozen=True)
@@ -139,9 +161,13 @@ class ActionInput:
 @dataclasses.dataclass(frozen=True)
 class Action(NamedBase):
     forms : tuple[tuple[ActionInput,...]]
+    actor : Callable[[str,'WorldRules','World',str,dict[str,str],Callable[[str],None]],tuple[bool,'World']]
 
     def get_input_forms(self) -> tuple[tuple[ActionInput]]:
         return self.forms
+
+    def perform_action(self, rules: 'WorldRules', world: 'World', character_id: str, inputs: dict[str,str], inform: Callable[[str],None]) -> tuple[bool,'World']:
+        return self.actor(self.get_id(), rules, world, character_id, inputs, inform)
 
     def get_inputs(self, form_inputs: tuple[tuple[ActionEdge, Named]]) -> dict[str, Named]:
         for form in self.forms:
@@ -191,7 +217,7 @@ class ParseNode:
             node = node.add_action_form(action, form)
         return node
 
-    def continue_parse(self, character: Character, world: 'World', input_str: str, already_found: tuple[Named]) -> tuple[str, dict[str, Named]]:
+    def continue_parse(self, character: Character, world: 'World', input_str: str, already_found: tuple[str]) -> tuple[str, dict[str, str]]:
         if len(input_str) == 0:
             return tuple((action, world.get_action(action).get_inputs(already_found)) for action in self.__value)
         matches = []
@@ -201,7 +227,7 @@ class ParseNode:
                 matches.extend(node.continue_parse(character, world, left, already_found + ((edge, found[1]),)))
         return tuple(matches)
 
-    def parse_input(self, character: Character, world: 'World', input_str: str) -> tuple[tuple[str, dict[str, Named]]]:
+    def parse_input(self, character: Character, world: 'World', input_str: str) -> tuple[tuple[str, dict[str, str]]]:
         input_str = re.sub(r"\b(a|an|the|i)\b", "", input_str)
         input_str = re.sub(r"\s+", " ", input_str)
         input_str = re.sub(r"^\s+", "", input_str)
@@ -251,6 +277,9 @@ class World:
 
     def get_character(self, character_id: str) -> Character:
         return self.__names.get_from_id(character_id, 'character')
+
+    def get_visible(self, visible_id: str) -> Visible:
+        return self.__names.get_from_id(visible_id)
 
     def get_action(self, action_id: str) -> Action:
         return self.__names.get_from_id(action_id, 'action')
@@ -303,18 +332,12 @@ class WorldRules:
             new_parser = new_parser.add_action(action)
         return WorldRules(new_parser, self.__actions + tuple(actions))
 
-    def parse_input(self, character: Character, world: World, input_str: str) -> tuple[tuple[str, dict[str, Named]]]:
+    def parse_input(self, character: Character, world: World, input_str: str) -> tuple[tuple[str, dict[str, str]]]:
         return self.__parser.parse_input(character, world, input_str)
 
     def get_actions(self) -> list[Action]:
         return list(self.__actions)
 
-    def advance(self, world: World, character_id: str, action_id: str, action_args: dict[str, Named]) -> tuple[bool, World]:
-        logger.debug(action_id)
-        logger.debug(action_args)
-        match action_id:
-            case 'walk':
-                return True, world
-            case 'look':
-                return True, world
-        return False, world
+    def advance(self, world: World, character_id: str, action_id: str, action_args: dict[str, Named], inform: Callable[[str],None]) -> tuple[bool, World]:
+        logger.debug("%s: %s", action_id, action_args)
+        return world.get_action(action_id).perform_action(self, world, character_id, action_args, inform)

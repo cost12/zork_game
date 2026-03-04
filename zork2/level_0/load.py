@@ -3,6 +3,10 @@ import logging
 from zork2.world import World, WorldRules, Character, Item, ContainerItem, Room, PathWay, NamedBase, Action, ActionInput, ActionEdge
 from zork2.utils import Named, NameFinder, ItemTree, WorldMap
 
+from zork2.descriptions import plain_text
+from zork2.interactions import simple_interaction
+from zork2.actions import look, walk
+
 logger = logging.getLogger(__name__)
 
 def load_directions() -> list[Named]:
@@ -13,25 +17,59 @@ def load_directions() -> list[Named]:
 
 def load_characters() -> list[Character]:
     return [
-        Character("Player1", "player1 inventory", "player1 wearing"),
+        Character(
+            "Player1",
+            descriptor=plain_text("A handsome fellow."),
+            interactor=simple_interaction(),
+            inventory_id="player1 inventory",
+            wearing_id="player1 wearing",
+        ),
     ]
 
 def load_items() -> list[Item|ContainerItem]:
     return [
-        ContainerItem("player1 inventory"),
-        ContainerItem("player1 wearing"),
+        ContainerItem(
+            "player1 inventory",
+            descriptor=plain_text("An inventory."),
+            interactor=simple_interaction(),
+        ),
+        ContainerItem(
+            "player1 wearing",
+            descriptor=plain_text(""),
+            interactor=simple_interaction(),
+        ),
     ]
 
 def load_rooms() -> list[Room]:
     return [
-        Room("Grey Room"),
-        Room("Gray Room"),
+        Room(
+            "Grey Room",
+            descriptor=plain_text("A grey room, with a view..."),
+            interactor=simple_interaction(),
+        ),
+        Room(
+            "Gray Room",
+            descriptor=plain_text("A gray room, with a view..."),
+            interactor=simple_interaction(),
+        ),
     ]
 
 def load_paths() -> list[PathWay]:
     return [
-        PathWay("Gray South exit", (("gray room", "south"),), "grey room"),
-        PathWay("Grey North exit", (("grey room", "north"),), "gray room"),
+        PathWay(
+            "Gray South exit",
+            descriptor=plain_text("A gray path stretching south."),
+            interactor=simple_interaction(),
+            starts=(("gray room", "south"),),
+            end_id="grey room",
+        ),
+        PathWay(
+            "Grey North exit",
+            descriptor=plain_text("A grey path stretching north."),
+            interactor=simple_interaction(),
+            starts=(("grey room", "north"),),
+            end_id="gray room",
+        ),
     ]
 
 def load_actions():
@@ -47,13 +85,15 @@ def load_actions():
                     ActionInput('direction', ActionEdge('direction')),
                 ),
             ),
+            walk(),
             aliases=['go']
         ),
         Action(
             'look',
             (
                 (ActionInput('self', ActionEdge('action', 'look')),),
-            )
+            ),
+            look(),
         )
     ]
 
