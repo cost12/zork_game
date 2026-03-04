@@ -1,7 +1,12 @@
 import dataclasses
+import re
+import logging
 
+from frozendict import frozendict
 
 from .utils import ItemTree, WorldMap, NameFinder, ItemLimit, Named, HasInventory, HasWearing, Container, Path, HasLocation
+
+logger = logging.getLogger(__name__)
 
 @dataclasses.dataclass(frozen=True)
 class NamedBase(Named):
@@ -92,6 +97,124 @@ class PathWay(NamedBase, Path):
     def list_possible_ends(self, names: NameFinder, start: Container) -> list[Container]:
         return [names.get_from_id(self.end_id)]
 
+@dataclasses.dataclass(frozen=True)
+class ActionEdge:
+    category : str
+    form : str|None = None
+
+    def __repr__(self) -> str:
+        return f"<{self.category} ({self.form})>"
+
+    def find_match(self, character: Character, world: 'World', input_str: str) -> tuple[bool, tuple[str, Named], str]:
+        match self.category:
+            case 'literal':
+                if len(input_str) >= len(self.form) and input_str[:len(self.form)]==self.form:
+                    return True, (self.form, self.form), input_str[len(self.form)+1:]
+            case 'regex':
+                m = re.search(f"^{self.form}", input_str, re.IGNORECASE)
+                if m:
+                    return True, (m.group(0), m.group(1)), input_str[len(m.group(0))+1:]
+            case _:
+                matches = world.find_matches(character, input_str, self.category)
+                if self.form:
+                    matches = [m for m in matches if isinstance(m[1], Named) and m[1].get_id() == self.form]
+                if len(matches) > 0:
+                    return True, (matches[0][:2]), matches[0][2]
+        return False, ("", ""), input_str
+
+@dataclasses.dataclass(frozen=True)
+class ActionInput:
+    name : str
+    edge : ActionEdge
+
+    def get_name(self) -> str:
+        return self.name
+
+    def get_edge(self) -> ActionEdge:
+        return self.edge
+
+    def get_defaults(self) -> dict[str, Named]:
+        return {}
+
+@dataclasses.dataclass(frozen=True)
+class Action(NamedBase):
+    forms : tuple[tuple[ActionInput,...]]
+
+    def get_input_forms(self) -> tuple[tuple[ActionInput]]:
+        return self.forms
+
+    def get_inputs(self, form_inputs: tuple[tuple[ActionEdge, Named]]) -> dict[str, Named]:
+        for form in self.forms:
+            out = {}
+            if len(form) != len(form_inputs):
+                continue
+            found_match = True
+            for i, action_input in enumerate(form):
+                if action_input.get_edge() == form_inputs[i][0]:
+                    out = out | action_input.get_defaults()
+                    out[action_input.get_name()] = form_inputs[i][1]
+                else:
+                    found_match = False
+                    break
+            if found_match:
+                out.pop('self', None)
+                return out
+        return {}
+
+class ParseNode:
+    def __init__(self, value: frozenset[str]|None = None, children: frozendict[ActionEdge, 'ParseNode']|None = None):
+        self.__value : frozenset[str] = value if value else frozenset()
+        self.__children : frozendict[ActionEdge, ParseNode] = children if children else frozendict()
+
+    def get_rep(self, previous: str) -> str:
+        rep = f"{previous}: {set(self.__value)}"
+        for edge, child in self.__children.items():
+            rep += f"\n{child.get_rep(previous + " " + str(edge))}"
+        return rep
+
+    def add_action_form(self, action: Action, form: tuple[ActionInput]) -> 'ParseNode':
+        new_value = set(self.__value)
+        new_children = dict(self.__children)
+        if len(form) == 0:
+            new_value = new_value.union([action.get_id()])
+        else:
+            edge = form[0].get_edge()
+            if edge in new_children:
+                new_children[edge] = new_children[edge].add_action_form(action, form[1:])
+            else:
+                new_children[edge] = ParseNode().add_action_form(action, form[1:])
+        return ParseNode(frozenset(new_value), frozendict(new_children))
+
+    def add_action(self, action: Action) -> 'ParseNode':
+        node = self
+        for form in action.get_input_forms():
+            node = node.add_action_form(action, form)
+        return node
+
+    def continue_parse(self, character: Character, world: 'World', input_str: str, already_found: tuple[Named]) -> tuple[str, dict[str, Named]]:
+        if len(input_str) == 0:
+            return tuple((action, world.get_action(action).get_inputs(already_found)) for action in self.__value)
+        matches = []
+        for edge, node in self.__children.items():
+            matched, found, left = edge.find_match(character, world, input_str)
+            if matched:
+                matches.extend(node.continue_parse(character, world, left, already_found + ((edge, found[1]),)))
+        return tuple(matches)
+
+    def parse_input(self, character: Character, world: 'World', input_str: str) -> tuple[tuple[str, dict[str, Named]]]:
+        input_str = re.sub(r"\b(a|an|the|i)\b", "", input_str)
+        input_str = re.sub(r"\s+", " ", input_str)
+        input_str = re.sub(r"^\s+", "", input_str)
+        input_str = re.sub(r"\s+$", "", input_str)
+        if len(input_str) == 0:
+            return tuple((action, world.get_action(action).get_inputs(tuple())) for action in self.__value)
+        matches = []
+        for edge, node in self.__children.items():
+            matched, found, left = edge.find_match(character, world, input_str)
+            if matched:
+                matches.extend(node.continue_parse(character, world, left, ((edge, found[1]),)))
+        return tuple(matches)
+
 class World:
 
     def __init__(self, *, init_locations: ItemTree|None=None, init_map: WorldMap|None=None, init_names: NameFinder|None = None):
@@ -111,6 +234,26 @@ class World:
         return World(init_locations=new_locations, init_map=self.__world_map)
 
     # UTILS
+    def find_matches(self, character: Character, input_str: str, category: str) -> list[tuple[str, Named, str]]:
+        trees = None
+        if category not in ['direction', 'action']:
+            trees = []
+            node = character
+            while node is not None:
+                trees.append(self.__item_locations.get_subtree(node))
+                next_node_id = self.__item_locations.get_parent()
+                if next_node_id is None:
+                    node = None
+                else:
+                    node = self.__names.get_from_id(next_node_id)
+        matches = self.__names.get_from_input(input_str.split(), category, trees)
+        return [(" ".join(used), found, " ".join(left)) for found, used, left in matches]
+
+    def get_character(self, character_id: str) -> Character:
+        return self.__names.get_from_id(character_id, 'character')
+
+    def get_action(self, action_id: str) -> Action:
+        return self.__names.get_from_id(action_id, 'action')
 
     def get_room(self, item: HasLocation) -> Room:
         return self.__names.get_from_id(self.__item_locations.get_top_parent(item))
@@ -145,3 +288,33 @@ class World:
             return self, False
         new_locations = self.__item_locations.move(item, new_spot)
         return World(init_locations=new_locations, init_map=self.__world_map), True
+
+class WorldRules:
+    def __init__(self, parser: ParseNode|None = None, actions: tuple[Action]|None = None):
+        self.__parser = parser if parser else ParseNode()
+        self.__actions = actions if actions else tuple()
+
+    def __repr__(self) -> str:
+        return f"\nInputs:\n{self.__parser.get_rep('\t')}"
+
+    def add_actions(self, actions: list[Action]) -> 'WorldRules':
+        new_parser = self.__parser
+        for action in actions:
+            new_parser = new_parser.add_action(action)
+        return WorldRules(new_parser, self.__actions + tuple(actions))
+
+    def parse_input(self, character: Character, world: World, input_str: str) -> tuple[tuple[str, dict[str, Named]]]:
+        return self.__parser.parse_input(character, world, input_str)
+
+    def get_actions(self) -> list[Action]:
+        return list(self.__actions)
+
+    def advance(self, world: World, character_id: str, action_id: str, action_args: dict[str, Named]) -> tuple[bool, World]:
+        logger.debug(action_id)
+        logger.debug(action_args)
+        match action_id:
+            case 'walk':
+                return True, world
+            case 'look':
+                return True, world
+        return False, world

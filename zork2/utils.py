@@ -131,10 +131,9 @@ class ItemTree:
 
     def move(self, child: HasLocation, new_parent: Container) -> 'ItemTree':
         new_graph = self.__graph.copy()
-        parents : list[str] = self.get_parents(child)
-        if not (len(parents) == 1 and parents[0] == new_parent.get_id()):
+        old_parent = self.get_parent(child)
+        if old_parent is None:
             raise RuntimeError("Wrong number of parents for item to be moved.")
-        old_parent = parents[0]
         new_graph.remove_edge(old_parent, child.get_id())
         new_graph.add_edge(new_parent.get_id(), child.get_id(), relationship="child")
         return ItemTree(graph=new_graph)
@@ -168,8 +167,11 @@ class ItemTree:
         subgraph               = self.__graph.subgraph(nodes).copy()
         return ItemTree(graph=subgraph)
 
-    def get_parents(self, node: HasLocation|Container) -> list[str]:
-        return [self.__graph.nodes[p] for p in self.__graph.predecessors(node.get_id())]
+    def get_parent(self, node: HasLocation|Container) -> str|None:
+        parents = list(self.__graph.predecessors(node.get_id()))
+        if len(parents) > 0:
+            return parents[0]
+        return None
 
     def get_children(self, node: HasLocation|Container) -> list[str]:
         return [self.__graph.nodes[c] for c in self.__graph.successors(node.get_id())]
@@ -226,7 +228,7 @@ class WordTreeNode:
     def get_rep(self, previous: str) -> str:
         rep = f"{previous}: {set(self.__value)}"
         for word, child in self.__children.items():
-            rep += f"\n{child.get_rep(previous+ " " + word)}"
+            rep += f"\n{child.get_rep(previous + " " + word)}"
         return rep
 
     def add(self, words: list[str], value: Named) -> 'WordTreeNode':
@@ -334,7 +336,7 @@ class NameFinder:
     def contains(self, named: Named) -> bool:
         return named.get_id() in self.__by_id
 
-    def get_from_input(self, inputs: list[str], category: str|list[str]=None, items: ItemTree = None) -> list[tuple[Named,list[str],list[str]]]:
+    def get_from_input(self, inputs: list[str], category: str|list[str]=None, items: list[ItemTree]|None=None) -> list[tuple[Named,list[str],list[str]]]:
         matches : list[tuple[str,list[str],list[str]]] = []
         inputs = [input.lower() for input in inputs]
         if category is None:
@@ -352,9 +354,16 @@ class NameFinder:
             raise RuntimeError()
         match_list  = [(self.__by_id[match], used, leftover) for match, used, leftover in matches]
         if items is not None:
-            match_list = [
-                (match,used,leftover) for match,used,leftover in match_list if isinstance(match, (HasLocation, Container)) and items.contains(match)
-            ]
+            new_order = []
+            for tree in items:
+                new_found = [
+                    (match,used,leftover) for match,used,leftover in match_list if isinstance(match, (HasLocation,Container)) and tree.contains(match)
+                ]
+                new_order.extend(new_found)
+                for found in new_found:
+                    match_list.remove(found)
+            new_order.extend(match_list)
+            match_list = new_order
         return match_list
 
     def update(self, named: Named) -> bool:

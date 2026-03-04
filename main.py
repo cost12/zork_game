@@ -2,9 +2,10 @@ import argparse
 import dataclasses
 import logging
 
-from zork2.level_0.load import load_world
-
 from logging_config import setup_logging
+
+from zork2.level_0.load import load_world
+from zork2.game import Game, ClPlayer
 
 setup_logging()
 logger = logging.getLogger(__name__)
@@ -30,8 +31,13 @@ def parse_args() -> Args:
 def main():
     args = parse_args()
     logger.debug(args)
-    world = load_world()
+    rules, world = load_world()
+    logger.debug(rules)
     logger.debug(world)
+
+    game = Game(world, rules, (ClPlayer(),))
+    while not game.is_over():
+        game = game.advance()
 
 if __name__=="__main__":
     main()
