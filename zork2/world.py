@@ -162,12 +162,12 @@ class ActionInput:
 @dataclasses.dataclass(frozen=True)
 class Action(NamedBase):
     forms : tuple[tuple[ActionInput,...]]
-    actor : Callable[[str,'WorldRules','World',str,dict[str,str],Callable[[str],None]],tuple[bool,'World']]
+    actor : Callable[[str,'WorldRules','World',str,dict[str,str],Callable[[str],None]],tuple['ActionLogLine','World']]
 
     def get_input_forms(self) -> tuple[tuple[ActionInput]]:
         return self.forms
 
-    def perform_action(self, rules: 'WorldRules', world: 'World', character_id: str, inputs: dict[str,str], inform: Callable[[str],None]) -> tuple[bool,'World']:
+    def perform_action(self, rules: 'WorldRules', world: 'World', character_id: str, inputs: dict[str,str], inform: Callable[[str],None]) -> tuple['ActionLogLine','World']:
         return self.actor(self.get_id(), rules, world, character_id, inputs, inform)
 
     def get_inputs(self, form_inputs: tuple[tuple[ActionEdge, Named]]) -> dict[str, Named]:
@@ -250,6 +250,7 @@ class ActionLogLine:
     room_id : str
     action_id : str
     success : bool
+    turns : int
     score : int = 0
 
 class ActionLog:
@@ -270,6 +271,15 @@ class ActionLog:
                 (action.action_id    == action_id    or action_id is None) and \
                 (action.success      == success      or success is None)
         ])
+
+    def action_turns(self, character_id: str|None=None, room_id: str|None=None, action_id: str|None=None, success: bool|None=None) -> int:
+        return sum(
+            action.turns for action in self.__actions if
+                (action.character_id == character_id or character_id is None) and \
+                (action.room_id      == room_id      or room_id is None) and \
+                (action.action_id    == action_id    or action_id is None) and \
+                (action.success      == success      or success is None)
+        )
 
     def action_score(self, character_id: str|None=None, room_id: str|None=None, action_id: str|None=None, success: bool|None=None) -> int:
         return sum(
@@ -411,6 +421,6 @@ class WorldRules:
     def get_actions(self) -> list[Action]:
         return list(self.__actions)
 
-    def advance(self, world: World, character_id: str, action_id: str, action_args: dict[str, Named], inform: Callable[[str],None]) -> tuple[bool, World]:
+    def advance(self, world: World, character_id: str, action_id: str, action_args: dict[str, Named], inform: Callable[[str],None]) -> tuple[ActionLogLine, World]:
         logger.debug("%s: %s", action_id, action_args)
         return world.get_action(action_id).perform_action(self, world, character_id, action_args, inform)

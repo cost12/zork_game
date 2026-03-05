@@ -29,7 +29,7 @@ class ClPlayer(Player):
     def choose_action(self, rules: WorldRules, world: World) -> tuple[str, dict[str, str]]:
         while True:
             log = world.get_log()
-            action_str = input(f"S: {log.action_score(character_id=self.get_character_id())} T: {log.action_count(character_id=self.get_character_id(), success=True)} M: {log.action_count(character_id=self.get_character_id())}> ")
+            action_str = input(f"S: {log.action_score(character_id=self.get_character_id())} T: {log.action_turns(character_id=self.get_character_id())} M: {log.action_count(character_id=self.get_character_id())}> ")
             actions = rules.parse_input(world.get_character(self.get_character_id()), world, action_str)
             if len(actions) == 1:
                 return actions[0]
@@ -51,7 +51,5 @@ class Game:
     def advance(self) -> 'Game':
         player = self.players[self.turn % len(self.players)]
         action, action_args = player.choose_action(self.rules, self.world)
-        success, new_world = self.rules.advance(self.world, player.get_character_id(), action, action_args, player.inform)
-        if success:
-            return dataclasses.replace(self, world=new_world, turn=self.turn+1)
-        return dataclasses.replace(self, world=new_world)
+        log, new_world = self.rules.advance(self.world, player.get_character_id(), action, action_args, player.inform)
+        return dataclasses.replace(self, world=new_world, turn=self.turn+log.turns)
