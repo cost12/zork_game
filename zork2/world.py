@@ -1,5 +1,6 @@
 import dataclasses
 import re
+import string
 import logging
 from abc import abstractmethod
 from typing import Callable
@@ -12,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 class Visible(Named):
     @abstractmethod
-    def can_interact_with(self, rules: 'WorldRules', world: 'World', character_id: str, action_id: str, inform: Callable[[str],None]) -> bool:
+    def can_interact_with(self, rules: 'WorldRules', world: 'World', other_id: str, action_id: str, inform: Callable[[str],None]) -> bool:
         pass
 
     @abstractmethod
@@ -50,8 +51,8 @@ class VisibleBase(NamedBase, Visible):
     descriptor : Callable[[str,'WorldRules','World',str,Callable[[str],None]],None]
     interactor : Callable[[str,'WorldRules','World',str,str,Callable[[str],None]],bool]
 
-    def can_interact_with(self, rules: 'WorldRules', world: 'World', character_id: str, action_id: str, inform: Callable[[str],None]) -> bool:
-        return self.interactor(self.get_id(), rules, world, character_id, action_id, inform)
+    def can_interact_with(self, rules: 'WorldRules', world: 'World', other_id: str, action_id: str, inform: Callable[[str],None]) -> bool:
+        return self.interactor(self.get_id(), rules, world, other_id, action_id, inform)
 
     def describe(self, rules: 'WorldRules', world: 'World', character_id: str, inform: Callable[[str],None]) -> None:
         return self.descriptor(self.get_id(), rules, world, character_id, inform)
@@ -228,7 +229,9 @@ class ParseNode:
         return tuple(matches)
 
     def parse_input(self, character: Character, world: 'World', input_str: str) -> tuple[tuple[str, dict[str, str]]]:
-        input_str = re.sub(r"\b(a|an|the|i)\b", "", input_str)
+        input_str = re.sub(r"\b(a|an|the|i)\b", "", input_str, flags=re.IGNORECASE)
+        punctuation = "|".join(re.escape(c) for c in string.punctuation)
+        input_str = re.sub(rf"{punctuation}", "", input_str)
         input_str = re.sub(r"\s+", " ", input_str)
         input_str = re.sub(r"^\s+", "", input_str)
         input_str = re.sub(r"\s+$", "", input_str)
@@ -241,23 +244,70 @@ class ParseNode:
                 matches.extend(node.continue_parse(character, world, left, ((edge, found[1]),)))
         return tuple(matches)
 
+@dataclasses.dataclass(frozen=True)
+class ActionLogLine:
+    character_id : str
+    room_id : str
+    action_id : str
+    success : bool
+    score : int = 0
+
+class ActionLog:
+    def __init__(self, actions: tuple[ActionLogLine]|None=None):
+        self.__actions : tuple[ActionLogLine] = actions if actions else tuple()
+
+    def __repr__(self):
+        return str(self.__actions)
+
+    def update_log(self, log_line: ActionLogLine) -> 'ActionLog':
+        return ActionLog(self.__actions + (log_line,))
+
+    def action_count(self, character_id: str|None=None, room_id: str|None=None, action_id: str|None=None, success: bool|None=None) -> int:
+        return len([
+            action for action in self.__actions if
+                (action.character_id == character_id or character_id is None) and \
+                (action.room_id      == room_id      or room_id is None) and \
+                (action.action_id    == action_id    or action_id is None) and \
+                (action.success      == success      or success is None)
+        ])
+
+    def action_score(self, character_id: str|None=None, room_id: str|None=None, action_id: str|None=None, success: bool|None=None) -> int:
+        return sum(
+            action.score for action in self.__actions if
+                (action.character_id == character_id or character_id is None) and \
+                (action.room_id      == room_id      or room_id is None) and \
+                (action.action_id    == action_id    or action_id is None) and \
+                (action.success      == success      or success is None)
+        )
+
 class World:
 
-    def __init__(self, *, init_locations: ItemTree|None=None, init_map: WorldMap|None=None, init_names: NameFinder|None = None):
+    def __init__(self, *, init_locations: ItemTree|None=None, init_map: WorldMap|None=None, init_names: NameFinder|None = None, init_log: ActionLog|None = None):
         self.__item_locations = ItemTree()   if init_locations is None else init_locations
         self.__world_map      = WorldMap()   if init_map       is None else init_map
         self.__names          = NameFinder() if init_names     is None else init_names
+        self.__log            = ActionLog()  if init_log       is None else init_log
 
     def __repr__(self) -> str:
-        rep = f"\nItems: {self.__item_locations}\n"
-        rep += f"Map: {self.__world_map.get_rep(self.__names)}\n"
-        rep += f"Names: {self.__names}"
+        rep =  f"\nItems: {self.__item_locations}"
+        rep += f"\nMap: {self.__world_map.get_rep(self.__names)}"
+        rep += f"\nNames: {self.__names}"
+        rep += f"\nLog: {self.__log}"
         return rep
+
+    def __update(self, *, new_locations: ItemTree|None=None, new_map: WorldMap|None=None, new_names: NameFinder|None=None, new_log: ActionLog|None=None) -> 'World':
+        return World(
+            init_locations=new_locations if new_locations else self.__item_locations,
+            init_map=new_map if new_map else self.__world_map,
+            init_names=new_names if new_names else self.__names,
+            init_log=new_log if new_log else self.__log
+        )
 
     # init
     def add_character(self, character: Character, location: Room) -> 'World':
         new_locations = self.__item_locations.add_carrier(character, location)
-        return World(init_locations=new_locations, init_map=self.__world_map)
+        new_names = self.__names.add(character, category='character')
+        return self.__update(new_locations=new_locations, new_names=new_names)
 
     # UTILS
     def find_matches(self, character: Character, input_str: str, category: str) -> list[tuple[str, Named, str]]:
@@ -296,10 +346,21 @@ class World:
     def get_subtree(self, item: HasLocation) -> ItemTree:
         return self.__item_locations.get_subtree(item)
 
+    def get_parent(self, item: HasLocation|Container) -> Container|None:
+        p = self.__item_locations.get_parent(item)
+        return self.__names.get_from_id(p) if p else p
+
     def get_locations(self) -> ItemTree:
         return self.__item_locations
 
-    # MOVEMENT
+    def get_log(self) -> ActionLog:
+        return self.__log
+
+    # MUTATE
+
+    def update_log(self, log_line: ActionLogLine) -> 'World':
+        new_log = self.__log.update_log(log_line)
+        return self.__update(new_log=new_log)
 
     def walk(self, character: Character, direction: Named) -> tuple['World', bool]:
         room = self.get_room(character)
@@ -309,14 +370,14 @@ class World:
         end = path.get_end(self.__names)
         if end: # end should never be None but just in case
             new_locations = self.__item_locations.move(character, end)
-            return World(init_locations=new_locations, init_map=self.__world_map), True
+            return self.__update(new_locations=new_locations), True
         return self, False
 
     def move_item(self, item: Item, new_spot: HasLocation) -> tuple['World', bool]:
         if not self.get_room(item) == self.get_room(new_spot):
             return self, False
         new_locations = self.__item_locations.move(item, new_spot)
-        return World(init_locations=new_locations, init_map=self.__world_map), True
+        return self.__update(new_locations=new_locations), True
 
 class WorldRules:
     def __init__(self, parser: ParseNode|None = None, actions: tuple[Action]|None = None):

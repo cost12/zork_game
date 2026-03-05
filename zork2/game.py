@@ -28,14 +28,15 @@ class ClPlayer(Player):
 
     def choose_action(self, rules: WorldRules, world: World) -> tuple[str, dict[str, str]]:
         while True:
-            action_str = input("What do you do? ")
+            log = world.get_log()
+            action_str = input(f"S: {log.action_score(character_id=self.get_character_id())} T: {log.action_count(character_id=self.get_character_id(), success=True)} M: {log.action_count(character_id=self.get_character_id())}> ")
             actions = rules.parse_input(world.get_character(self.get_character_id()), world, action_str)
             if len(actions) == 1:
                 return actions[0]
             if len(actions) > 1:
                 print("This statement is ambiguous. ")
                 return actions[0]
-            print("That doesn't mean anything. ")
+            return 'bad input', {'text': action_str}
 
 @dataclasses.dataclass(frozen=True)
 class Game:
@@ -53,4 +54,4 @@ class Game:
         success, new_world = self.rules.advance(self.world, player.get_character_id(), action, action_args, player.inform)
         if success:
             return dataclasses.replace(self, world=new_world, turn=self.turn+1)
-        return self
+        return dataclasses.replace(self, world=new_world)

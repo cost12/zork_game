@@ -177,11 +177,11 @@ class ItemTree:
         return [self.__graph.nodes[c] for c in self.__graph.successors(node.get_id())]
 
     def get_top_parent(self, node: HasLocation|Container) -> str:
-        top = node
-        parents = list(self.__graph.predecessors(node.get_id()))
+        top = node.get_id()
+        parents = list(self.__graph.predecessors(top))
         while parents:
             top = parents[0]
-            parents = list(self.__graph.predecessors(parents[0]))
+            parents = list(self.__graph.predecessors(top))
         return top
 
 class WorldMap:

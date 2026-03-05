@@ -5,7 +5,7 @@ from zork2.utils import Named, NameFinder, ItemTree, WorldMap
 
 from zork2.descriptions import plain_text
 from zork2.interactions import simple_interaction
-from zork2.actions import look, walk
+from zork2.actions import look, walk, bad_input
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +26,7 @@ def load_characters() -> list[Character]:
         ),
     ]
 
-def load_items() -> list[Item|ContainerItem]:
+def load_items() -> list[Item]:
     return [
         ContainerItem(
             "player1 inventory",
@@ -74,6 +74,11 @@ def load_paths() -> list[PathWay]:
 
 def load_actions():
     return [
+        Action(
+            'bad input',
+            (tuple(),),
+            bad_input(),
+        ),
         Action(
             'walk',
             (
