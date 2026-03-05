@@ -79,12 +79,6 @@ class Path(Container):
     def list_possible_ends(self, names: 'NameFinder', start: Container) -> list[Container]:
         pass
 
-def _category(named: Named) -> str:
-    cat = str(type(named)).lower().rsplit(".", maxsplit=1)[-1][:-2]
-    if 'action' in cat:
-        return 'action'
-    return cat
-
 class ItemTree:
     def __init__(self, *, graph:nx.DiGraph=None):
         self.__graph = graph if graph else nx.DiGraph()
@@ -94,9 +88,7 @@ class ItemTree:
 
     # initialization
 
-    def add_node(self, node: HasLocation|Container, category: str|None = None) -> 'ItemTree':
-        if category is None:
-            category = _category(node)
+    def add_node(self, node: HasLocation|Container, category: str) -> 'ItemTree':
         new_graph = self.__graph.copy()
         new_graph.add_node(node.get_id(), category=category)
         return ItemTree(graph=new_graph)
@@ -108,22 +100,16 @@ class ItemTree:
         graph.add_node(child.get_id(), category=category)
         self.__add_edge(graph, child, parent)
 
-    def add_child(self, child: HasLocation, parent: Container, category: str|None = None) -> 'ItemTree':
-        if category is None:
-            category = _category(child)
+    def add_child(self, child: HasLocation, parent: Container, category: str) -> 'ItemTree':
         new_graph = self.__graph.copy()
         self.__add_child(new_graph, child, parent, category)
         return ItemTree(graph=new_graph)
 
-    def add_carrier(self, names: 'NameFinder', carrier: Carrier, parent: Container, category: str|None = None, child_category: str|None = None) -> 'ItemTree':
-        if category is None:
-            category = _category(carrier)
+    def add_carrier(self, names: 'NameFinder', carrier: Carrier, parent: Container, category: str, child_category: str) -> 'ItemTree':
         new_graph = self.__graph.copy()
         new_graph.add_node(carrier.get_id(), category=category)
         self.__add_edge(new_graph, carrier, parent)
         for child in carrier.get_children(names):
-            if child_category is None:
-                child_category = _category(child)
             self.__add_child(new_graph, child, carrier, child_category)
         return ItemTree(graph=new_graph)
 
@@ -277,13 +263,11 @@ class NameFinder:
             rep += f"\n{category}:\n{tree.get_rep("\t")}"
         return rep
 
-    def add(self, named: Named, *, category: str|None = None) -> tuple[bool, 'NameFinder']:
+    def add(self, named: Named, *, category: str) -> tuple[bool, 'NameFinder']:
         if named.get_id() in self.__by_id:
-            logger.debug('%s %s already exists', _category(named), named.get_id())
+            logger.debug('%s %s already exists', category, named.get_id())
             return False, self
         new_id = self.__by_id | {named.get_id(): named}
-        if not category:
-            category = _category(named)
         logger.debug('%s %s', category, named.get_id())
         category_tree = self.__by_name.get(category, WordTreeNode())
         for name in named.get_aliases():
@@ -330,14 +314,11 @@ class NameFinder:
             match_list = [match for match in match_list if isinstance(match, (HasLocation, Container)) and items.contains(match)]
         return match_list
 
-    def get_from_id(self, name_id: str, category: str|list[str] = None) -> Named:
+    def get_from_id(self, name_id: str) -> Named:
         name_id = name_id.lower()
         if name_id in self.__by_id:
-            if category is None or \
-            (isinstance(category, str)  and _category(self.__by_id[name_id]) == category.lower()) or \
-            (isinstance(category, list) and _category(self.__by_id[name_id]) in [cat.lower() for cat in category]):
-                return self.__by_id[name_id]
-        raise ValueError(f"\"{name_id}\" not found in category {category}")
+            return self.__by_id[name_id]
+        raise ValueError(f"\"{name_id}\" not found")
 
     def contains(self, named: Named) -> bool:
         return named.get_id() in self.__by_id

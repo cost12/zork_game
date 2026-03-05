@@ -326,13 +326,13 @@ class World:
         return [(" ".join(used), found, " ".join(left)) for found, used, left in matches]
 
     def get_character(self, character_id: str) -> Character:
-        return self.__names.get_from_id(character_id, 'character')
+        return self.__names.get_from_id(character_id)
 
     def get_visible(self, visible_id: str) -> Visible:
         return self.__names.get_from_id(visible_id)
 
     def get_action(self, action_id: str) -> Action:
-        return self.__names.get_from_id(action_id, 'action')
+        return self.__names.get_from_id(action_id)
 
     def get_room(self, item: HasLocation) -> Room:
         return self.__names.get_from_id(self.__item_locations.get_top_parent(item))
