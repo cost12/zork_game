@@ -3,9 +3,9 @@ import logging
 from zork2.world import World, WorldRules, Character, Item, ContainerItem, Room, PathWay, NamedBase, Action, ActionInput, ActionEdge
 from zork2.utils import Named, NameFinder, ItemTree, WorldMap
 
-from zork2.descriptions import plain_text
+from zork2.descriptions import plain_text, room_description, path_description
 from zork2.interactions import simple_interaction
-from zork2.actions import look, walk, bad_input
+from zork2.actions import look, walk, bad_input, debug
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +19,7 @@ def load_characters() -> list[Character]:
     return [
         Character(
             "Player1",
-            descriptor=plain_text("A handsome fellow."),
+            descriptor=plain_text("A handsome fellow.", 'a handsome fellow'),
             interactor=simple_interaction(),
             inventory_id="player1 inventory",
             wearing_id="player1 wearing",
@@ -30,12 +30,12 @@ def load_items() -> list[Item]:
     return [
         ContainerItem(
             "player1 inventory",
-            descriptor=plain_text("An inventory."),
+            descriptor=plain_text("An inventory.", 'an inventory'),
             interactor=simple_interaction(),
         ),
         ContainerItem(
             "player1 wearing",
-            descriptor=plain_text(""),
+            descriptor=plain_text("", ''),
             interactor=simple_interaction(),
         ),
     ]
@@ -44,12 +44,12 @@ def load_rooms() -> list[Room]:
     return [
         Room(
             "Grey Room",
-            descriptor=plain_text("A grey room, with a view..."),
+            descriptor=room_description("You are standing in a grey room, with a view...", "In the room sits"),
             interactor=simple_interaction(),
         ),
         Room(
             "Gray Room",
-            descriptor=plain_text("A gray room, with a view..."),
+            descriptor=room_description("You see a gray room, with a view...", "In the room you find"),
             interactor=simple_interaction(),
         ),
     ]
@@ -58,14 +58,14 @@ def load_paths() -> list[PathWay]:
     return [
         PathWay(
             "Gray South exit",
-            descriptor=plain_text("A gray path stretching south."),
+            descriptor=path_description("A musty passage way.", 'A gray path stretches {direction}.', "In the path, you find"),
             interactor=simple_interaction(),
             starts=(("gray room", "south"),),
             end_id="grey room",
         ),
         PathWay(
             "Grey North exit",
-            descriptor=plain_text("A grey path stretching north."),
+            descriptor=path_description("A musty passage way.", 'A grey path winds {direction}.', "In the path, you find"),
             interactor=simple_interaction(),
             starts=(("grey room", "north"),),
             end_id="gray room",
@@ -78,6 +78,11 @@ def load_actions():
             'bad input',
             (tuple(),),
             bad_input(),
+        ),
+        Action(
+            'debug',
+            ((ActionInput('self', ActionEdge('action', 'debug')),),),
+            debug(),
         ),
         Action(
             'walk',

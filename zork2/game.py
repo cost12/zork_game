@@ -24,7 +24,7 @@ class ClPlayer(Player):
         return "player1"
 
     def inform(self, info: str) -> None:
-        print(info)
+        print(info, end='')
 
     def choose_action(self, rules: WorldRules, world: World) -> tuple[str, dict[str, str]]:
         while True:

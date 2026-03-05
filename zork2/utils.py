@@ -174,7 +174,7 @@ class ItemTree:
         return None
 
     def get_children(self, node: HasLocation|Container) -> list[str]:
-        return [self.__graph.nodes[c] for c in self.__graph.successors(node.get_id())]
+        return list(self.__graph.successors(node.get_id()))
 
     def get_top_parent(self, node: HasLocation|Container) -> str:
         top = node.get_id()
@@ -219,6 +219,12 @@ class WorldMap:
         if direction.get_name() == "random":
             return random.choice(list(self.__world_map[node.get_id()].values()))
         return self.__world_map[node.get_id()].get(direction.get_id())
+
+    def get_path_direction(self, node: Container, path: Path) -> str|None:
+        for direction, path_id in self.__world_map[node.get_id()].items():
+            if path_id == path.get_id():
+                return direction
+        return None
 
 class WordTreeNode:
     def __init__(self, value: frozenset[str]|None = None, branches: frozendict[str, 'WordTreeNode']|None = None):

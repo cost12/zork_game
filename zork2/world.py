@@ -13,11 +13,11 @@ logger = logging.getLogger(__name__)
 
 class Visible(Named):
     @abstractmethod
-    def can_interact_with(self, rules: 'WorldRules', world: 'World', other_id: str, action_id: str, inform: Callable[[str],None]) -> bool:
+    def can_interact_with(self, rules: 'WorldRules', world: 'World', other_id: str, action_id: str, inputs: dict[str,str], inform: Callable[[str],None]) -> bool:
         pass
 
     @abstractmethod
-    def describe(self, rules: 'WorldRules', world: 'World', character_id: str, inform: Callable[[str],None]) -> None:
+    def describe(self, rules: 'WorldRules', world: 'World', character_id: str, inputs: dict[str,str], inform: Callable[[str],None]) -> None:
         pass
 
 @dataclasses.dataclass(frozen=True)
@@ -48,14 +48,14 @@ class NamedBase(Named):
 
 @dataclasses.dataclass(frozen=True)
 class VisibleBase(NamedBase, Visible):
-    descriptor : Callable[[str,'WorldRules','World',str,Callable[[str],None]],None]
-    interactor : Callable[[str,'WorldRules','World',str,str,Callable[[str],None]],bool]
+    descriptor : Callable[[str,'WorldRules','World',str,dict[str,str],Callable[[str],None]],None]
+    interactor : Callable[[str,'WorldRules','World',str,str,dict[str,str],Callable[[str],None]],bool]
 
-    def can_interact_with(self, rules: 'WorldRules', world: 'World', other_id: str, action_id: str, inform: Callable[[str],None]) -> bool:
-        return self.interactor(self.get_id(), rules, world, other_id, action_id, inform)
+    def can_interact_with(self, rules: 'WorldRules', world: 'World', other_id: str, action_id: str, inputs: dict[str,str], inform: Callable[[str],None]) -> bool:
+        return self.interactor(self.get_id(), rules, world, other_id, action_id, inputs, inform)
 
-    def describe(self, rules: 'WorldRules', world: 'World', character_id: str, inform: Callable[[str],None]) -> None:
-        return self.descriptor(self.get_id(), rules, world, character_id, inform)
+    def describe(self, rules: 'WorldRules', world: 'World', character_id: str, inputs: dict[str,str], inform: Callable[[str],None]) -> None:
+        return self.descriptor(self.get_id(), rules, world, character_id, inputs, inform)
 
 @dataclasses.dataclass(frozen=True)
 class Item(VisibleBase, HasLocation):
@@ -257,7 +257,7 @@ class ActionLog:
         self.__actions : tuple[ActionLogLine] = actions if actions else tuple()
 
     def __repr__(self):
-        return str(self.__actions)
+        return "\n" + "\n".join(str(action) for action in self.__actions)
 
     def update_log(self, log_line: ActionLogLine) -> 'ActionLog':
         return ActionLog(self.__actions + (log_line,))
@@ -355,6 +355,18 @@ class World:
 
     def get_log(self) -> ActionLog:
         return self.__log
+
+    def get_exits(self, room: Room) -> list[PathWay]:
+        path_ids = self.__world_map.get_paths(room)
+        return [self.__names.get_from_id(path_id) for path_id in path_ids]
+
+    def get_children(self, item: Container) -> list[Visible]:
+        child_ids = self.__item_locations.get_children(item)
+        return [self.__names.get_from_id(child_id) for child_id in child_ids]
+
+    def get_path_direction(self, room: Room, path: PathWay) -> Named|None:
+        direction_id = self.__world_map.get_path_direction(room, path)
+        return self.__names.get_from_id(direction_id) if direction_id else direction_id
 
     # MUTATE
 
