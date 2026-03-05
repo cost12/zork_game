@@ -38,6 +38,11 @@ def load_items() -> list[Item]:
             descriptor=plain_text("", ''),
             interactor=simple_interaction(),
         ),
+        Item(
+            "grey book",
+            descriptor=plain_text("A grey book.", "a grey book"),
+            interactor=simple_interaction(),
+        )
     ]
 
 def load_rooms() -> list[Room]:
@@ -108,7 +113,9 @@ def load_actions():
     ]
 
 def load_start_locations(names: NameFinder, locations: ItemTree) -> ItemTree:
-    return locations.add_carrier(names, names.get_from_id('player1'), names.get_from_id('gray room'), 'character', 'inventory')
+    locations = locations.add_carrier(names, names.get_from_id('player1'), names.get_from_id('gray room'), 'character', 'inventory')
+    locations = locations.add_child(names.get_from_id('grey book'), names.get_from_id('gray room'), 'item')
+    return locations
 
 def load_world() -> tuple[WorldRules, World]:
     locations = ItemTree()

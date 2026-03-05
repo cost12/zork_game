@@ -50,6 +50,8 @@ def path_description(text: str, from_room_text: str, contents_text: str) -> Call
                 for child in children:
                     child.describe(rules, world, character_id, inputs | {"list": True}, inform)
                 inform(".")
-            if not inputs.get('from_room', False):
+            if inputs.get('from_room', False):
+                inform(" ")
+            else:
                 inform("\n")
     return description
