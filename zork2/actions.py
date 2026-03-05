@@ -40,7 +40,24 @@ def look() -> Callable[[str,WorldRules,World,str,dict[str,str],Callable[[str],No
 def walk() -> Callable[[str,WorldRules,World,str,dict[str,str],Callable[[str],None]],tuple[bool, World]]:
     def action(own_id: str, rules: WorldRules, world: World, character_id: str, inputs: dict[str,str], inform: Callable[[str],None]) -> tuple[ActionLogLine,World]:
         character = world.get_character(character_id)
-        inform("walking\n")
+        character_room = world.get_room(character)
+        direction_id = inputs.get('direction', None)
+        if direction_id is None:
+            inform("No direction was given.")
+            log = ActionLogLine(character_id, character_room.get_id(), own_id, False, 0)
+            new_world = world.update_log(log)
+            return log, new_world
+        path = world.get_path(character_room, world.get_direction(direction_id))
+        if path and path.can_interact_with(rules, world, character_id, own_id, {}, inform):
+            new_room_id = path.get_end()
+            new_room = world.get_visible(new_room_id)
+            new_world = world.move_item(character, new_room)
+            new_room.describe(rules, new_world, character_id, {"from_walk": True}, inform)
+            log = ActionLogLine(character_id, character_room.get_id(), own_id, True, 1)
+            new_world = new_world.update_log(log)
+            return log, new_world
+        if path is None:
+            inform("You foolishly walk straight into a wall thinking there might be a path there. Ouch.\n")
         log = ActionLogLine(character_id, world.get_room(character).get_id(), own_id, False, 0)
         new_world = world.update_log(log)
         return log, new_world

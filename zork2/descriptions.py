@@ -16,6 +16,8 @@ def room_description(text: str, contents_text: str) -> Callable[[str,WorldRules,
     def description(own_id: str, rules: WorldRules, world: World, character_id: str, inputs: dict[str,str], inform: Callable[[str],None]) -> str:
         own_item = world.get_visible(own_id)
         if own_item.can_interact_with(rules, world, character_id, 'look', inputs, inform):
+            if inputs.get('from_walk', False):
+                inform(f"[{own_item.get_name()}]\n")
             inform(f"{text} ")
             for path in world.get_exits(own_item):
                 path.describe(rules, world, character_id, inputs | {"from_room": True}, inform)

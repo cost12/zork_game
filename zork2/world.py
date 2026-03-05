@@ -109,8 +109,8 @@ class PathWay(VisibleBase, Path):
     def get_limit(self) -> ItemLimit:
         return self.item_limit
 
-    def get_end(self, names: NameFinder) -> Container:
-        return names.get_from_id(self.end_id)
+    def get_end(self) -> str:
+        return self.end_id
 
     def list_starts(self, names: NameFinder):
         return [
@@ -344,6 +344,9 @@ class World:
     def get_action(self, action_id: str) -> Action:
         return self.__names.get_from_id(action_id)
 
+    def get_direction(self, direction_id: str) -> Named:
+        return self.__names.get_from_id(direction_id)
+
     def get_room(self, item: HasLocation) -> Room:
         return self.__names.get_from_id(self.__item_locations.get_top_parent(item))
 
@@ -384,22 +387,9 @@ class World:
         new_log = self.__log.update_log(log_line)
         return self.__update(new_log=new_log)
 
-    def walk(self, character: Character, direction: Named) -> tuple['World', bool]:
-        room = self.get_room(character)
-        path = self.get_path(room, direction)
-        if path is None:
-            return self, False
-        end = path.get_end(self.__names)
-        if end: # end should never be None but just in case
-            new_locations = self.__item_locations.move(character, end)
-            return self.__update(new_locations=new_locations), True
-        return self, False
-
-    def move_item(self, item: Item, new_spot: HasLocation) -> tuple['World', bool]:
-        if not self.get_room(item) == self.get_room(new_spot):
-            return self, False
-        new_locations = self.__item_locations.move(item, new_spot)
-        return self.__update(new_locations=new_locations), True
+    def move_item(self, item: HasLocation, new_place: Container) -> 'World':
+        new_locations = self.__item_locations.move(item, new_place)
+        return self.__update(new_locations=new_locations)
 
 class WorldRules:
     def __init__(self, parser: ParseNode|None = None, actions: tuple[Action]|None = None):

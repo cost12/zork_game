@@ -1,0 +1,4 @@
+look at (individual objects)
+use inventory
+multi paths/ path restrictions
+update interactions so character is always passed in?
